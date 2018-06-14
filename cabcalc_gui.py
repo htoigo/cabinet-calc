@@ -88,8 +88,8 @@ class Application(tk.Frame):
         # self.l3 = ttk.Label(text='Label 3', style='BW.TLabel')
         # self.l3.pack()
 
-    def print_contents(self, event):
-        print('Hi. Contents of entry are now ---->', self.contents.get())
+#    def print_contents(self, event):
+#        print('Hi. Contents of entry are now ---->', self.contents.get())
 
 
 # root = tk.Tk()
