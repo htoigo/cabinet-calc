@@ -1,0 +1,113 @@
+  -*- mode: org;-*-
+
+# Project file for Cabinet Calc program.
+
+* Currently used version
+
+** CabCalc-Spreadsheet
+
+* Proof of Concept for new version
+  See Google Keep card for drawings of interface and output.
+
+** Interface
+*** Isometric drawing of cabinet.
+  Should the height, width, depth be entered next to this drawing?
+*** Fields to enter numbers.
+  Number of cabinets wanted.
+  Height, Width, Depth as floats to 3 decimal places.
+  Material Thickness, Bottom Thickness as floats to 3 decimal places.
+  Material Type as a string.
+*** Fields to enter Notes.
+**** Notes for overall piece.
+**** Notes for each individual part.
+
+** Output
+  There is an example of a more complex output from CAD on Google Drive.  This
+  type takes a lot of work, and while they use CAD program to generate PDF
+  output like this for standard catalog items that they make a lot of, they want
+  to avoid this for one-off items.  Hence this program.
+*** Terminal Job Description
+  Pared-down description of the job, with no diagrams. Just the information. What
+  must we include, here?
+*** Pretty Job Description, first page
+Should contain the most critical information for the job.
+**** Isometric drawing of cabinet
+**** Parts List
+***** Each part has:
+**** Parts Images
+***** Quantity
+  E.g.: '7 Back Panels' in bottom left of part interior.
+***** Width and height measurements labeled with arrows
+***** Crosses mark sides to be banded
+***** Material and thickness
+  Printed in the interior of the part.
+
+*** Pretty Job Description, second page
+* Specification
+  Identify true requirements. Ideally, limit to one page.
+
+** Requirements
+*** Must be runnable on Windows 10.
+*** Generate a parts list with correct dimensions and number of each part.
+*** Must be printable.
+*** Must it be email-able?
+** Use case #1
+  Generate a cabinet-bank layout from:
+    1. Wall width, height, depth, material, material thickness, number of
+    fillers, 
+* Implementation
+** CabCalc main program
+  Uses a collection of modules, which might be useful for other cabinet
+  fabrication programs.
+** Modules
+*** gui
+*** cabinet.py
+  All cabinet-specific logic, independent of interface or output format or
+  job description format.
+**** Cabinet Bank
+  Upper and/or lower cabinet run(s).
+**** Cabinet Run
+  Fullwidth, Height, Depth, Number of fillers, Doors per cabinet,
+  Primary material, prim matl thickness, parts list,
+*** job
+  Complete job specification.
+**** Job ID?
+**** Name
+**** Customer
+**** List of Cabinet Banks
+  Each Cabinet Bank has: Upper and/or lower cabinet runs.
+**** Kiosks / Stations?
+*** job output / cut sheet / parts sheet / job description
+  Layout and generation of the pretty job description, independent of the final
+  form--pdf, rtf, plain text, LaTeX, etc.
+**** Job Title/Header
+**** Cabinet (run) overview
+  Includes primary material and material thickness.
+  Whether open/closed on each end.
+**** Parts list
+  Do different parts need to specify their material & thickness?
+  They could inherit material from Run primary material, if not specified for
+  the part individually.
+*** plain text
+  Render the pretty job description to plain text, for output in the
+  terminal.
+*** pdf
+  Render the pretty job description to PDF.
+**** Isometric Drawing of a single cabinet
+**** Parts Drawings
+**** Cabinet Run Drawing
+*** dxf
+  Given a list of parts, arrange the parts on pieces of the raw material in the
+  most efficient way possible, and generate a dxf file.
+
+
+cabcalc/
+    __init__.py
+    cabcalc.py
+    gui.py
+    cabinet.py
+    job.py
+    jobpretty.py
+    formats/
+        __init__.py
+        pdf.py
