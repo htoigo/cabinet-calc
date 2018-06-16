@@ -12,7 +12,8 @@ import math
 from fractions import Fraction
 
 import cabinet
-import cabcalc_gui as gui
+import job
+import gui
 
 
 def start_gui():
@@ -33,7 +34,7 @@ def start_cli(args):
         # Do not pass matl_thickness to cabinet.Run()
         pass
     
-    job = cabinet.Job(args.jobname)
+    job = job.Job(args.jobname, 'Customer 1')
     cabs = cabinet.Run(args.fullwidth, args.height, args.depth,
                        num_fillers=args.fillers, matl_thickness=args.thickness)
 
