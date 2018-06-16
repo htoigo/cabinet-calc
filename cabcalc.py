@@ -18,7 +18,7 @@ import gui
 
 def start_gui():
     """Start the GUI version of the program."""
-    app = gui.Application(title='Cabinet Calc')
+    app = gui.Application()
     app.mainloop()
 
 
