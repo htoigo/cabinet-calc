@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-cabinet.api
-~~~~~~~~~~~
+cabinet.py module
+~~~~~~~~~~~~~~~~~
 
 This module implements the Cabinet module API.
 
@@ -41,6 +41,14 @@ max_cabinet_width = 36
 # due to the hinges.
 door_hinge_gap = 0.125
 
+# Primary materials list. Does each material have a standard thickness
+# associated with it?
+
+materials = ( 'Plywood'
+            , 'Melamine'
+            , 'Graphite'
+            , 'Steel' )
+
 
 def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
                 matl_thickness=0.75, topnailer_depth=4, door_thickness=0.75,
@@ -63,23 +71,14 @@ def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
 
 
 # Should we expose the following functions for ad hoc use?
-
-
-def num_cabinets(full_width):
-    """Compute the number of cabinets needed for the given wall width.
-
-    Return the smallest number of cabinets needed, while not exceeding the
-    maximum cabinet width.
-    """
-    return math.ceil(full_width / max_cabinet_width)
-
-
-# def cabinet_width(full_width, num_cabinets):
-#     result = 0
+#
+# def num_cabinets(full_width):
 #     return result
-
+#
+# def cabinet_width(full_width, num_cabinets):
+#     return result
+#
 # def extra_width(full_width, num_cabinets):
-#     result = 0
 #     return result
 
 
@@ -123,12 +122,12 @@ class Run:
 
     @property
     def num_cabinets(self):
-        """The number of cabinets needed for the run.
+        """Compute the number of cabinets needed for the given wall width.
 
-        This function uses the module global function `num_cabinets', to avoid
-        duplication of code.
+        Return the smallest number of cabinets needed, while not exceeding the
+        maximum cabinet width.
         """
-        return num_cabinets(self._fullwidth)
+        return math.ceil(self.fullwidth / max_cabinet_width)
 
     @property
     def cabinet_height(self):
@@ -304,10 +303,3 @@ class Run:
         """The height of a single door."""
         height = self.cabinet_height - self.doortop_space
         return height
-
-
-# class Job:
-#     """A customer job."""
-
-#     def __init__(self, name):
-#         self.name = name

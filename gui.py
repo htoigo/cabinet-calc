@@ -14,96 +14,260 @@ Display Cabinet-Calc in a tkinter top-level window on the user's desktop.
 Where will the output go?
 """
 
-#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets, Run, Job]
+#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 from tkinter import *
 from tkinter import ttk
+from functools import reduce
+
+import cabinet as cab
+import job
+
+
+def unlines(lines):
+    """Join a list of lines, after appending a newline to each."""
+    nlines = map(lambda s: s + '\n', lines)
+    str = reduce(lambda s, t: s+t, nlines, '')
+    return str
 
 
 class Application(ttk.Frame):
-    """The application, which is a frame within the root window."""
+    """The application, which is the main content frame in the root window."""
     def __init__(self, root=None, title='Cabinet Calc'):
         if root is None:
             # Create a new root window to be our master
             self.root = Tk()
         else:
+            # Our master will be what was passed in as `root'
             self.root = root
-        super().__init__(self.root, padding=(3, 3))
+        super().__init__(self.root, padding=5)
+        # Instance variables
         self.root.title(title)
-        self.grid()
-        self.create_widgets()
-
-    def create_widgets(self):
-        self.title_lbl = ttk.Label(self, text='Euro-Style Cabinet Calculator')
-        self.jobname_lbl = ttk.Label(self, text='Job Name:')
-        self.jobname_ent = ttk.Entry(self)
-        # Material
+        self.jobname = StringVar()
+        self.customer = StringVar()
+        self.fullwidth = StringVar()
+        self.height = StringVar()
+        self.depth = StringVar()
+        self.num_fillers = IntVar()
         self.material = StringVar()
-        self.material.set('Plywood')
-        self.material_lbl = ttk.Label(self, text='Material:')
-        self.material_cbx = ttk.Combobox(self, textvariable=self.material)
-        # self.material_cbx.bind('<<ComboboxSelected>>', lambda x: pass)
-        self.material_cbx['values'] = ('Plywood', 'Melamine', 'Graphite')
-
-        self.thickness_lbl = ttk.Label(self, text='Thickness:')
         self.thickness = StringVar()
-        self.thickness.set('0.75')
-        self.thickness_ent = ttk.Entry(self, textvariable=self.thickness)
-        # Doors
+        self.diff_btm_thickness = StringVar()
+        self.bottom_thickness = StringVar()
         self.doors_per_cab = IntVar()
+        self.output = StringVar()
+        self.initialize_vars()
+        self.make_widgets()
+
+    def initialize_vars(self):
+        self.jobname.set('')
+        self.customer.set('')
+        self.fullwidth.set('')
+        self.height.set('')
+        self.depth.set('')
+        self.num_fillers.set(0)
+        self.material.set('Plywood')
+        self.thickness.set('0.75')
+        self.diff_btm_thickness.set('no')
+        self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
-        self.doors_per_cab_lbl = ttk.Label(self, text='Doors per Cabinet:')
-        self.doors_per_cab_rad1 = ttk.Radiobutton(self, value=1, text='1',
-                                                  variable=self.doors_per_cab)
-        self.doors_per_cab_rad2 = ttk.Radiobutton(self, value=2, text='2',
-                                                  variable=self.doors_per_cab)
-        self.total_width_lbl = ttk.Label(self, text='Width:')
-        self.total_width_ent = ttk.Entry(self)
-        self.height_lbl = ttk.Label(self, text='Height:')
-        self.height_ent = ttk.Entry(self)
-        self.depth_lbl = ttk.Label(self, text='Depth:')
-        self.depth_ent = ttk.Entry(self)
+        self.output.set('No job yet.')
 
+    def make_widgets(self):
+        """Create and layout all the UI elements.
+
+        Only the widgets that need to be refered to in other parts of the code
+        are made as instance variables (with `self.').
+        """
+        ttk.Label(self, text='Euro-Style Cabinet Calculator').grid(
+            column=0, row=0, sticky=W)
+        inputframe = ttk.Labelframe(self, text='Specification:', borderwidth=2,
+            relief='groove', padding=5)
+        ttk.Label(self, text='Job Description:').grid(
+            column=0, row=2, sticky=W, pady=2)
+        outputframe = ttk.Frame(self, borderwidth=1, relief='sunken',
+                                padding=5)
         self.grid(column=0, row=0, sticky=(N, S, E, W))
-        self.title_lbl.grid(column=0, columnspan=6, row=0)
-        self.jobname_lbl.grid(column=0, columnspan=2, row=1)
-        self.jobname_ent.grid(column=2, columnspan=2, row=1)
-        self.material_lbl.grid(column=0, columnspan=2, row=2)
-        self.material_cbx.grid(column=2, columnspan=2, row=2)
-        self.thickness_lbl.grid(column=4, row=2)
-        self.thickness_ent.grid(column=5, row=2)
-        self.doors_per_cab_lbl.grid(column=0, columnspan=3, row=3)
-        self.doors_per_cab_rad1.grid(column=3, row=3)
-        self.doors_per_cab_rad2.grid(column=4, row=3)
-        self.total_width_lbl.grid(column=0, row=4)
-        self.total_width_ent.grid(column=1, row=4)
-        self.height_lbl.grid(column=2, row=4)
-        self.height_ent.grid(column=3, row=4)
-        self.depth_lbl.grid(column=4, row=4)
-        self.depth_ent.grid(column=5, row=4)
-
+        inputframe.grid(column=0, row=1, sticky=(N, S, E, W), pady=10)
+        outputframe.grid(column=0, row=3, sticky=(N, S, E, W))
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
-        self.columnconfigure(3, weight=1)
-        self.columnconfigure(4, weight=1)
-        self.columnconfigure(5, weight=1)
-        self.rowconfigure(1, weight=1)
+        self.rowconfigure(3, weight=1)
+        self.fill_inputframe(inputframe)
+        self.fill_outputframe(outputframe)
 
-        # Ttk code:
-        # style = ttk.Style()
-        # style.configure('BW.TLabel', foreground='black', background='white')
-        # self.l3 = ttk.Label(text='Label 3', style='BW.TLabel')
-        # self.l3.pack()
+    def fill_inputframe(self, inpframe):
 
+        def make_jobframe():
+            jobframe = ttk.Frame(inpframe, padding=(0, 5, 0, 10))
+            jobframe.grid(column=0, row=0, sticky=(N, S, W, E))
+            jobframe.columnconfigure(0, weight=0)
+            jobframe.columnconfigure(1, weight=1)
+            ttk.Label(jobframe, text='Job Name:').grid(column=0, row=0, pady=2,
+                                                       sticky=W)
+            self.jobname_ent = ttk.Entry(jobframe, textvariable=self.jobname,
+                validate='key', validatecommand=(vcmd, '%P'))
+            ttk.Label(jobframe, text='Customer:').grid(column=0, row=1, pady=2,
+                                                       sticky=W)
+            self.customer_ent = ttk.Entry(jobframe, textvariable=self.customer,
+                validate='key', validatecommand=(vcmd, '%P'))
+            self.jobname_ent.grid(column=1, row=0, pady=2, sticky=(W, E),
+                                  padx=(5, 0))
+            self.customer_ent.grid(column=1, row=1, pady=2, sticky=(W, E),
+                                   padx=(5, 0))
+            self.jobname_ent.focus_set()
 
-# root = tk.Tk()
-# app = Application(master=root)
-# Using the Wm (window manager) class methods:
-# app.master.title('Cabinet Calc')
-# app.master.maxsize(200, 100)
-# app.mainloop()
+        def make_dimframe():
+            dimframe = ttk.Frame(inpframe, padding=(0, 10))
+            dimframe.grid(column=0, row=1, sticky=(N, S, W, E))
+            dimframe.columnconfigure(0, weight=0)
+            dimframe.columnconfigure(1, weight=1)
+            dimframe.columnconfigure(2, weight=0)
+            dimframe.columnconfigure(3, weight=1)
+            dimframe.columnconfigure(4, weight=0)
+            dimframe.columnconfigure(5, weight=1)
+            ttk.Label(dimframe, text='Width:').grid(column=0, row=0, sticky=W,
+                                                    padx=(0, 3))
+            self.fullwidth_ent = ttk.Entry(dimframe, width=6,
+                textvariable=self.fullwidth, validate='key',
+                validatecommand=(vcmd, '%P'))
+            ttk.Label(dimframe, text='Height:').grid(column=2, row=0, sticky=E,
+                                                     padx=(6, 3))
+            self.height_ent = ttk.Entry(dimframe, width=6,
+                textvariable=self.height, validate='key',
+                validatecommand=(vcmd, '%P'))
+            ttk.Label(dimframe, text='Depth:').grid(column=4, row=0, sticky=E,
+                                                    padx=(6, 3))
+            self.depth_ent = ttk.Entry(dimframe, width=6,
+                textvariable=self.depth, validate='key',
+                validatecommand=(vcmd, '%P'))
+            self.fullwidth_ent.grid(column=1, row=0, sticky=(W, E), padx=3)
+            self.height_ent.grid(column=3, row=0, sticky=(W, E), padx=3)
+            self.depth_ent.grid(column=5, row=0, sticky=(W, E), padx=3)
+
+        def make_miscframe():
+            miscframe = ttk.Frame(inpframe, padding=(0, 5))
+            miscframe.grid(column=0, row=2, sticky=(N, S, W, E))
+            miscframe.columnconfigure(0, weight=0)
+            miscframe.columnconfigure(1, weight=0)
+            miscframe.columnconfigure(2, weight=0)
+            miscframe.columnconfigure(3, weight=0)
+            miscframe.columnconfigure(4, weight=1)
+            miscframe.columnconfigure(5, weight=1)
+            miscframe.columnconfigure(6, weight=1)
+            ttk.Label(miscframe, text='Number of fillers:').grid(
+                column=0, columnspan=2, row=0, sticky=W, padx=(0, 2), pady=2)
+            ttk.Radiobutton(miscframe, value=0, text='0',
+                            variable=self.num_fillers).grid(
+                                column=2, row=0, sticky=W, padx=3, pady=2)
+            ttk.Radiobutton(miscframe, value=1, text='1',
+                            variable=self.num_fillers).grid(
+                                column=3, row=0, sticky=W, padx=3, pady=2)
+            ttk.Radiobutton(miscframe, value=2, text='2',
+                            variable=self.num_fillers).grid(
+                                column=4, row=0, sticky=W, padx=3, pady=2)
+            ttk.Label(miscframe, text='Material:').grid(
+                column=0, row=1, sticky=W, padx=(0, 2), pady=2)
+            material_cbx = ttk.Combobox(miscframe, textvariable=self.material,
+                                width=max(map(len, cab.materials)) + 2)
+            material_cbx['values'] = cab.materials
+            # Prevent direct editing of the value in the combobox:
+            material_cbx.state(['readonly'])
+            # Call the `selection clear' method when the value changes. It looks
+            # a bit odd visually without doing that.
+            material_cbx.bind('<<ComboboxSelected>>',
+                              lambda x: material_cbx.selection_clear())
+            material_cbx.grid(column=1, columnspan=2, row=1, sticky=W,
+                              padx=(6, 0), pady=2)
+            ttk.Label(miscframe, text='Thickness:').grid(
+                column=4, row=1, sticky=E, padx=4, pady=2)
+            ttk.Entry(miscframe, textvariable=self.thickness,
+                      width=6).grid(column=5, row=1, sticky=W, pady=2)
+            bottom_thickness_chk = ttk.Checkbutton(
+                miscframe, text='Different Bottom Thickness:',
+                command=self.diff_btm_changed, variable=self.diff_btm_thickness,
+                onvalue='yes', offvalue='no').grid(
+                    column=1, columnspan=4, row=2, sticky=E, padx=4, pady=2)
+            self.bottom_thickness_ent = ttk.Entry(
+                miscframe, textvariable=self.bottom_thickness, width=6
+            )
+            self.bottom_thickness_ent.state(['disabled'])
+            self.bottom_thickness_ent.grid(column=5, row=2, sticky=W, pady=2)
+            ttk.Label(miscframe, text='Doors per Cabinet:').grid(
+                column=0, columnspan=2, row=3, sticky=W, padx=(0, 6), pady=2)
+            ttk.Radiobutton(miscframe, value=1, text='1',
+                variable=self.doors_per_cab).grid(
+                    column=2, row=3, sticky=W, padx=3, pady=2)
+            ttk.Radiobutton(miscframe, value=2, text='2',
+                variable=self.doors_per_cab).grid(
+                    column=3, row=3, sticky=W, padx=3, pady=2)
+
+        def make_buttonframe():
+            buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
+            buttonframe.grid(column=0, row=3, sticky=(N, S, W, E))
+            buttonframe.columnconfigure(0, weight=1)
+            buttonframe.columnconfigure(1, weight=1)
+            buttonframe.rowconfigure(0, weight=1)
+            self.calc_button = ttk.Button(buttonframe, text='Calculate',
+                                          command=self.calculate_job)
+            self.calc_button.state(['disabled'])
+            clear_button = ttk.Button(buttonframe, text='Clear',
+                                      command=self.clear_input)
+            self.calc_button.grid(column=0, row=0, sticky=E, padx=2)
+            clear_button.grid(column=1, row=0, sticky=W, padx=2)
+
+        # Register our validate function to get its function ID. This is used
+        # to disable the `Calculate' button if the fields necessary for
+        # calculation are not filled in.
+        vcmd = self.root.register(self.validate_entry)
+        make_jobframe()
+        make_dimframe()
+        make_miscframe()
+        make_buttonframe()
+        inpframe.columnconfigure(0, weight=1)
+
+    def fill_outputframe(self, outpframe):
+        self.output_lbl = ttk.Label(outpframe, textvariable=self.output)
+        self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
+
+    def validate_entry(self, value):
+        if self.have_enough_info():
+            self.calc_button.state(['!disabled'])
+        else:
+            self.calc_button.state(['disabled'])
+        return True
+
+    def have_enough_info(self):
+        result = (self.jobname_ent.get() != ''
+                  and self.customer_ent.get() != ''
+                  and self.fullwidth_ent.get() != ''
+                  and self.height_ent.get() != ''
+                  and self.depth_ent.get() != '')
+        return result
+
+    def diff_btm_changed(self):
+        if self.diff_btm_thickness.get() == 'yes':
+            self.bottom_thickness_ent.state(['!disabled'])
+        else:
+            self.bottom_thickness.set('')
+            self.bottom_thickness_ent.state(['disabled'])
+
+    def clear_input(self):
+        self.initialize_vars()
+        self.bottom_thickness_ent.state(['disabled'])
+        self.calc_button.state(['disabled'])
+        self.output_lbl.grid_configure(pady=(0, 50))
+
+    def calculate_job(self):
+        j = job.Job(self.jobname.get(), self.customer.get(),
+                    cab.Run(float(self.fullwidth.get()),
+                            float(self.height.get()),
+                            float(self.depth.get()),
+                            num_fillers=self.num_fillers.get(),
+                            material=self.material.get(),
+                            matl_thickness=float(self.thickness.get())))
+        self.output.set(unlines(j.description()))
+        self.output_lbl.grid_configure(pady=0)
