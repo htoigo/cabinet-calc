@@ -57,4 +57,4 @@ d.add(rightsidetop)
 
 d.translate(20, 20)
 
-renderPDF.drawToFile(d, 'drawing.pdf', 'My first drawing')
+renderPDF.drawToFile(d, 'out/drawing.pdf', 'My first drawing')
