@@ -23,9 +23,11 @@ class Job:
     """A customer job."""
 
     def __init__(self, name, customer, cab_run):
-        # Do we need a unique job.ID?
+        # Do we need a unique job.ID? Not now. Job.name must be unique.
         self.name = name
-        self.customer = customer
+        # Do not need customer field:
+        # self.customer = customer
+        # Each job only has ONE run of cabinets.
         self.cabs = cab_run
 
     def description(self):
