@@ -9,9 +9,10 @@ parts list, and pretty-printed cut sheet.
 import sys
 import argparse
 
+import gui
 import cabinet as cab
 import job
-import gui
+import cutlist
 
 
 def start_gui():
@@ -29,7 +30,10 @@ def start_cli(args):
                         matl_thickness=args.thickness))
     for line in j.description():
         print(line)
-    # TODO: Generate PDF job sheet, if requested.
+
+    if args.cutlist is not None:
+        # Generate a cutlist and save in file args.cutlist
+        cutlist.save_cutlist(args.cutlist, j)
 
 
 def get_parser():
@@ -62,6 +66,10 @@ def get_parser():
                         help="building material thickness",
                         type=float,
                         default='0.75')
+    parser.add_argument("-cl", "--cutlist",
+                        help="generate a cutlist & save in FNAME",
+                        metavar='FNAME',
+                        type=str)
     parser.add_argument("-ctl", "--ctopleft",
                         help="countertop overhang left side",
                         type=float)
