@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# cabinet.py    -*- coding: utf-8 -*-
 
 """
 cabinet.py module
@@ -303,3 +303,6 @@ class Run:
         """The height of a single door."""
         height = self.cabinet_height - self.doortop_space
         return height
+
+
+# cabinet.py ends here
