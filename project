@@ -88,7 +88,7 @@ Should contain the most critical information for the job.
   Do different parts need to specify their material & thickness?
   They could inherit material from Run primary material, if not specified for
   the part individually.
-*** plain text
+*** DONE  plain text
   Render the pretty job description to plain text, for output in the
   terminal.
 *** pdf
@@ -101,13 +101,21 @@ Should contain the most critical information for the job.
   most efficient way possible, and generate a dxf file.
 
 
+Program Name:    Cabinet Calc
+
+Python Package:  cabcalc
+
 cabcalc/
     __init__.py
     cabcalc.py
     gui.py
     cabinet.py
     job.py
-    jobpretty.py
-    formats/
-        __init__.py
-        pdf.py
+    cutlist.py
+    dimension_strs.py
+    panel_layout.py  (DXF)
+    tests/
+        test_dimension_strs.py
+
+* Purpose
+* Principles
