@@ -8,6 +8,7 @@ parts list, and pretty-printed cut sheet.
 
 import sys
 import argparse
+import textwrap
 
 import gui
 import cabinet as cab
@@ -24,51 +25,75 @@ def start_gui():
 def start_cli(args):
     """Start the command-line version of the program."""
 
-    j = job.Job(args.jobname, 'Customer 1',
-                cab.Run(args.fullwidth, args.height, args.depth,
-                        num_fillers=args.fillers,
-                        matl_thickness=args.thickness))
-    for line in j.description():
-        print(line)
+    # Create a cabinet Run object which does all the calculating.
+    cab_run = cab.Run(args.fullwidth, args.height, args.depth,
+                      num_fillers=args.fillers,
+                      matl_thickness=args.thick)
+    # Create a job object that holds the name, a single cabinet run object,
+    # and an optional description for the job.
+    if args.desc is not None:
+        j = job.Job(args.name, cab_run, args.desc)
+    else:
+        j = job.Job(args.name, cab_run)
 
+    # Output the job specification to the terminal.
+    for line in j.specification():
+        print(line)
+    # If requested, produce and save a cutlist pdf file.
     if args.cutlist is not None:
-        # Generate a cutlist and save in file args.cutlist
+        # Generate a cutlist pdf and save in file given by args.cutlist
         cutlist.save_cutlist(args.cutlist, j)
 
 
 def get_parser():
     """Create a parser for the command line arguments."""
-    parser = argparse.ArgumentParser(description='Configure a bank of cabinets.')
-    parser.add_argument("-w", "--fullwidth",
-                        help="full bank width for all cabinets combined",
-                        metavar='W',
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=textwrap.dedent('''\
+            Configure a one-off job consisting of a single bank of cabinets.
+
+            Passing no arguments starts the GUI version of Cabinet Calc.
+            When running the command line version, the following arguments are
+            REQUIRED:  -w WIDTH -ht HT -d DEPTH -n NAME
+            Otherwise, there is not enough information to compute the job.
+            '''))
+    parser.add_argument('-w', '--fullwidth',
+                        help='full bank width for all cabinets combined',
+                        metavar='WIDTH',
                         type=float)
-    parser.add_argument("-ht", "--height",
+    parser.add_argument('-ht', '--height',
                         help="height from toe kick to top of cabinet",
                         metavar='HT',
                         type=float)
-    parser.add_argument("-d", "--depth",
+    parser.add_argument('-d', '--depth',
                         help="depth from front to back including door",
-                        metavar='D',
+                        metavar='DEPTH',
                         type=float)
+    parser.add_argument('-n', "--name",
+                        help="a unique identifying name for the job",
+                        metavar='NAME',
+                        type=str)
+    parser.add_argument("-s", "--desc",
+                        help="a description of the job",
+                        metavar='DESC',
+                        type=str)
     parser.add_argument("-f", "--fillers",
-                        help="number of fillers to be used",
+                        help="number of fillers to be used (0, 1, or 2); "
+                             "if unspecified, defaults to 0",
                         metavar='N',
                         type=int,
                         default='0')
-    parser.add_argument("-j", "--jobname",
-                        help="an identifying name for the job",
-                        type=str)
-    parser.add_argument("-m", "--material",
+    parser.add_argument("-m", "--matl",
                         help="primary building material name",
                         type=str)
-    parser.add_argument("-th", "--thickness",
+    parser.add_argument("-th", "--thick",
                         help="building material thickness",
+                        metavar='TH',
                         type=float,
                         default='0.75')
-    parser.add_argument("-cl", "--cutlist",
-                        help="generate a cutlist & save in FNAME",
-                        metavar='FNAME',
+    parser.add_argument("-c", "--cutlist",
+                        help="generate a cutlist & save in FN.pdf",
+                        metavar='FN',
                         type=str)
     parser.add_argument("-ctl", "--ctopleft",
                         help="countertop overhang left side",
