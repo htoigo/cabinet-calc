@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# gui.py    -*- coding: utf-8 -*-
 
 """
 cabinet-calc GUI
@@ -25,6 +25,7 @@ from functools import reduce
 
 import cabinet as cab
 import job
+import cutlist
 
 
 def unlines(lines):
@@ -47,7 +48,7 @@ class Application(ttk.Frame):
         # Instance variables
         self.root.title(title)
         self.jobname = StringVar()
-        self.customer = StringVar()
+        self.description = StringVar()
         self.fullwidth = StringVar()
         self.height = StringVar()
         self.depth = StringVar()
@@ -58,12 +59,13 @@ class Application(ttk.Frame):
         self.bottom_thickness = StringVar()
         self.doors_per_cab = IntVar()
         self.output = StringVar()
+        self.job = None
         self.initialize_vars()
         self.make_widgets()
 
     def initialize_vars(self):
         self.jobname.set('')
-        self.customer.set('')
+        self.description.set('')
         self.fullwidth.set('')
         self.height.set('')
         self.depth.set('')
@@ -74,6 +76,7 @@ class Application(ttk.Frame):
         self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
         self.output.set('No job yet.')
+        self.job = None
 
     def make_widgets(self):
         """Create and layout all the UI elements.
@@ -81,23 +84,26 @@ class Application(ttk.Frame):
         Only the widgets that need to be refered to in other parts of the code
         are made as instance variables (with `self.').
         """
-        ttk.Label(self, text='Euro-Style Cabinet Calculator').grid(
+        ttk.Label(self, text='The Euro-Style Cabinet Calculator').grid(
             column=0, row=0, sticky=W)
-        inputframe = ttk.Labelframe(self, text='Specification:', borderwidth=2,
+        inputframe = ttk.Labelframe(self, text='Parameters: ', borderwidth=2,
             relief='groove', padding=5)
-        ttk.Label(self, text='Job Description:').grid(
+        ttk.Label(self, text='Job Specification:').grid(
             column=0, row=2, sticky=W, pady=2)
         outputframe = ttk.Frame(self, borderwidth=1, relief='sunken',
                                 padding=5)
-        self.grid(column=0, row=0, sticky=(N, S, E, W))
-        inputframe.grid(column=0, row=1, sticky=(N, S, E, W), pady=10)
-        outputframe.grid(column=0, row=3, sticky=(N, S, E, W))
+        outp_btnsframe = ttk.Frame(self, padding=(0, 10))
+        self.grid(column=0, row=0, sticky=(N, S, W, E))
+        inputframe.grid(column=0, row=1, sticky=(N, S, W, E), pady=10)
+        outputframe.grid(column=0, row=3, sticky=(N, S, W, E))
+        outp_btnsframe.grid(column=0, row=4, sticky=(N, S, W, E))
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
         self.rowconfigure(3, weight=1)
         self.fill_inputframe(inputframe)
         self.fill_outputframe(outputframe)
+        self.fill_outp_btnsframe(outp_btnsframe)
 
     def fill_inputframe(self, inpframe):
 
@@ -106,18 +112,19 @@ class Application(ttk.Frame):
             jobframe.grid(column=0, row=0, sticky=(N, S, W, E))
             jobframe.columnconfigure(0, weight=0)
             jobframe.columnconfigure(1, weight=1)
-            ttk.Label(jobframe, text='Job Name:').grid(column=0, row=0, pady=2,
-                                                       sticky=W)
+            ttk.Label(jobframe, text='Job Name:').grid(
+                column=0, row=0, pady=2, sticky=W)
             self.jobname_ent = ttk.Entry(jobframe, textvariable=self.jobname,
                 validate='key', validatecommand=(vcmd, '%P'))
-            ttk.Label(jobframe, text='Customer:').grid(column=0, row=1, pady=2,
-                                                       sticky=W)
-            self.customer_ent = ttk.Entry(jobframe, textvariable=self.customer,
-                validate='key', validatecommand=(vcmd, '%P'))
+            ttk.Label(jobframe, text='Description:').grid(
+                column=0, row=1, pady=2, sticky=W)
+            self.descrip_ent = ttk.Entry(
+                jobframe, textvariable=self.description, validate='key',
+                validatecommand=(vcmd, '%P'))
             self.jobname_ent.grid(column=1, row=0, pady=2, sticky=(W, E),
                                   padx=(5, 0))
-            self.customer_ent.grid(column=1, row=1, pady=2, sticky=(W, E),
-                                   padx=(5, 0))
+            self.descrip_ent.grid(column=1, row=1, pady=2, sticky=(W, E),
+                                  padx=(5, 0))
             self.jobname_ent.focus_set()
 
         def make_dimframe():
@@ -129,19 +136,19 @@ class Application(ttk.Frame):
             dimframe.columnconfigure(3, weight=1)
             dimframe.columnconfigure(4, weight=0)
             dimframe.columnconfigure(5, weight=1)
-            ttk.Label(dimframe, text='Width:').grid(column=0, row=0, sticky=W,
-                                                    padx=(0, 3))
-            self.fullwidth_ent = ttk.Entry(dimframe, width=6,
+            ttk.Label(dimframe, text='Width:').grid(
+                column=0, row=0, sticky=W, padx=(0, 3))
+            self.fullwidth_ent = ttk.Entry(dimframe, width=10,
                 textvariable=self.fullwidth, validate='key',
                 validatecommand=(vcmd, '%P'))
-            ttk.Label(dimframe, text='Height:').grid(column=2, row=0, sticky=E,
-                                                     padx=(6, 3))
-            self.height_ent = ttk.Entry(dimframe, width=6,
+            ttk.Label(dimframe, text='Height:').grid(
+                column=2, row=0, sticky=E, padx=(6, 3))
+            self.height_ent = ttk.Entry(dimframe, width=10,
                 textvariable=self.height, validate='key',
                 validatecommand=(vcmd, '%P'))
-            ttk.Label(dimframe, text='Depth:').grid(column=4, row=0, sticky=E,
-                                                    padx=(6, 3))
-            self.depth_ent = ttk.Entry(dimframe, width=6,
+            ttk.Label(dimframe, text='Depth:').grid(
+                column=4, row=0, sticky=E, padx=(6, 3))
+            self.depth_ent = ttk.Entry(dimframe, width=10,
                 textvariable=self.depth, validate='key',
                 validatecommand=(vcmd, '%P'))
             self.fullwidth_ent.grid(column=1, row=0, sticky=(W, E), padx=3)
@@ -230,8 +237,23 @@ class Application(ttk.Frame):
         inpframe.columnconfigure(0, weight=1)
 
     def fill_outputframe(self, outpframe):
-        self.output_lbl = ttk.Label(outpframe, textvariable=self.output)
+        self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
+                                    font='TkFixedFont')
         self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
+
+    def fill_outp_btnsframe(self, outp_btnsframe):
+        outp_btnsframe.columnconfigure(0, weight=1)
+        outp_btnsframe.columnconfigure(1, weight=1)
+        outp_btnsframe.rowconfigure(0, weight=1)
+        self.cutlist_button = ttk.Button(
+            outp_btnsframe, text='Save Cutlist', command=self.save_cutlist)
+        self.cutlist_button.state(['disabled'])
+        self.panel_layout_btn = ttk.Button(
+            outp_btnsframe, text='Optimize Panel Layout',
+            command=self.optimize_panel_layout)
+        self.panel_layout_btn.state(['disabled'])
+        self.cutlist_button.grid(column=0, row=0, sticky=E, padx=2)
+        self.panel_layout_btn.grid(column=1, row=0, sticky=W, padx=2)
 
     def validate_entry(self, value):
         if self.have_enough_info():
@@ -242,7 +264,6 @@ class Application(ttk.Frame):
 
     def have_enough_info(self):
         result = (self.jobname_ent.get() != ''
-                  and self.customer_ent.get() != ''
                   and self.fullwidth_ent.get() != ''
                   and self.height_ent.get() != ''
                   and self.depth_ent.get() != '')
@@ -259,15 +280,32 @@ class Application(ttk.Frame):
         self.initialize_vars()
         self.bottom_thickness_ent.state(['disabled'])
         self.calc_button.state(['disabled'])
+        self.cutlist_button.state(['disabled'])
+        self.panel_layout_btn.state(['disabled'])
         self.output_lbl.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
-        j = job.Job(self.jobname.get(), self.customer.get(),
-                    cab.Run(float(self.fullwidth.get()),
-                            float(self.height.get()),
-                            float(self.depth.get()),
-                            num_fillers=self.num_fillers.get(),
-                            material=self.material.get(),
-                            matl_thickness=float(self.thickness.get())))
-        self.output.set(unlines(j.description()))
+        cab_run = cab.Run(float(self.fullwidth.get()),
+                          float(self.height.get()),
+                          float(self.depth.get()),
+                          num_fillers=self.num_fillers.get(),
+                          material=self.material.get(),
+                          matl_thickness=float(self.thickness.get()))
+        if self.description.get() is '':
+            self.job = job.Job(self.jobname.get(), cab_run)
+        else:
+            self.job = job.Job(self.jobname.get(), cab_run,
+                               self.description.get())
+        self.output.set(unlines(self.job.specification()))
         self.output_lbl.grid_configure(pady=0)
+        self.cutlist_button.state(['!disabled'])
+
+    def save_cutlist(self):
+        # Generate a cutlist pdf and save in file chosen by user
+        cutlist.save_cutlist('Test-cutlist', self.job)
+
+    def optimize_panel_layout(self):
+        pass
+
+
+# gui.py ends here
