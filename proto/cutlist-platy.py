@@ -73,7 +73,7 @@ styleH = styles['Heading3']
 cab_run = cab.Run(247.0, 28.0, 24.0, num_fillers=0)
 j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
 
-for line in j.specification():
+for line in j.specification:
     elements.append(Paragraph(line, styleN))
 
 go()

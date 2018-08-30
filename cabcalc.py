@@ -37,7 +37,7 @@ def start_cli(args):
         j = job.Job(args.name, cab_run)
 
     # Output the job specification to the terminal.
-    for line in j.specification():
+    for line in j.specification:
         print(line)
     # If requested, produce and save a cutlist pdf file.
     if args.cutlist is not None:

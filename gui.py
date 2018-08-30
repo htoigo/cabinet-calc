@@ -291,12 +291,12 @@ class Application(ttk.Frame):
                           num_fillers=self.num_fillers.get(),
                           material=self.material.get(),
                           matl_thickness=float(self.thickness.get()))
-        if self.description.get() is '':
-            self.job = job.Job(self.jobname.get(), cab_run)
-        else:
+        if self.description.get() is not '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())
-        self.output.set(unlines(self.job.specification()))
+        else:
+            self.job = job.Job(self.jobname.get(), cab_run)
+        self.output.set(unlines(self.job.specification))
         self.output_lbl.grid_configure(pady=0)
         self.cutlist_button.state(['!disabled'])
 
