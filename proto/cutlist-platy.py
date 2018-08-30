@@ -1,17 +1,18 @@
 # cutlist-platy.py    -*- coding: utf-8 -*-
 
+import math
+
 from reportlab.pdfgen import canvas as canv
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
-from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, Frame, \
-                               Paragraph, Spacer
+from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, \
+                               PageTemplate, Frame, Paragraph, Spacer
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.styles import getSampleStyleSheet
 
-# import cabinet as cab
-# import job
-import math
+import cabinet as cab
+import job
 
 
 def landscape(pagesize):
@@ -36,45 +37,46 @@ def myLaterPages(canvas, doc):
     canvas.restoreState()
 
 
-# TODO: Derive a new class CutlistDocTemplate from BaseDocTemplate. Model it on
-#       SimpleDocTemplate.
+def go():
+    # TODO: Derive a new class CutlistDocTemplate from BaseDocTemplate?
+    doc = BaseDocTemplate('platy-doc.pdf', showBoundary=1, pagesize=landscape(letter))
 
-# The frame location x, y is the lower lefthand corner.
-lfr = Frame(inch, inch, (page_width - 2.5 * inch) / 2, page_ht - 3 * inch,
-            id='LeftColumn', showBoundary=1)
-rfr = Frame(inch + (page_width - 2.5 * inch) / 2 + 0.5 * inch, inch,
-           (page_width - 2.5 * inch) / 2, page_ht - 3 * inch,
-            id='RightColumn', showBoundary=1)
-
-# TODO: Do we need a new class derived from PageTemplate?
-#       Or just use objects of the existing PageTemplate class?
-pg1 = PageTemplate(id='TwoColumns', frames=[lfr, rfr])
+    # Two columns
+    intercol_spc = 24    # pts
+    frame_width = (doc.width - intercol_spc) / 2
+    frameL = Frame(doc.leftMargin, doc.bottomMargin,
+                   frame_width, doc.height,
+                   id='col1')
+    frameR = Frame(doc.leftMargin + frame_width + intercol_spc, doc.bottomMargin,
+                   frame_width, doc.height,
+                   id='col2')
+    doc.addPageTemplates(
+        [PageTemplate(id='twoCol', frames=[frameL, frameR], onPage=myLaterPages)]
+    )
+    # Pass a list of Flowables to the doc's `build' method:
+    doc.build(elements)
+    # onFirstPage=myFirstPage, onLaterPages=myLaterPages
 
 
 title = 'Sample Cutlist'
 pageinfo = 'Job Name: Toigo Kitchen'
-
 page_width, page_ht = landscape(letter)
+
+
+# Main content is contained in `elements', which is a list of Flowables.
+elements = []    # [Spacer(1, 1.5 * inch)]
 
 styles = getSampleStyleSheet()
 styleN = styles['Normal']
 styleH = styles['Heading3']
 
-# The `story' is a list of Flowables.
-story = []    # [Spacer(1, 1.5 * inch)]
-p0 = Paragraph('This is the preamble. ' * 17, styleN)
-story.append(p0)
+cab_run = cab.Run(247.0, 28.0, 24.0, num_fillers=0)
+j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
 
-for i in range(30):
-    story.append(Paragraph('Heading Number {}'.format(i), styleH))
-    # story.append(Spacer(1, 0.2 * inch))
-    ptext = ('This is paragraph number {}, in <i>Normal</i> style. '.format(i)) * 20
-    story.append(Paragraph(ptext, styleN))
-    # story.append(Spacer(1, 0.2 * inch))
+for line in j.specification():
+    elements.append(Paragraph(line, styleN))
 
-doc = SimpleDocTemplate('platy-doc.pdf', pagesize=landscape(letter))
-# Pass a list of Flowables to the doc's `build' method:
-doc.build(story, onFirstPage=myFirstPage, onLaterPages=myLaterPages)
+go()
 
 
 #------------------------------------------------------------------------------
