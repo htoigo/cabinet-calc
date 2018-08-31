@@ -9,7 +9,7 @@ from reportlab.graphics import renderPDF
 
 import cabinet
 
-debug = False
+debug = True
 
 #       +z
 #        |
@@ -90,6 +90,6 @@ for p1, p2 in isometric_lines:
 # Move the cabinet away from the lower-left corner
 d2.translate(40, 40)
 
-renderPDF.drawToFile(d2, 'out/rotated.pdf', 'Rotated View of Cabinet')
+renderPDF.drawToFile(d2, 'rotated.pdf', 'Rotated View of Cabinet')
 
 # matrix_ops.py ends here
