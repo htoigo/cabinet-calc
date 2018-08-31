@@ -12,9 +12,19 @@ from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, \
                                FrameBreak
 from reportlab.rl_config import defaultPageSize
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.graphics.shapes import Drawing, Line, Rect, String, Group, \
+    PolyLine
 
 import cabinet as cab
 import job
+from dimension_strs import dimstr, dimstr_col
+
+
+# Global Variables
+
+debug = False
+
+panel_scale = 1 / 32
 
 
 def unlines(lines):
@@ -74,9 +84,89 @@ def go():
     # onFirstPage=myFirstPage, onLaterPages=myLaterPages
 
 
+def panel_drawing(name, hdim, vdim, scale=panel_scale, padding=6):
+    """Create an individual panel Drawing of the named panel."""
+    hdim_scaled = hdim * inch * scale
+    vdim_scaled = vdim * inch * scale
+    # We might need 36 pts of space on left of rectangle to be safe,
+    # for a long vdim_str, like 35 5/16-".
+    result = Drawing(hdim_scaled + 2 * padding + 36,
+                     vdim_scaled + 2 * padding + 14 + 4 + 10)
+    # Coordinates of the lower left corner of the rectangle
+    rx = padding + 36
+    ry = padding + 14
+    result.add(Rect(rx, ry, hdim_scaled, vdim_scaled,
+                    fillColor=colors.lightgrey))
+    result.add(String(rx + hdim_scaled / 2,
+                      ry + vdim_scaled + 4,
+                      name,
+                      textAnchor='middle'))
+    hdim_arrow = PolyLine([rx + 7, ry - 11,  rx + 1.5, ry - 9,
+                           rx + 7, ry - 7,  rx + 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5 - 5.5, ry - 7,
+                           rx + hdim_scaled - 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5 - 5.5, ry - 11],
+                          strokeWidth=0.6)
+    result.add(hdim_arrow)
+    result.add(Line(rx, ry - 4,  rx, ry - 14))
+    result.add(Line(rx + hdim_scaled, ry - 4,  rx + hdim_scaled, ry - 14))
+    hdim_str = String(rx + hdim_scaled / 2, ry - 12,
+                      dimstr(hdim) + '"',
+                      textAnchor='middle',
+                      fontSize=9)
+    bnds = hdim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], hdim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(hdim_str)
+    vdim_arrow = PolyLine([rx - 11, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
+                           rx - 7, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
+                           rx - 9, ry + vdim_scaled - 1.5,
+                           rx - 7, ry + vdim_scaled - 1.5 - 5.5,
+                           rx - 9, ry + vdim_scaled - 1.5,
+                           rx - 11, ry + vdim_scaled - 1.5 - 5.5],
+                          strokeWidth=0.6)
+    result.add(vdim_arrow)
+    result.add(Line(rx - 4, ry,  rx - 14, ry))
+    result.add(Line(rx - 4, ry + vdim_scaled,  rx - 14, ry + vdim_scaled))
+    vdim_str = String(rx - 2, ry + vdim_scaled / 2 - 4,
+                      dimstr(vdim) + '"',
+                      textAnchor='end',
+                      fontSize=9)
+    bnds = vdim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], vdim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(vdim_str)
+    return result
+
+
 title = 'Sample Cutlist'
 pageinfo = 'Job Name: Toigo Kitchen'
 page_width, page_ht = landscape(letter)
+
+cab_run = cab.Run(247.0, 28.0, 24.0, num_fillers=0)
+j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
+
+isometric_lines=[((-21.213203435596427, 14.084566021003273), (4.242640687119287, -0.6123724356957947)), ((-21.213203435596427, 14.084566021003273), (-21.213203435596427, -9.185586535436919)), ((-21.213203435596427, 14.084566021003273), (-4.242640687119287, 23.882524992135984)), ((4.242640687119287, -0.6123724356957947), (-21.213203435596427, 14.084566021003273)), ((4.242640687119287, -0.6123724356957947), (4.242640687119287, -23.882524992135984)), ((4.242640687119287, -0.6123724356957947), (21.213203435596427, 9.185586535436919)), ((-21.213203435596427, -9.185586535436919), (-21.213203435596427, 14.084566021003273)), ((-21.213203435596427, -9.185586535436919), (4.242640687119287, -23.882524992135984)), ((-21.213203435596427, -9.185586535436919), (-4.242640687119287, 0.6123724356957947)), ((4.242640687119287, -23.882524992135984), (4.242640687119287, -0.6123724356957947)), ((4.242640687119287, -23.882524992135984), (-21.213203435596427, -9.185586535436919)), ((4.242640687119287, -23.882524992135984), (21.213203435596427, -14.084566021003273)), ((-4.242640687119287, 23.882524992135984), (-21.213203435596427, 14.084566021003273)), ((-4.242640687119287, 23.882524992135984), (21.213203435596427, 9.185586535436919)), ((-4.242640687119287, 23.882524992135984), (-4.242640687119287, 0.6123724356957947)), ((21.213203435596427, 9.185586535436919), (4.242640687119287, -0.6123724356957947)), ((21.213203435596427, 9.185586535436919), (-4.242640687119287, 23.882524992135984)), ((21.213203435596427, 9.185586535436919), (21.213203435596427, -14.084566021003273)), ((-4.242640687119287, 0.6123724356957947), (-21.213203435596427, -9.185586535436919)), ((-4.242640687119287, 0.6123724356957947), (-4.242640687119287, 23.882524992135984)), ((-4.242640687119287, 0.6123724356957947), (21.213203435596427, -14.084566021003273)), ((21.213203435596427, -14.084566021003273), (4.242640687119287, -23.882524992135984)), ((21.213203435596427, -14.084566021003273), (21.213203435596427, 9.185586535436919)), ((21.213203435596427, -14.084566021003273), (-4.242640687119287, 0.6123724356957947))]
+
+isometric_view = Drawing()
+for p1, p2 in isometric_lines:
+    isometric_view.add(Line(p1[0], p1[1], p2[0], p2[1], strokeWidth=0.3))
+isometric_view.translate(140, 40)
+isometric_view.scale(4, 4)
+
+backpanel_dr = panel_drawing('Back', cab_run.back_width, cab_run.back_height)
+bottompanel_dr = panel_drawing('Bottom', cab_run.bottom_width,
+                               cab_run.bottom_depth)
+sidepanel_dr = panel_drawing('Side', cab_run.side_depth, cab_run.side_height)
+topnailer_dr = panel_drawing('Nailer', cab_run.topnailer_width,
+                             cab_run.topnailer_depth, scale=1/16)
+door_dr = panel_drawing('Door', cab_run.door_width, cab_run.door_height,
+                        scale=1/20)
+# Add a filler only if needed:
+filler_dr = panel_drawing('Filler', cab_run.filler_width, cab_run.filler_height)
 
 
 # Main content is contained in `elements', which is a list of Flowables.
@@ -87,19 +177,21 @@ styleN = styles['Normal']
 styleH = styles['Heading3']
 styleFxd = ParagraphStyle(name='FixedWidth', fontName='Courier')
 
-cab_run = cab.Run(247.0, 28.0, 24.0, num_fillers=0)
-j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
-
 elements += [Paragraph(line, styleN) for line in j.header]
 elements.append(FrameBreak())
 
 # elements.append(Spacer(0.1 * inch, 0.25 * inch))
 elements.append(Paragraph('Overview:', styleH))
 elements += [Paragraph(line, styleN) for line in j.overview]
-# TODO: Append isoview drawing to elements, here.
+elements.append(isometric_view)
 elements.append(FrameBreak())
 
-# TODO: Append panel drawings to elements, here.
+elements.append(backpanel_dr)
+# elements.append(bottompanel_dr)
+# elements.append(sidepanel_dr)
+elements.append(topnailer_dr)
+elements.append(door_dr)
+
 elements.append(Paragraph('Parts List:', styleH))
 elements += [Paragraph(line, styleFxd) for line in j.partslist]
 
@@ -269,20 +361,5 @@ def draw_isoview(canvas, cabs):
     canvas.rect(0, 0, cabs.cabinet_width * inch, cabs.cabinet_height * inch)
     canvas.lines(isoLines_pts)
 
-
-def drawtxt_jobheader(canvas):
-    pass
-
-
-def drawtxt_overview(canvas):
-    pass
-
-
-def drawtxt_partslist(canvas):
-    pass
-
-
-def draw_panels(canvas):
-    pass
 
 # cutlist-platy.py ends here
