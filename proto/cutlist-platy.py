@@ -1,18 +1,27 @@
 # cutlist-platy.py    -*- coding: utf-8 -*-
 
 import math
+from functools import reduce
 
 from reportlab.pdfgen import canvas as canv
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, \
-                               PageTemplate, Frame, Paragraph, Spacer
+                               PageTemplate, Frame, Paragraph, Spacer, \
+                               FrameBreak
 from reportlab.rl_config import defaultPageSize
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 
 import cabinet as cab
 import job
+
+
+def unlines(lines):
+    """Join a list of lines, after appending a newline to each."""
+    nlines = map(lambda s: s + '\n', lines)
+    str = reduce(lambda s, t: s+t, nlines, '')
+    return str
 
 
 def landscape(pagesize):
@@ -38,20 +47,27 @@ def myLaterPages(canvas, doc):
 
 
 def go():
-    # TODO: Derive a new class CutlistDocTemplate from BaseDocTemplate?
-    doc = BaseDocTemplate('platy-doc.pdf', showBoundary=1, pagesize=landscape(letter))
+    doc = BaseDocTemplate('platy-doc.pdf', showBoundary=1,
+                          pagesize=landscape(letter))
 
+    hdr_ht = 45           # pts   6 + 12 + 3 + 12 + 3 + 6
+    spc_after_hdr = 12    # pts
+    frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
+                     doc.width, hdr_ht,
+                     id='hdr')
     # Two columns
-    intercol_spc = 24    # pts
-    frame_width = (doc.width - intercol_spc) / 2
+    intercol_spc = 24     # pts
+    col_width = (doc.width - intercol_spc) / 2
+    col_ht = doc.height - hdr_ht - spc_after_hdr
     frameL = Frame(doc.leftMargin, doc.bottomMargin,
-                   frame_width, doc.height,
+                   col_width, col_ht,
                    id='col1')
-    frameR = Frame(doc.leftMargin + frame_width + intercol_spc, doc.bottomMargin,
-                   frame_width, doc.height,
+    frameR = Frame(doc.leftMargin + col_width + intercol_spc, doc.bottomMargin,
+                   col_width, col_ht,
                    id='col2')
     doc.addPageTemplates(
-        [PageTemplate(id='twoCol', frames=[frameL, frameR], onPage=myLaterPages)]
+        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
+                      onPage=myLaterPages)]
     )
     # Pass a list of Flowables to the doc's `build' method:
     doc.build(elements)
@@ -69,12 +85,23 @@ elements = []    # [Spacer(1, 1.5 * inch)]
 styles = getSampleStyleSheet()
 styleN = styles['Normal']
 styleH = styles['Heading3']
+styleFxd = ParagraphStyle(name='FixedWidth', fontName='Courier')
 
 cab_run = cab.Run(247.0, 28.0, 24.0, num_fillers=0)
 j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
 
-for line in j.specification:
-    elements.append(Paragraph(line, styleN))
+elements += [Paragraph(line, styleN) for line in j.header]
+elements.append(FrameBreak())
+
+# elements.append(Spacer(0.1 * inch, 0.25 * inch))
+elements.append(Paragraph('Overview:', styleH))
+elements += [Paragraph(line, styleN) for line in j.overview]
+# TODO: Append isoview drawing to elements, here.
+elements.append(FrameBreak())
+
+# TODO: Append panel drawings to elements, here.
+elements.append(Paragraph('Parts List:', styleH))
+elements += [Paragraph(line, styleFxd) for line in j.partslist]
 
 go()
 
