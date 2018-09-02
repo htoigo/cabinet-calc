@@ -107,13 +107,6 @@ def landscape(pagesize):
 page_width, page_ht = landscape(letter)
 
 
-def unlines(lines):
-    """Join a list of lines, after appending a newline to each."""
-    nlines = map(lambda s: s + '\n', lines)
-    str = reduce(lambda s, t: s+t, nlines, '')
-    return str
-
-
 def inches_to_pts(line):
     """Convert a 4-tuple representing a line from inches to points.
 
@@ -396,9 +389,6 @@ isoLines = [
 isoLines_pts = [inches_to_pts(line) for line in isoLines]
 isoLines_scaled = [(coord * default_iso_scale for coord in line)
                    for line in isoLines_pts]
-# isoLines_flat = []
-# for tup in isoLines_pts:
-#     isoLines_flat.extend(tup)
 
 isometric_view = Drawing(260, 210)
 # isometric_view.add(PolyLine(isoLines_flat, strokeWidth=0.25))
@@ -459,8 +449,6 @@ filler_dr = panel_drawing('Filler', cab_run.filler_width, cab_run.filler_height)
 
 # Create table for layout of the panel drawings
 
-# colWidths = (110, 110, 92)    # assumes col_width of 312 pts
-#                               # (9 * 72 - 24) / 2
 colWidths = ('35%', '35%', '30%')
 rowHeights = (130, 130)       # assumes col_ht of 411 pts
                               # 6.5 * 72 - 45 - 12
@@ -508,7 +496,7 @@ hdr_tbl = Table(
 
 # Main content
 # This is contained in `elements', which is a list of Flowables.
-elements = []    # [Spacer(1, 1.5 * inch)]
+elements = []
 
 # elements += [Paragraph(line, normal_style) for line in j.header]
 elements.append(hdr_tbl)
