@@ -37,37 +37,57 @@ class Job:
         result.append('Job Name: ' + self.name)
         if self.description is not '':
             result.append('Description: ' + self.description)
+        result.append('Total Wall Space: ' + str(self.cabs.fullwidth) + '"')
+        return result
+
+    @property
+    def summaryln(self):
+        """Return a single string summary of the job."""
+        result = ( str(self.cabs.num_cabinets) + ' cabinets measuring '
+                   + dimstr(self.cabs.cabinet_width) + '" '
+                   + 'totalling '
+                   + dimstr(self.cabs.cabinet_width
+                            * self.cabs.num_cabinets) + '"' )
+        if self.cabs.num_fillers == 0:
+            result += ( ', with finished end panels on left and right.'
+                        ' No filler panels required.\n' )
+        elif self.cabs.num_fillers == 1:
+            result += ( ', with a ' + dimstr(self.cabs.filler_width)
+                        + '" filler.\n' )
+        elif self.cabs.num_fillers == 2:
+            result += ( ', with two (2) ' + dimstr(self.cabs.filler_width)
+                        + '" fillers.\n' )
+        else:
+            # The number of fillers should never be greater than 2.
+            raise ValueError('number of fillers not 0, 1, or 2')
+        return result
+
+    @property
+    def cabinfo(self):
+        """A list of strings."""
+        result = []
+        result.append('Number of cabinets needed:  '
+                      + str(self.cabs.num_cabinets))
+        result.append('Single cabinet width:  '
+                      + dimstr(self.cabs.cabinet_width) + '"\n')
+        return result
+
+    @property
+    def materialinfo(self):
+        """A list of strings."""
+        result = []
+        result.append('Material:  ' + self.cabs.material)
+        result.append('Material thickness:  '
+                      + dimstr(self.cabs.matl_thickness) + '"')
         return result
 
     @property
     def overview(self):
         result = []
         # result.append('Overview:\n')
-        # result.append('Total Wall Space: ' + str(self.cabs.fullwidth) + '"')
-        summary = ( str(self.cabs.num_cabinets) + ' cabinets measuring '
-                    + dimstr(self.cabs.cabinet_width) + '" '
-                    + 'totalling '
-                    + dimstr(self.cabs.cabinet_width
-                             * self.cabs.num_cabinets) + '"' )
-        if self.cabs.num_fillers == 0:
-            summary += ( ', with finished end panels on left and right.'
-                         ' No filler panels required.' )
-        elif self.cabs.num_fillers == 1:
-            summary += ', with a ' + dimstr(self.cabs.filler_width) + '" filler.'
-        elif self.cabs.num_fillers == 2:
-            summary += ( ', with two (2) ' + dimstr(self.cabs.filler_width)
-                         + '" fillers.' )
-        else:
-            # The number of fillers should never be greater than 2
-            raise ValueError('number of fillers not 0, 1, or 2')
-        result.append(summary)
-        result.append('\nNumber of cabinets needed:  '
-                      + str(self.cabs.num_cabinets))
-        result.append('Single cabinet width:  '
-                      + dimstr(self.cabs.cabinet_width) + '"')
-        result.append('\nMaterial:  ' + self.cabs.material)
-        result.append('Material thickness:  '
-                      + dimstr(self.cabs.matl_thickness) + '"')
+        result.append(self.summaryln)
+        result.extend(self.cabinfo)
+        result.extend(self.materialinfo)
         return result
 
     @property
