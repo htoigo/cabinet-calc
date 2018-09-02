@@ -91,13 +91,15 @@ def build_doc():
                      id='hdr')
     # Two columns
     intercol_spc = 24     # pts
-    col_width = (doc.width - intercol_spc) / 2
+    # col_width = (doc.width - intercol_spc) / 2
+    ltcol_width = (doc.width - intercol_spc) * 0.4
+    rtcol_width = (doc.width - intercol_spc) * 0.6
     col_ht = doc.height - hdr_ht - spc_after_hdr
     frameL = Frame(doc.leftMargin, doc.bottomMargin,
-                   col_width, col_ht,
+                   ltcol_width, col_ht,
                    id='col1')
-    frameR = Frame(doc.leftMargin + col_width + intercol_spc, doc.bottomMargin,
-                   col_width, col_ht,
+    frameR = Frame(doc.leftMargin + ltcol_width + intercol_spc, doc.bottomMargin,
+                   rtcol_width, col_ht,
                    id='col2')
     doc.addPageTemplates(
         [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
@@ -119,8 +121,9 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     # Coordinates of the lower left corner of the rectangle
     rx = padding + 36
     ry = padding + 14
+    # linen =     HexColor(0xFAF0E6)
     result.add(Rect(rx, ry, hdim_scaled, vdim_scaled,
-                    fillColor=colors.cornsilk))
+                    fillColor=colors.HexColor(0xf8f0e6)))
     result.add(String(rx + hdim_scaled / 2,
                       ry + vdim_scaled + 4,
                       name,
@@ -164,15 +167,16 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     result.add(whiteout_r)
     result.add(vdim_str)
     if material is not None and thickness is not None:
-        matl_thick_str = String(rx + 6, ry + 8,
+        matl_thick_str = String(rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
                                 dimstr(thickness) + '"  ' + material[:3],
+                                textAnchor='end',
                                 fontSize=7)
         result.add(matl_thick_str)
     return result
 
 
-cab_run = cab.Run(139.5, 27.0625, 24.125, num_fillers=0)
-j = job.Job('Toigo Kitchen', cab_run, 'Kiosk with built-in espresso bar.')
+cab_run = cab.Run(247, 27.0625, 24.125, num_fillers=1)
+j = job.Job('Toigo Kitchen', cab_run, 'Free-standing island kiosk with built-in espresso bar operated by expert robo-barrista.')
 
 
 
@@ -311,7 +315,7 @@ isoLines_scaled = [(coord * default_iso_scale for coord in line)
 # for tup in isoLines_pts:
 #     isoLines_flat.extend(tup)
 
-isometric_view = Drawing(280, 280)
+isometric_view = Drawing(260, 210)
 # isometric_view.add(PolyLine(isoLines_flat, strokeWidth=0.25))
 for line in isoLines_scaled:
     isometric_view.add(Line(*line, strokeWidth=0.25))
@@ -343,8 +347,7 @@ isometric_view.add(String(mrb_x_scaled + 10, mrb_y_scaled,
                           dimstr(ddim) + '"',
                           textAnchor='start',
                           fontSize=9))
-
-isometric_view.translate(40, 40)
+# isometric_view.translate(10, 0)
 
 
 # Construct Drawings of the individual panels
@@ -371,8 +374,9 @@ filler_dr = panel_drawing('Filler', cab_run.filler_width, cab_run.filler_height)
 
 # Create table for layout of the panel drawings
 
-colWidths = (110, 110, 92)    # assumes col_width of 312 pts
-                              # (9 * 72 - 24) / 2
+# colWidths = (110, 110, 92)    # assumes col_width of 312 pts
+#                               # (9 * 72 - 24) / 2
+colWidths = ('35%', '35%', '30%')
 rowHeights = (130, 130)       # assumes col_ht of 411 pts
                               # 6.5 * 72 - 45 - 12
 if j.cabs.num_fillers == 0:
@@ -388,10 +392,20 @@ panels_tbl.setStyle(top_center_style)
 
 # Create table for layout of header
 
-hdr_data = ( (Paragraph(j.header[0], styleH),
-              Paragraph(str(j.cabs.fullwidth) + '" Wide', styleH),
-              'Both ends open.'),
-             (Paragraph(j.header[1], styleN), '', '') )
+if j.description is not '':
+    desc = 'Description: ' + j.description
+else:
+    desc = ''
+# Endedness can be one of:
+#   'Both ends open.'
+#   'Both ends closed.'
+#   'Left end closed,  right end open.'
+#   etc.
+endedness = 'Both ends open.'
+hdr_data = ( ( Paragraph('Job Name: ' + j.name, title_style),
+               Paragraph(str(j.cabs.fullwidth) + '" wide', wallwidth_style),
+               Paragraph(endedness, rt_style)),
+             (Paragraph(desc, normal_style), '', '') )
 hdr_sty = [ ('VALIGN', (0,0), (0,0), 'MIDDLE'),
             ('VALIGN', (1,0), (2,0), 'BOTTOM'),
             ('ALIGN', (1,0), (1,0), 'CENTER'),
@@ -399,7 +413,8 @@ hdr_sty = [ ('VALIGN', (0,0), (0,0), 'MIDDLE'),
             # Job description spans across entire 2nd row.
             ('SPAN', (0,1), (2,1)),
             # Nice colors:  cornsilk, linen
-            ('BACKGROUND', (0,0), (-1,-1), colors.wheat)
+            # lightslategrey = HexColor(0x778899) , 0xc8d8e6
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
             # ('LINEBELOW', (0,'splitlast'), (-1,'splitlast'), 1, colors.grey,'butt')
 ]
 hdr_tbl = Table(
