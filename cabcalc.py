@@ -14,6 +14,7 @@ import gui
 import cabinet as cab
 import job
 import cutlist
+from text import wrap
 
 
 def start_gui():
@@ -36,9 +37,11 @@ def start_cli(args):
     else:
         j = job.Job(args.name, cab_run)
 
-    # Output the job specification to the terminal.
-    for line in j.specification:
+    # Output the job specification to the terminal, ensuring lines are no
+    # longer than 60 chars.
+    for line in wrap(j.specification, 60):
         print(line)
+
     # If requested, produce and save a cutlist pdf file.
     if args.cutlist is not None:
         # Generate a cutlist pdf and save in file given by args.cutlist

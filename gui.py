@@ -21,18 +21,13 @@ __author__ = 'Harry H. Toigo II'
 
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 from functools import reduce
 
 import cabinet as cab
 import job
 import cutlist
-
-
-def unlines(lines):
-    """Join a list of lines, after appending a newline to each."""
-    nlines = map(lambda s: s + '\n', lines)
-    str = reduce(lambda s, t: s+t, nlines, '')
-    return str
+from text import wrap
 
 
 class Application(ttk.Frame):
@@ -291,18 +286,22 @@ class Application(ttk.Frame):
                           num_fillers=self.num_fillers.get(),
                           material=self.material.get(),
                           matl_thickness=float(self.thickness.get()))
-        if self.description.get() is not '':
+        if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())
         else:
             self.job = job.Job(self.jobname.get(), cab_run)
-        self.output.set(unlines(self.job.specification))
+        # Ensure output lines are no longer than 60 chars
+        self.output.set('\n'.join(wrap(self.job.specification, 60)))
         self.output_lbl.grid_configure(pady=0)
         self.cutlist_button.state(['!disabled'])
 
     def save_cutlist(self):
         # Generate a cutlist pdf and save in file chosen by user
-        cutlist.save_cutlist('Test-cutlist', self.job)
+        filename = filedialog.asksaveasfilename()
+        if filename != '':
+            # cutlist.save_cutlist(filename, self.job)
+            pass
 
     def optimize_panel_layout(self):
         pass
