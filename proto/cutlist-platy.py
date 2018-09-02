@@ -2,6 +2,7 @@
 
 import math
 from functools import reduce
+import re
 
 from reportlab.pdfgen import canvas as canv
 from reportlab.lib.pagesizes import letter
@@ -166,6 +167,30 @@ def build_doc():
                       onPage=myLaterPages)]
     )
     # Pass a list of Flowables to the doc's `build' method:
+    doc.build(elements)
+
+
+def pdf_ify(fname):
+    """Append `.pdf' to the given filename, only if needed."""
+    pdfre = re.compile(r'.+\.[Pp][Dd][Ff]$')
+    if re.match(pdfre, fname):
+        result = fname
+    else:
+        result = fname + '.pdf'
+    return result
+
+
+def save_cutlist(fname, job):
+    """Generate a cutlist for the job and save in fname.pdf."""
+    doc = BaseDocTemplate(pdf_ify(fname), showBoundary=0,
+                          pagesize=landscape(letter))
+    doc.addPageTemplates(
+        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
+                      onPage=myLaterPages)]
+    )
+    # Construct the cutlist content--i.e., the `elements' list of Flowables
+    elements = content(job)
+    # Fill out and layout the document. This saves the pdf file as well.
     doc.build(elements)
 
 
@@ -485,38 +510,27 @@ hdr_tbl = Table(
 # This is contained in `elements', which is a list of Flowables.
 elements = []    # [Spacer(1, 1.5 * inch)]
 
-# elements += [Paragraph(line, styleN) for line in j.header]
+# elements += [Paragraph(line, normal_style) for line in j.header]
 elements.append(hdr_tbl)
 elements.append(FrameBreak())
 
-# elements.append(Spacer(0.1 * inch, 0.25 * inch))
-elements.append(Paragraph('Overview:', styleH))
-elements += [Paragraph(line, styleN) for line in j.overview]
+elements.append(Paragraph('Overview:', heading_style))
+elements.append(Paragraph(j.summaryln, normal_style))
+elements.append(Spacer(1 * inch, 10))
+for line in j.cabinfo:
+    elements.append(Paragraph(line, normal_style))
+elements.append(Spacer(1 * inch, 10))
+for line in j.materialinfo:
+    elements.append(Paragraph(line, normal_style))
 elements.append(isometric_view)
 elements.append(FrameBreak())
 
 # A Table of panels
 elements.append(panels_tbl)
 
-elements.append(Paragraph('Parts List:', styleH))
-elements += [XPreformatted(line, styleFxd) for line in j.partslist]
+elements.append(Paragraph('Parts List:', heading_style))
+elements += [XPreformatted(line, fixed_style) for line in j.partslist]
 
 build_doc()
-
-
-#-------------------------------------------------------------------------------
-
-def save_cutlist(fname, job):
-    """Generate a cutlist for the job and save in fname."""
-    c = canv.Canvas(fname + ".pdf", pagesize=letter)
-    # TODO: Set landscape mode...is now set in "Global variables" above
-    draw_isoview(c, job.cabs)
-    drawtxt_jobheader(c)
-    drawtxt_overview(c)
-    drawtxt_partslist(c)
-    draw_panels(c)
-    c.setPageSize((lHeight, lWidth))
-    c.showPage()
-    c.save()
 
 # cutlist-platy.py ends here
