@@ -300,8 +300,7 @@ class Application(ttk.Frame):
         # Generate a cutlist pdf and save in file chosen by user
         filename = filedialog.asksaveasfilename()
         if filename != '':
-            # cutlist.save_cutlist(filename, self.job)
-            pass
+            cutlist.save_cutlist(filename, self.job)
 
     def optimize_panel_layout(self):
         pass
