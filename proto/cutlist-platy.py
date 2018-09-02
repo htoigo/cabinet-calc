@@ -172,11 +172,32 @@ def pdf_ify(fname):
         result = fname + '.pdf'
     return result
 
+def makeframes(doc):
+    """Return (frameHdr, frameL, frameR), given the document template."""
+    hdr_ht = 60           # pts
+    hdr_spc_after = 12    # pts
+    frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
+                     doc.width, hdr_ht,
+                     id='hdr')
+    # The two columns
+    intercol_spc = 24     # pts
+    ltcol_width = (doc.width - intercol_spc) * 0.4
+    rtcol_width = (doc.width - intercol_spc) * 0.6
+    col_ht = doc.height - hdr_ht - hdr_spc_after
+    frameL = Frame(doc.leftMargin, doc.bottomMargin,
+                   ltcol_width, col_ht,
+                   id='col1')
+    frameR = Frame(doc.leftMargin + ltcol_width + intercol_spc, doc.bottomMargin,
+                   rtcol_width, col_ht,
+                   id='col2')
+    return (frameHdr, frameL, frameR)
+
 
 def save_cutlist(fname, job):
     """Generate a cutlist for the job and save in fname.pdf."""
     doc = BaseDocTemplate(pdf_ify(fname), showBoundary=0,
                           pagesize=landscape(letter))
+    frameHdr, frameL, frameR = makeframes(doc)
     doc.addPageTemplates(
         [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
                       onPage=myLaterPages)]
