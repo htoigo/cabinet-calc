@@ -14,7 +14,7 @@ from reportlab.platypus import BaseDocTemplate, SimpleDocTemplate, \
 from reportlab.rl_config import defaultPageSize, \
                                 canvas_basefontname as _baseFontName
 from reportlab.lib.fonts import tt2ps
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 from reportlab.graphics.shapes import Drawing, Line, Rect, String, Group, \
     PolyLine
@@ -41,10 +41,6 @@ _baseFontNameI = tt2ps(_baseFontName, 0, 1)
 _baseFontNameBI = tt2ps(_baseFontName, 1, 1)
 
 # Paragraph styles for text
-
-styles = getSampleStyleSheet()
-styleN = styles['Normal']
-styleH = styles['Heading2']
 
 # Normal text style
 normal_style = ParagraphStyle(
