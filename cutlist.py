@@ -134,35 +134,6 @@ def myLaterPages(canvas, doc):
     canvas.restoreState()
 
 
-def build_doc():
-    doc = BaseDocTemplate('platy-doc.pdf', showBoundary=0,
-                          pagesize=landscape(letter))
-
-    hdr_ht = 60           # pts   6 + 12 + 3 + 12 + 3 + 6
-    spc_after_hdr = 12    # pts
-    frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
-                     doc.width, hdr_ht,
-                     id='hdr')
-    # Two columns
-    intercol_spc = 24     # pts
-    # col_width = (doc.width - intercol_spc) / 2
-    ltcol_width = (doc.width - intercol_spc) * 0.4
-    rtcol_width = (doc.width - intercol_spc) * 0.6
-    col_ht = doc.height - hdr_ht - spc_after_hdr
-    frameL = Frame(doc.leftMargin, doc.bottomMargin,
-                   ltcol_width, col_ht,
-                   id='col1')
-    frameR = Frame(doc.leftMargin + ltcol_width + intercol_spc, doc.bottomMargin,
-                   rtcol_width, col_ht,
-                   id='col2')
-    doc.addPageTemplates(
-        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
-                      onPage=myLaterPages)]
-    )
-    # Pass a list of Flowables to the doc's `build' method:
-    doc.build(elements)
-
-
 def pdf_ify(fname):
     """Append `.pdf' to the given filename, only if needed."""
     pdfre = re.compile(r'.+\.[Pp][Dd][Ff]$')
