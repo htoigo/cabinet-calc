@@ -297,8 +297,11 @@ class Application(ttk.Frame):
         self.cutlist_button.state(['!disabled'])
 
     def save_cutlist(self):
-        # Generate a cutlist pdf and save in file chosen by user
-        filename = filedialog.asksaveasfilename()
+        """Generate a cutlist pdf and save in file chosen by user."""
+        filename = filedialog.asksaveasfilename(
+            title='Filename to Save Cutlist As',
+            parent=self.root,
+            filetypes=(('PDF Files', '*.pdf'), ('All Files', '*')))
         if filename != '':
             cutlist.save_cutlist(filename, self.job)
 
