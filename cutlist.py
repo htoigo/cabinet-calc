@@ -27,8 +27,6 @@ debug = False
 default_iso_scale = 1 / 16
 default_panel_scale = 1 / 32
 
-pageinfo = 'Job Name: Toigo Kitchen'
-
 
 def landscape(pagesize):
     """Return pagesize in landscape mode (with width and height reversed)."""
@@ -48,20 +46,11 @@ def inches_to_pts(line):
     return tuple(coord * inch for coord in line)
 
 
-def myFirstPage(canvas, doc):
-    canvas.saveState()
-    canvas.setFont('Times-Bold', 16)
-    canvas.drawCentredString(page_width / 2.0, page_ht - inch, title)
-    canvas.setFont('Times-Roman', 9)
-    canvas.drawString(inch, 0.75 * inch, 'First Page / {}'.format(pageinfo))
-    canvas.restoreState()
-
-
-def myLaterPages(canvas, doc):
+def all_pages(canvas, doc):
     canvas.saveState()
     canvas.setFont('Times-Roman', 9)
-    canvas.drawString(inch, 0.75 * inch, '{}'.format(pageinfo))
-    canvas.drawRightString(page_width - inch, 0.75 * inch,
+    # canvas.drawString(inch, 0.5 * inch, '{}'.format(pageinfo))
+    canvas.drawRightString(page_width - inch, 0.5 * inch,
                            'Page {}'.format(doc.page))
     canvas.restoreState()
 
@@ -110,7 +99,7 @@ def save_cutlist(fname, job):
     frameHdr, frameL, frameR = makeframes(doc)
     doc.addPageTemplates(
         [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
-                      onPage=myLaterPages)]
+                      onPage=all_pages)]
     )
     # Construct the cutlist content--i.e., the `elements' list of Flowables
     elements = content(job)
