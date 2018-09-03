@@ -163,8 +163,14 @@ def makeframes(doc):
 
 def save_cutlist(fname, job):
     """Generate a cutlist for the job and save in fname.pdf."""
-    doc = BaseDocTemplate(pdf_ify(fname), showBoundary=0,
-                          pagesize=landscape(letter))
+    doc = BaseDocTemplate(pdf_ify(fname),
+                          pagesize=landscape(letter),
+                          title='Cutlist Report for ' + job.name,
+                          #TODO: author='',
+                          subject='Cabinet Calc Cutlist Report',
+                          #TODO: Get version below from program source
+                          creator='Cabinet Calc version 0.1',
+                          showBoundary=0)
     frameHdr, frameL, frameR = makeframes(doc)
     doc.addPageTemplates(
         [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
