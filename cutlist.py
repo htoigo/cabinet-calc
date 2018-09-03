@@ -37,22 +37,25 @@ def landscape(pagesize):
 page_width, page_ht = landscape(letter)
 
 
-def inches_to_pts(line):
-    """Convert a 4-tuple representing a line from inches to points.
-
-    The line is a 4-tuple (x1, y1, x2, y2) with coordinates in inches, and the
-    return value is the same line with inches converted to DTP points (1/72").
-    """
-    return tuple(coord * inch for coord in line)
-
-
-def all_pages(canvas, doc):
-    canvas.saveState()
-    canvas.setFont('Times-Roman', 9)
-    # canvas.drawString(inch, 0.5 * inch, '{}'.format(pageinfo))
-    canvas.drawRightString(page_width - inch, 0.5 * inch,
-                           'Page {}'.format(doc.page))
-    canvas.restoreState()
+def save_cutlist(fname, job):
+    """Generate a cutlist for the job and save in fname.pdf."""
+    doc = BaseDocTemplate(pdf_ify(fname),
+                          pagesize=landscape(letter),
+                          title='Cutlist for ' + job.name,
+                          #TODO: author='',
+                          subject='Cabinet Calc Cutlist Report',
+                          #TODO: Get version below from program source
+                          creator='Cabinet Calc version 0.1',
+                          showBoundary=0)
+    frameHdr, frameL, frameR = makeframes(doc)
+    doc.addPageTemplates(
+        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
+                      onPage=all_pages)]
+    )
+    # Construct the cutlist content--i.e., the `elements' list of Flowables
+    elements = content(job)
+    # Fill out and layout the document. This saves the pdf file as well.
+    doc.build(elements)
 
 
 def pdf_ify(fname):
@@ -86,91 +89,74 @@ def makeframes(doc):
     return (frameHdr, frameL, frameR)
 
 
-def save_cutlist(fname, job):
-    """Generate a cutlist for the job and save in fname.pdf."""
-    doc = BaseDocTemplate(pdf_ify(fname),
-                          pagesize=landscape(letter),
-                          title='Cutlist for ' + job.name,
-                          #TODO: author='',
-                          subject='Cabinet Calc Cutlist Report',
-                          #TODO: Get version below from program source
-                          creator='Cabinet Calc version 0.1',
-                          showBoundary=0)
-    frameHdr, frameL, frameR = makeframes(doc)
-    doc.addPageTemplates(
-        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
-                      onPage=all_pages)]
-    )
-    # Construct the cutlist content--i.e., the `elements' list of Flowables
-    elements = content(job)
-    # Fill out and layout the document. This saves the pdf file as well.
-    doc.build(elements)
+def all_pages(canvas, doc):
+    canvas.saveState()
+    canvas.setFont('Times-Roman', 9)
+    # canvas.drawString(inch, 0.5 * inch, '{}'.format(pageinfo))
+    canvas.drawRightString(page_width - inch, 0.5 * inch,
+                           'Page {}'.format(doc.page))
+    canvas.restoreState()
 
 
-def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
-                  material=None, thickness=None):
-    """Create an individual panel Drawing of the named panel."""
-    hdim_scaled = hdim * inch * scale
-    vdim_scaled = vdim * inch * scale
-    # We might need 36 pts of space on left of rectangle to be safe,
-    # for a long vdim_str, like 23 13/16-".
-    result = Drawing(hdim_scaled + 2 * padding + 36,
-                     vdim_scaled + 2 * padding + 14 + 4 + 10)
-    # Coordinates of the lower left corner of the rectangle
-    rx = padding + 36
-    ry = padding + 14
-    # linen =     HexColor(0xFAF0E6)
-    result.add(Rect(rx, ry, hdim_scaled, vdim_scaled,
-                    fillColor=colors.HexColor(0xf8f0e6)))
-    result.add(String(rx + hdim_scaled / 2,
-                      ry + vdim_scaled + 4,
-                      name,
-                      textAnchor='middle'))
-    hdim_arrow = PolyLine([rx + 7, ry - 11,  rx + 1.5, ry - 9,
-                           rx + 7, ry - 7,  rx + 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5 - 5.5, ry - 7,
-                           rx + hdim_scaled - 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5 - 5.5, ry - 11],
-                          strokeWidth=0.6)
-    result.add(hdim_arrow)
-    result.add(Line(rx, ry - 4,  rx, ry - 14))
-    result.add(Line(rx + hdim_scaled, ry - 4,  rx + hdim_scaled, ry - 14))
-    hdim_str = String(rx + hdim_scaled / 2, ry - 12,
-                      dimstr(hdim) + '"',
-                      textAnchor='middle',
-                      fontSize=9)
-    bnds = hdim_str.getBounds()
-    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], hdim_str.fontSize,
-                      fillColor=colors.white, strokeColor=colors.white)
-    result.add(whiteout_r)
-    result.add(hdim_str)
-    vdim_arrow = PolyLine([rx - 11, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
-                           rx - 7, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
-                           rx - 9, ry + vdim_scaled - 1.5,
-                           rx - 7, ry + vdim_scaled - 1.5 - 5.5,
-                           rx - 9, ry + vdim_scaled - 1.5,
-                           rx - 11, ry + vdim_scaled - 1.5 - 5.5],
-                          strokeWidth=0.6)
-    result.add(vdim_arrow)
-    result.add(Line(rx - 4, ry,  rx - 14, ry))
-    result.add(Line(rx - 4, ry + vdim_scaled,  rx - 14, ry + vdim_scaled))
-    vdim_str = String(rx - 2, ry + vdim_scaled / 2 - 4,
-                      dimstr(vdim) + '"',
-                      textAnchor='end',
-                      fontSize=9)
-    bnds = vdim_str.getBounds()
-    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], vdim_str.fontSize,
-                      fillColor=colors.white, strokeColor=colors.white)
-    result.add(whiteout_r)
-    result.add(vdim_str)
-    if material is not None and thickness is not None:
-        matl_thick_str = String(rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
-                                dimstr(thickness) + '"  ' + material[:3],
-                                textAnchor='end',
-                                fontSize=7)
-        result.add(matl_thick_str)
+def content(job):
+    """Create a list of flowables with all the content for the given job."""
+    result = []
+    result.append(hdr_table(job))
+    result.append(FrameBreak())
+
+    result.append(Paragraph('Overview:', heading_style))
+    result.append(Paragraph(job.summaryln, normal_style))
+    result.append(Spacer(1, 10))
+    for line in job.cabinfo:
+        result.append(Paragraph(line, normal_style))
+    result.append(Spacer(1, 10))
+    for line in job.materialinfo:
+        result.append(Paragraph(line, normal_style))
+    result.append(isometric_view(job))
+    result.append(FrameBreak())
+
+    result.append(panels_table(job))
+    result.append(Paragraph('Parts List:', heading_style))
+    for line in job.partslist:
+        result.append(XPreformatted(line, fixed_style))
     return result
+
+
+def hdr_table(job):
+    """Return a table layout of the job header."""
+    if job.description != '':
+        desc = 'Description: ' + job.description
+    else:
+        desc = ''
+    # Endedness indicates whether the cabinet run is open-ended or closed-ended
+    # on each side. It can be: 'Both ends open.', 'Both ends closed.',
+    # 'Left end closed,  right end open.', etc.
+    endedness = 'Both ends open.'
+    data = ( ( Paragraph('Job Name: ' + job.name, title_style),
+               Paragraph(str(job.cabs.fullwidth) + '" wide', wallwidth_style),
+               Paragraph(endedness, rt_style)),
+             (Paragraph(desc, normal_style), '', '') )
+    styleHdr = [ ('VALIGN', (0,0), (0,0), 'MIDDLE'),
+                 ('VALIGN', (1,0), (2,0), 'BOTTOM'),
+                 ('ALIGN', (1,0), (1,0), 'CENTER'),
+                 ('ALIGN', (2,0), (2,0), 'RIGHT'),
+                 # Job description spans across entire 2nd row.
+                 ('SPAN', (0,1), (2,1)),
+                 # Nice colors:  cornsilk, linen
+                 # lightslategrey = HexColor(0x778899) , 0xc8d8e6
+                 ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
+                 # ('LINEBELOW', (0,'splitlast'), (-1,'splitlast'), 1, colors.grey,'butt')
+    ]
+    return Table(data, style=styleHdr, colWidths = ['50%','25%','25%'])
+
+
+def inches_to_pts(line):
+    """Convert a 4-tuple representing a line from inches to points.
+
+    The line is a 4-tuple (x1, y1, x2, y2) with coordinates in inches, and the
+    return value is the same line with inches converted to DTP points (1/72").
+    """
+    return tuple(coord * inch for coord in line)
 
 
 def isometric_view(job):
@@ -373,55 +359,69 @@ def panels_table(job):
     return Table(data, colWidths, rowHeights, style=top_center_style)
 
 
-def hdr_table(job):
-    """Return a table layout of the job header."""
-    if job.description != '':
-        desc = 'Description: ' + job.description
-    else:
-        desc = ''
-    # Endedness indicates whether the cabinet run is open-ended or closed-ended
-    # on each side. It can be: 'Both ends open.', 'Both ends closed.',
-    # 'Left end closed,  right end open.', etc.
-    endedness = 'Both ends open.'
-    data = ( ( Paragraph('Job Name: ' + job.name, title_style),
-               Paragraph(str(job.cabs.fullwidth) + '" wide', wallwidth_style),
-               Paragraph(endedness, rt_style)),
-             (Paragraph(desc, normal_style), '', '') )
-    styleHdr = [ ('VALIGN', (0,0), (0,0), 'MIDDLE'),
-                 ('VALIGN', (1,0), (2,0), 'BOTTOM'),
-                 ('ALIGN', (1,0), (1,0), 'CENTER'),
-                 ('ALIGN', (2,0), (2,0), 'RIGHT'),
-                 # Job description spans across entire 2nd row.
-                 ('SPAN', (0,1), (2,1)),
-                 # Nice colors:  cornsilk, linen
-                 # lightslategrey = HexColor(0x778899) , 0xc8d8e6
-                 ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
-                 # ('LINEBELOW', (0,'splitlast'), (-1,'splitlast'), 1, colors.grey,'butt')
-    ]
-    return Table(data, style=styleHdr, colWidths = ['50%','25%','25%'])
-
-
-def content(job):
-    """Create a list of flowables with all the content for the given job."""
-    result = []
-    result.append(hdr_table(job))
-    result.append(FrameBreak())
-
-    result.append(Paragraph('Overview:', heading_style))
-    result.append(Paragraph(job.summaryln, normal_style))
-    result.append(Spacer(1, 10))
-    for line in job.cabinfo:
-        result.append(Paragraph(line, normal_style))
-    result.append(Spacer(1, 10))
-    for line in job.materialinfo:
-        result.append(Paragraph(line, normal_style))
-    result.append(isometric_view(job))
-    result.append(FrameBreak())
-
-    result.append(panels_table(job))
-    result.append(Paragraph('Parts List:', heading_style))
-    for line in job.partslist:
-        result.append(XPreformatted(line, fixed_style))
+def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
+                  material=None, thickness=None):
+    """Create an individual panel Drawing of the named panel."""
+    hdim_scaled = hdim * inch * scale
+    vdim_scaled = vdim * inch * scale
+    # We might need 36 pts of space on left of rectangle to be safe,
+    # for a long vdim_str, like 23 13/16-".
+    result = Drawing(hdim_scaled + 2 * padding + 36,
+                     vdim_scaled + 2 * padding + 14 + 4 + 10)
+    # Coordinates of the lower left corner of the rectangle
+    rx = padding + 36
+    ry = padding + 14
+    # linen =     HexColor(0xFAF0E6)
+    result.add(Rect(rx, ry, hdim_scaled, vdim_scaled,
+                    fillColor=colors.HexColor(0xf8f0e6)))
+    result.add(String(rx + hdim_scaled / 2,
+                      ry + vdim_scaled + 4,
+                      name,
+                      textAnchor='middle'))
+    hdim_arrow = PolyLine([rx + 7, ry - 11,  rx + 1.5, ry - 9,
+                           rx + 7, ry - 7,  rx + 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5 - 5.5, ry - 7,
+                           rx + hdim_scaled - 1.5, ry - 9,
+                           rx + hdim_scaled - 1.5 - 5.5, ry - 11],
+                          strokeWidth=0.6)
+    result.add(hdim_arrow)
+    result.add(Line(rx, ry - 4,  rx, ry - 14))
+    result.add(Line(rx + hdim_scaled, ry - 4,  rx + hdim_scaled, ry - 14))
+    hdim_str = String(rx + hdim_scaled / 2, ry - 12,
+                      dimstr(hdim) + '"',
+                      textAnchor='middle',
+                      fontSize=9)
+    bnds = hdim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], hdim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(hdim_str)
+    vdim_arrow = PolyLine([rx - 11, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
+                           rx - 7, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
+                           rx - 9, ry + vdim_scaled - 1.5,
+                           rx - 7, ry + vdim_scaled - 1.5 - 5.5,
+                           rx - 9, ry + vdim_scaled - 1.5,
+                           rx - 11, ry + vdim_scaled - 1.5 - 5.5],
+                          strokeWidth=0.6)
+    result.add(vdim_arrow)
+    result.add(Line(rx - 4, ry,  rx - 14, ry))
+    result.add(Line(rx - 4, ry + vdim_scaled,  rx - 14, ry + vdim_scaled))
+    vdim_str = String(rx - 2, ry + vdim_scaled / 2 - 4,
+                      dimstr(vdim) + '"',
+                      textAnchor='end',
+                      fontSize=9)
+    bnds = vdim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], vdim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(vdim_str)
+    if material is not None and thickness is not None:
+        matl_thick_str = String(rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
+                                dimstr(thickness) + '"  ' + material[:3],
+                                textAnchor='end',
+                                fontSize=7)
+        result.add(matl_thick_str)
     return result
 
 
