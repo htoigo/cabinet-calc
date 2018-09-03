@@ -304,10 +304,34 @@ def isometric_view(job):
     # (x,y) of back left top, scaled
     blt_x_scaled = iso45 * inch * default_iso_scale
     blt_y_scaled = (job.cabs.cabinet_height + iso45) * inch * default_iso_scale
-    result.add(String(blt_x_scaled + hdim_scaled / 2, blt_y_scaled + 4,
+    hdim_arrow = PolyLine(
+        [blt_x_scaled + 6.4 + 7 + 1.25, blt_y_scaled + 6.4 + 1.25,
+         blt_x_scaled + 6.4 + 1.5, blt_y_scaled + 6.4,
+         blt_x_scaled + 6.4 + 7 - 1.25, blt_y_scaled + 6.4 - 1.25,
+         blt_x_scaled + 6.4 + 1.5, blt_y_scaled + 6.4,
+         
+         blt_x_scaled + hdim_scaled + 6.4 - 1.5, blt_y_scaled + 6.4,
+         blt_x_scaled + hdim_scaled + 6.4 - 7 + 1.25, blt_y_scaled + 6.4 + 1.25,
+         blt_x_scaled + hdim_scaled + 6.4 - 1.5, blt_y_scaled + 6.4,
+         blt_x_scaled + hdim_scaled + 6.4 - 7 - 1.25, blt_y_scaled + 6.4 - 1.25
+        ],
+        strokeWidth=0.25)
+    result.add(hdim_arrow)
+    result.add(Line(blt_x_scaled + 2.8, blt_y_scaled + 2.8,
+                    blt_x_scaled + 2.8 + 7.1, blt_y_scaled + 2.8 + 7.1))
+    result.add(Line(blt_x_scaled + hdim_scaled + 2.8,
+                    blt_y_scaled + 2.8,
+                    blt_x_scaled + hdim_scaled + 2.8 + 7.1,
+                    blt_y_scaled + 2.8 + 7.1))
+    hdim_str = String(blt_x_scaled + hdim_scaled / 2, blt_y_scaled + 4,
                       dimstr(hdim) + '"',
                       textAnchor='middle',
-                      fontSize=9))
+                      fontSize=9)
+    bnds = hdim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], hdim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(hdim_str)
     ddim = job.cabs.cabinet_depth
     ddim_scaled = ddim * inch * default_iso_scale
     # (x,y) of middle right bottom, scaled
