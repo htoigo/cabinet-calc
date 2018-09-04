@@ -99,7 +99,7 @@ def all_pages(canvas, doc):
 
 
 def content(job):
-    """Create a list of flowables with all the content for the given job."""
+    """Create a list of flowables with all the content for the cutlist."""
     result = []
     result.append(hdr_table(job))
     result.append(FrameBreak())
@@ -145,7 +145,6 @@ def hdr_table(job):
                  # Nice colors:  cornsilk, linen
                  # lightslategrey = HexColor(0x778899) , 0xc8d8e6
                  ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
-                 # ('LINEBELOW', (0,'splitlast'), (-1,'splitlast'), 1, colors.grey,'butt')
     ]
     return Table(data, style=styleHdr, colWidths = ['50%','25%','25%'])
 
@@ -341,7 +340,86 @@ def isometric_view(job):
                       dimstr(ddim) + '"',
                       textAnchor='start',
                       fontSize=9))
-    # result.translate(10, 0)
+    return result
+
+
+def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
+    """Return a Group representing a horizontal dimension arrow.
+
+    x and y  are the coordinates of the left end of the arrow.
+    dim      is the dimension measurement.
+    strwid   is the stroke width of the lines.
+    """
+    x2, y2 = x + dim * inch * scale, y
+    result = Group(
+        # Arrow
+        Line(x, y, x2, y2, strokeWidth=strwid),
+        # Left arrowhead
+        Line(x, y, x + 5.5, y + 2, strokeWidth=strwid),
+        Line(x, y, x + 5.5, y - 2, strokeWidth=strwid),
+        # Right arrowhead
+        Line(x2 - 5.5, y2 + 2, x2, y2, strokeWidth=strwid),
+        Line(x2 - 5.5, y2 - 2, x2, y2, strokeWidth=strwid),
+        # Boundary lines
+        Line(x, y - boundsln_len/2, x, y + boundsln_len/2, strokeWidth=strwid),
+        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2, strokeWidth=strwid)
+        )
+    return result
+
+
+def hdimarrow_str(dim, scale, x, y, strwid, boundsln_len=10):
+    """Return a horizontal dimension arrow with labeled measurement."""
+    result = hdimarrow(dim, scale, x, y, strwid, boundsln_len)
+    dim_scaled = dim * inch * scale
+    dim_str = String(x + dim_scaled / 2, y - 3,
+                     dimstr(dim) + '"',
+                     textAnchor='middle',
+                     fontSize=9)
+    bnds = dim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], dim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(dim_str)
+    return result
+
+
+def vdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
+    """Return a Group representing a vertical dimension arrow.
+
+    x and y  are the coordinates of the bottom end of the arrow.
+    dim      is the dimension measurement.
+    strwid   is the stroke width of the lines.
+    """
+    x2, y2 = x, y + dim * inch * scale
+    result = Group(
+        # Arrow
+        Line(x, y, x2, y2, strokeWidth=strwid),
+        # Bottom arrowhead
+        Line(x, y, x - 2, y + 5.5, strokeWidth=strwid),
+        Line(x, y, x + 2, y + 5.5, strokeWidth=strwid),
+        # Top arrowhead
+        Line(x2, y2, x2 - 2, y2 - 5.5, strokeWidth=strwid),
+        Line(x2, y2, x2 + 2, y2 - 5.5, strokeWidth=strwid),
+        # Boundary lines
+        Line(x - boundsln_len/2, y, x + boundsln_len/2, y, strokeWidth=strwid),
+        Line(x2 - boundsln_len/2, y2, x2 + boundsln_len/2, y2, strokeWidth=strwid)
+        )
+    return result
+
+
+def vdimarrow_str(dim, scale, x, y, strwid, boundsln_len=10):
+    """Return a vertical dimension arrow with labeled measurement."""
+    result = vdimarrow(dim, scale, x, y, strwid, boundsln_len)
+    dim_scaled = dim * inch * scale
+    dim_str = String(x + boundsln_len / 2 + 2, y + dim_scaled / 2 - 4,
+                     dimstr(dim) + '"',
+                     textAnchor='end',
+                     fontSize=9)
+    bnds = dim_str.getBounds()
+    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], dim_str.fontSize,
+                      fillColor=colors.white, strokeColor=colors.white)
+    result.add(whiteout_r)
+    result.add(dim_str)
     return result
 
 
@@ -395,57 +473,22 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     # Coordinates of the lower left corner of the rectangle
     rx = padding + 36
     ry = padding + 14
-    # linen =     HexColor(0xFAF0E6)
+    # linen = HexColor(0xFAF0E6)
     result.add(Rect(rx, ry, hdim_scaled, vdim_scaled,
-                    fillColor=colors.HexColor(0xf8f0e6)))
+                    fillColor=colors.HexColor(0xf8f0e6), strokeWidth=0.75))
     result.add(String(rx + hdim_scaled / 2,
                       ry + vdim_scaled + 4,
                       name,
                       textAnchor='middle'))
-    hdim_arrow = PolyLine([rx + 7, ry - 11,  rx + 1.5, ry - 9,
-                           rx + 7, ry - 7,  rx + 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5 - 5.5, ry - 7,
-                           rx + hdim_scaled - 1.5, ry - 9,
-                           rx + hdim_scaled - 1.5 - 5.5, ry - 11],
-                          strokeWidth=0.6)
-    result.add(hdim_arrow)
-    result.add(Line(rx, ry - 4,  rx, ry - 14))
-    result.add(Line(rx + hdim_scaled, ry - 4,  rx + hdim_scaled, ry - 14))
-    hdim_str = String(rx + hdim_scaled / 2, ry - 12,
-                      dimstr(hdim) + '"',
-                      textAnchor='middle',
-                      fontSize=9)
-    bnds = hdim_str.getBounds()
-    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], hdim_str.fontSize,
-                      fillColor=colors.white, strokeColor=colors.white)
-    result.add(whiteout_r)
-    result.add(hdim_str)
-    vdim_arrow = PolyLine([rx - 11, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
-                           rx - 7, ry + 1.5 + 5.5,  rx - 9, ry + 1.5,
-                           rx - 9, ry + vdim_scaled - 1.5,
-                           rx - 7, ry + vdim_scaled - 1.5 - 5.5,
-                           rx - 9, ry + vdim_scaled - 1.5,
-                           rx - 11, ry + vdim_scaled - 1.5 - 5.5],
-                          strokeWidth=0.6)
-    result.add(vdim_arrow)
-    result.add(Line(rx - 4, ry,  rx - 14, ry))
-    result.add(Line(rx - 4, ry + vdim_scaled,  rx - 14, ry + vdim_scaled))
-    vdim_str = String(rx - 2, ry + vdim_scaled / 2 - 4,
-                      dimstr(vdim) + '"',
-                      textAnchor='end',
-                      fontSize=9)
-    bnds = vdim_str.getBounds()
-    whiteout_r = Rect(bnds[0], bnds[1], bnds[2] - bnds[0], vdim_str.fontSize,
-                      fillColor=colors.white, strokeColor=colors.white)
-    result.add(whiteout_r)
-    result.add(vdim_str)
+    result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67))
+    result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67))
     if material is not None and thickness is not None:
         matl_thick_str = String(rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
                                 dimstr(thickness) + '"  ' + material[:3],
                                 textAnchor='end',
                                 fontSize=7)
         result.add(matl_thick_str)
+
     return result
 
 
