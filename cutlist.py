@@ -143,7 +143,7 @@ def hdr_table(job):
     endedness = 'Both ends open.'
     data = (
         ( Paragraph('Job Name: ' + job.name, title_style),
-          Paragraph(str(job.cabs.fullwidth) + '" wide', wallwidth_style),
+          Paragraph(str(job.cabs.fullwidth) + '" Wide', wallwidth_style),
           Paragraph(endedness, rt_style)
           ),
         ( Paragraph(desc, normal_style), '', '')
