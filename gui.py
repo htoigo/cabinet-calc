@@ -223,7 +223,7 @@ class Application(ttk.Frame):
                                      command=self.quit)
             self.calc_button.grid(column=0, row=0, sticky=E, padx=2)
             clear_button.grid(column=1, row=0, sticky=W, padx=2)
-            quit_button.grid(column=2, row=0, sticky=(W, E), padx=2)
+            quit_button.grid(column=2, row=0, padx=2)
 
         # Register our validate function to get its function ID. This is used
         # to disable the `Calculate' button if the fields necessary for
