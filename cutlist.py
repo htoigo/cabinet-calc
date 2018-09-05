@@ -2,7 +2,6 @@
 
 
 import math
-from functools import reduce
 import re
 
 from reportlab.pdfgen import canvas as canv
@@ -10,11 +9,11 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import (
-    BaseDocTemplate, SimpleDocTemplate, PageTemplate, Frame, Paragraph, Spacer,
-    FrameBreak, Table, TableStyle, XPreformatted
+    BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, FrameBreak,
+    Table, TableStyle, XPreformatted
     )
 from reportlab.graphics.shapes import (
-    Drawing, Line, Rect, String, Group, PolyLine
+    Drawing, Line, Rect, String, Group
     )
 
 import cabinet as cab
