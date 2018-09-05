@@ -25,7 +25,7 @@ from text import (
     )
 
 
-# Global Variables
+# Global Constants
 
 debug = False
 
