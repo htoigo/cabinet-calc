@@ -212,14 +212,18 @@ class Application(ttk.Frame):
             buttonframe.grid(column=0, row=3, sticky=(N, S, W, E))
             buttonframe.columnconfigure(0, weight=1)
             buttonframe.columnconfigure(1, weight=1)
+            buttonframe.columnconfigure(2, weight=1)
             buttonframe.rowconfigure(0, weight=1)
             self.calc_button = ttk.Button(buttonframe, text='Calculate',
                                           command=self.calculate_job)
             self.calc_button.state(['disabled'])
             clear_button = ttk.Button(buttonframe, text='Clear',
                                       command=self.clear_input)
+            quit_button = ttk.Button(buttonframe, text='Quit',
+                                     command=self.quit)
             self.calc_button.grid(column=0, row=0, sticky=E, padx=2)
             clear_button.grid(column=1, row=0, sticky=W, padx=2)
+            quit_button.grid(column=2, row=0, sticky=(W, E), padx=2)
 
         # Register our validate function to get its function ID. This is used
         # to disable the `Calculate' button if the fields necessary for
@@ -270,6 +274,10 @@ class Application(ttk.Frame):
         else:
             self.bottom_thickness.set('')
             self.bottom_thickness_ent.state(['disabled'])
+
+    def quit(self):
+        # Destroying the app's top-level window quits the app.
+        self.root.destroy()
 
     def clear_input(self):
         self.initialize_vars()
