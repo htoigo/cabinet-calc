@@ -105,6 +105,8 @@ Program Name:    Cabinet Calc
 
 Python Package:  cabcalc
 
+Main executable: cabcalc.py  ->  rename to cabcalc (cabcalc.exe on Windows)?
+
 cabcalc/
     __init__.py
     cabcalc.py
