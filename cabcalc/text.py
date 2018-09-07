@@ -1,4 +1,4 @@
-# text.py    -*- coding: utf-8 -*-
+# text.py        -*- coding: utf-8 -*-
 
 __doc__ = """
 CabCalc text module

@@ -1,4 +1,4 @@
-# cabinet.py    -*- coding: utf-8 -*-
+# cabinet.py        -*- coding: utf-8 -*-
 
 """
 cabinet.py module

@@ -1,4 +1,4 @@
-# cutlist.py    -*- coding: utf-8 -*-
+# cutlist.py        -*- coding: utf-8 -*-
 
 
 import math

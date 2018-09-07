@@ -1,4 +1,4 @@
-# dimension_strs.py    -*- coding: utf-8 -*-
+# dimension_strs.py        -*- coding: utf-8 -*-
 
 from fractions import Fraction
 import math

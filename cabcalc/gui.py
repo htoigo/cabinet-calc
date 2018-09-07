@@ -1,4 +1,4 @@
-# gui.py    -*- coding: utf-8 -*-
+# gui.py        -*- coding: utf-8 -*-
 
 """
 cabinet-calc GUI

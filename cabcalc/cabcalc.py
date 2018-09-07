@@ -1,10 +1,14 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3        -*- coding: utf-8 -*-
 
-"""Cabinet-calc: generate cabinet layouts from available dimensions.
+# cabcalc.py  --  The main executable for Cabinet Calc.
+
+
+"""Cabinet Calc: generate a cabinet layout to fit given dimensions.
 
 A command-line and GUI program to generate a Euro-style cabinet bank layout,
 parts list, and pretty-printed cut sheet.
 """
+
 
 import sys
 import argparse
@@ -119,3 +123,6 @@ if __name__ == '__main__':
         start_gui()
     else:
         start_cli(args)
+
+
+# cabcalc.py ends here
