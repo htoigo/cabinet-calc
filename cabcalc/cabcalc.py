@@ -1,6 +1,8 @@
-#!/usr/bin/env python3        -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
-# cabcalc.py  --  The main executable for Cabinet Calc.
+# cabcalc.py        -*- coding: utf-8 -*-
+
+# The main executable for Cabinet Calc.
 
 # Copyright © 2018  Harry H. Toigo II
 
