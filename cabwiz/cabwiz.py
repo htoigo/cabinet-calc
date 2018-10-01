@@ -1,34 +1,35 @@
 #!/usr/bin/env python3
 
-# cabcalc.py        -*- coding: utf-8 -*-
+# cabwiz.py        -*- coding: utf-8 -*-
 
-# The main executable for Cabinet Calc.
+# The main executable for Cabinet Wiz.
 
 # Copyright © 2018  Harry H. Toigo II
 
-# This file is part of Cabinet Calc, the ....
+# This file is part of Cabinet Wiz, the custom Euro-style cabinet configurator.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
+# Cabinet Wiz is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
+# Cabinet Wiz is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+# along with Cabinet Wiz.  If not, see <https://www.gnu.org/licenses/>.
 
 # To contact us:
 #
 # Email:       hhtpub@gmail.com
+#
 # Snail mail:  433 Buena Vista Ave. #310
 #              Alameda CA  94501
 
 
-"""Cabinet Calc: generate a cabinet layout to fit given dimensions.
+"""Cabinet Wiz: generate a cabinet layout to fit given dimensions.
 
 A command-line and GUI program to generate a Euro-style cabinet bank layout,
 parts list, and pretty-printed cut sheet.
@@ -84,7 +85,7 @@ def get_parser():
         description=textwrap.dedent('''\
             Configure a one-off job consisting of a single bank of cabinets.
 
-            Passing no arguments starts the GUI version of Cabinet Calc.
+            Passing no arguments starts the GUI version of Cabinet Wiz.
             When running the command line version, the following arguments are
             REQUIRED:  -w WIDTH -ht HT -d DEPTH -n NAME
             Otherwise, there is not enough information to compute the job.
@@ -150,4 +151,4 @@ if __name__ == '__main__':
         start_cli(args)
 
 
-# cabcalc.py ends here
+# cabwiz.py ends here
