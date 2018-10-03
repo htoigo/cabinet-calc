@@ -1,6 +1,6 @@
   -*- mode: org;-*-
 
-# Project file for Cabinet Calc program.
+# Project file for Cabinet Wiz program.
 
 * Currently used version
 
@@ -56,7 +56,7 @@ Should contain the most critical information for the job.
     1. Wall width, height, depth, material, material thickness, number of
     fillers, 
 * Implementation
-** CabCalc main program
+** Cabinet Wiz main program
   Uses a collection of modules, which might be useful for other cabinet
   fabrication programs.
 ** Modules
@@ -101,15 +101,15 @@ Should contain the most critical information for the job.
   most efficient way possible, and generate a dxf file.
 
 
-Program Name:    Cabinet Calc
+Program Name:    Cabinet Wiz
 
-Python Package:  cabcalc
+Python Package:  cabwiz
 
-Main executable: cabcalc.py  ->  rename to cabcalc (cabcalc.exe on Windows)?
+Main executable: cabwiz.py  ->  rename to cabwiz (cabwiz.exe on Windows)?
 
-cabcalc/
+cabwiz/
     __init__.py
-    cabcalc.py
+    cabwiz.py
     gui.py
     cabinet.py
     job.py

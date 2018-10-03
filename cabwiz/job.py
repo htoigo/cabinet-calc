@@ -1,23 +1,23 @@
 # job.py        -*- coding: utf-8 -*-
 
-# Module with Job class and job-related functions for Cabinet Calc.
+# Module with Job class and job-related functions for Cabinet Wiz.
 
 # Copyright © 2018  Harry H. Toigo II
 
-# This file is part of Cabinet Calc, the ....
+# This file is part of Cabinet Wiz, the ....
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
+# Cabinet Wiz is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
+# Cabinet Wiz is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+# along with Cabinet Wiz.  If not, see <https://www.gnu.org/licenses/>.
 
 # To contact us:
 #
@@ -30,7 +30,7 @@
 job.py
 ~~~~~~
 
-This module implements the job facilities of cabcalc.
+This module implements the job facilities of Cabinet Wiz.
 
 :copyright: (c) 2018 by Lee Bernard, Harry H. Toigo II.
 :license: MIT, see LICENSE file for more details.
