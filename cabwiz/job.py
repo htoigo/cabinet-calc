@@ -2,7 +2,7 @@
 
 # Module with Job class and job-related functions for Cabinet Wiz.
 
-# Copyright © 2018  Harry H. Toigo II
+# Copyright © 2018  Harry H. Toigo II, L33b0
 
 # This file is part of Cabinet Wiz, the ....
 

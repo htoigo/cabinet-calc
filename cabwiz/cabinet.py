@@ -2,7 +2,7 @@
 
 # The `cabinet' module for Cabinet Wiz, which computes all cabinet specs.
 
-# Copyright © 2018  Harry H. Toigo II
+# Copyright © 2018  Harry H. Toigo II, L33b0
 
 # This file is part of Cabinet Wiz, the custom Euro-style cabinet configurator.
 
