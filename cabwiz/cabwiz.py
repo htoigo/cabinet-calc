@@ -6,7 +6,8 @@
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz, the custom Euro-style cabinet configurator.
+# This file is part of Cabinet Wiz.
+# Cabinet Wiz is the custom Euro-style cabinet configurator.
 
 # Cabinet Wiz is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,10 +30,13 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Wiz: generate a cabinet layout to fit given dimensions.
+"""Cabinet Wiz: The Custom Euro-Style Cabinet Configurator.
 
-A command-line and GUI program to generate a Euro-style cabinet bank layout,
-parts list, and pretty-printed cut sheet.
+Quickly and easily, by entering a few dimensions, configure a bank of Euro-style
+cabinets. Generate a parts list with dimensions, as well as cutlist.
+
+Cabinet Wiz has both a GUI interface for ease of use, and a command line interface
+for power users and scripting capability.
 """
 
 

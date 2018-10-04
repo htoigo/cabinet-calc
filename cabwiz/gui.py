@@ -4,7 +4,8 @@
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz, the ....
+# This file is part of Cabinet Wiz.
+# Cabinet Wiz is the custom Euro-style cabinet configurator.
 
 # Cabinet Wiz is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,22 +23,16 @@
 # To contact us:
 #
 # Email:       hhtpub@gmail.com
+#
 # Snail mail:  433 Buena Vista Ave. #310
 #              Alameda CA  94501
 
 
-"""
-Cabinet Wiz GUI
-~~~~~~~~~~~~~~~
+"""Cabinet Wiz GUI module.
 
 This module implements the Cabinet Wiz GUI.
-
-:copyright: (c) 2018 by Harry H. Toigo II.
-
-Display Cabinet Wiz in a tkinter top-level window on the user's desktop.
-
-Where will the output go?
 """
+
 
 #__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
 #           Run, Job]

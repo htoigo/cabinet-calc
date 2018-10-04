@@ -27,8 +27,7 @@
 #              Alameda CA  94501
 
 
-"""
-The `cabinet' module for Cabinet Wiz.
+"""Cabinet Wiz cabinet module.
 
 This module implements the...
 
@@ -47,6 +46,7 @@ the number and dimensions of:
 ... and create a cut sheet containing the parts list, diagrams of all parts
 to be cut, an isometric view of a single cabinet, with all diagrams to scale.
 """
+
 
 #__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets, Run, Job]
 __version__ = '0.1'

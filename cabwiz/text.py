@@ -1,10 +1,11 @@
 # text.py        -*- coding: utf-8 -*-
 
-# Module containing text related functions for Cabinet Wiz.
+# Module with text related functions for Cabinet Wiz.
 
-# Copyright (C) 2018  Harry H. Toigo II, L33b0
+# Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz, the ....
+# This file is part of Cabinet Wiz.
+# Cabinet Wiz is the custom Euro-style cabinet configurator.
 
 # Cabinet Wiz is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
 # To contact us:
 #
 # Email:       hhtpub@gmail.com
+#
 # Snail mail:  433 Buena Vista Ave. #310
 #              Alameda CA  94501
 
@@ -30,6 +32,7 @@
 
 This library module contains text-related functions and styles.
 """
+
 
 #__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
 #           Run, Job]
