@@ -368,7 +368,15 @@ def isometric_view(job):
     result.add(arr)
     return result
 
+def elevation_view(job):
 
+    elevationLines = []
+
+def toekick_view(job):
+
+    tokickLines = []
+
+    
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     """Return a Group representing a horizontal dimension arrow.
 
