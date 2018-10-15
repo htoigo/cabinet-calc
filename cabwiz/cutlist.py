@@ -374,7 +374,7 @@ def elevation_view(job):
 
 def toekick_view(job):
 
-    tokickLines = []
+    toekickLines = []
 
     
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
