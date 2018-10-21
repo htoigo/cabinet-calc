@@ -397,6 +397,61 @@ def toekick_view(job):
     toekickLines = [
         ]
 
+def stainless_leg(leg):
+
+    # Standard stainless steel leg dimensions with height variations
+    legLines = [
+
+        # Mounting plate 3.5" x 3.5" x 0.125" with center at 1.75"
+        # Main leg section is 1.625" in diameter and 1" less than leg height
+        # Adjustable foot section 1.25" in diameter
+
+        # Vertical lines --------------------------------------------
+
+        # Left side of mounting plate
+        (0, job.cabs.toekick_height,
+         0, job.cabs.toekick_height - 0.125),
+
+        # Left side of main leg section
+        (1.75 - (1.625/2), job.cabs.toekick_height - 0.125,
+         1.75 - (1.625/2), 1),
+
+        # Left side of adjustable foot
+        (1.75 - (1.25/2), 1,
+         1.75 - (1.25/2), 0),
+
+        # Right side of adjustable foot
+        (1.75 + (1.25/2), 1,
+         1.75 + (1.25/2), 0),
+
+        # Right side of main leg section
+        (1.75 + (1.625/2), job.cabs.toekick_height - 0.125,
+         1.75 + (1.625/2), 1),
+
+        # Right side of mounting plate
+        (3.5, job.cabs.toekick_height,
+         3.5, job.cabs.toekick_height - 0.125),
+
+        # Horizontal Lines --------------------------------------------
+
+        # Top of Mounting plate
+        (0, job.cabs.toekick_height,
+         3.5, job.cabs.toekick_height),
+
+        # Bottom of Mounting plate
+        (0, job.cabs.toekick_height - 0.125,
+         3.5, job.cabs.toekick_height - 0.125),
+
+        # Bottom Leg main section
+        (1.75 - (1.625/2), 1,
+         1.75 + (1.625/2), 1),
+
+        # Bottom of adjustable foot
+        (1.75 - (1.25/2), 0,
+         1.75 + (1.25/2), 0),
+        ]
+    
+
     
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     """Return a Group representing a horizontal dimension arrow.
