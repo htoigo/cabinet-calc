@@ -388,7 +388,12 @@ def elevation_view(job):
 
         # Vertical right line
         (job.cabs.fullwidth, job.cabs.toekick_height,
-         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height)
+         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        '''Need to add vertical lines showing cabinet divisions (side walls)
+            and maybe add doors. Not sure on adding doors. Also need to add
+            toekick drawing or incorporate basic rectangle or legs from
+            added drawing code'''
 
         ]
 
