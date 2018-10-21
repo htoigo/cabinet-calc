@@ -111,7 +111,9 @@ class Run:
     def __init__(self, fullwidth, height, depth, num_fillers=0,
                  material='Plywood', matl_thickness=0.75, topnailer_depth=4,
                  door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
-                 doorside_space_m=0.125, doorside_space_r=0.125):
+                 doorside_space_m=0.125, doorside_space_r=0.125,
+                 toekick_material='Plywood', toekick_height=6,
+                 toekick_inset=3):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
@@ -127,6 +129,9 @@ class Run:
         self.doorside_space_l = doorside_space_l
         self.doorside_space_m = doorside_space_m
         self.doorside_space_r = doorside_space_r
+        self.toekick_material = toekick_material
+        self.toekick_height = toekick_height
+        self.toekick_inset = toekick_inset
 
     @property
     def material(self):
