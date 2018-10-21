@@ -370,11 +370,32 @@ def isometric_view(job):
 
 def elevation_view(job):
 
-    elevationLines = []
+    elevationLines = [
+
+        # Front view of full cabinet run
+
+        # Horizontal bottom line
+        (0, job.cab.toekick_height,
+         job.cabs.fullwidth, job.cab.toekick_height),
+
+        # Horizontal top line
+        (0, job.cabs.cabinet_height + job.cabs.toekick_height,
+         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        # Vertical left line
+        (0, job.cabs.toekick_height,
+         0, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        # Vertical right line
+        (job.cabs.fullwidth, job.cabs.toekick_height,
+         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height)
+
+        ]
 
 def toekick_view(job):
 
-    toekickLines = []
+    toekickLines = [
+        ]
 
     
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):

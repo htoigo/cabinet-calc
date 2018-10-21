@@ -327,5 +327,13 @@ class Run:
         height = self.cabinet_height - self.doortop_space
         return height
 
+    '''@property
+    def toekick_material(self)
+        return tk_material'''
+    
+    '''@property
+    def toekick_height(self):
+        return tk_height'''
 
+    
 # cabinet.py ends here
