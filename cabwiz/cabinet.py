@@ -335,5 +335,9 @@ class Run:
     def toekick_height(self):
         return tk_height'''
 
+    '''@property
+    def toekick_inset(self):
+        return tk_inset'''
+
     
 # cabinet.py ends here
