@@ -402,6 +402,8 @@ def toekick_view(job):
     toekickLines = [
         ]
 
+    return result
+
 def stainless_leg(leg):
 
     # Standard stainless steel leg dimensions with height variations
@@ -455,6 +457,7 @@ def stainless_leg(leg):
         (1.75 - (1.25/2), 0,
          1.75 + (1.25/2), 0),
         ]
+    return result
     
 
     
