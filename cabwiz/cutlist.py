@@ -359,7 +359,7 @@ def isometric_view(job):
     result.add(arr)
 
     # Depth dimension arrow
-    ddim = job.cabs.cabinet_depth
+    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - cab.door_hinge_gap
     cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
     arr = ddimarrow_iso_str(
         ddim, default_iso_scale, cabwidth_scaled + 5 + 12, 0,
@@ -368,7 +368,99 @@ def isometric_view(job):
     result.add(arr)
     return result
 
+def elevation_view(job):
 
+    elevationLines = [
+
+        # Front view of full cabinet run
+
+        # Horizontal bottom line
+        (0, job.cab.toekick_height,
+         job.cabs.fullwidth, job.cab.toekick_height),
+
+        # Horizontal top line
+        (0, job.cabs.cabinet_height + job.cabs.toekick_height,
+         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        # Vertical left line
+        (0, job.cabs.toekick_height,
+         0, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        # Vertical right line
+        (job.cabs.fullwidth, job.cabs.toekick_height,
+         job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height),
+
+        '''Need to add vertical lines showing cabinet divisions (side walls)
+            and maybe add doors. Not sure on adding doors. Also need to add
+            toekick drawing or incorporate basic rectangle or legs from
+            added drawing code'''
+
+        ]
+
+def toekick_view(job):
+
+    toekickLines = [
+        ]
+
+    return result
+
+def stainless_leg(leg):
+
+    # Standard stainless steel leg dimensions with height variations
+    legLines = [
+
+        # Mounting plate 3.5" x 3.5" x 0.125" with center at 1.75"
+        # Main leg section is 1.625" in diameter and 1" less than leg height
+        # Adjustable foot section 1.25" in diameter
+
+        # Vertical lines --------------------------------------------
+
+        # Left side of mounting plate
+        (0, job.cabs.toekick_height,
+         0, job.cabs.toekick_height - 0.125),
+
+        # Left side of main leg section
+        (1.75 - (1.625/2), job.cabs.toekick_height - 0.125,
+         1.75 - (1.625/2), 1),
+
+        # Left side of adjustable foot
+        (1.75 - (1.25/2), 1,
+         1.75 - (1.25/2), 0),
+
+        # Right side of adjustable foot
+        (1.75 + (1.25/2), 1,
+         1.75 + (1.25/2), 0),
+
+        # Right side of main leg section
+        (1.75 + (1.625/2), job.cabs.toekick_height - 0.125,
+         1.75 + (1.625/2), 1),
+
+        # Right side of mounting plate
+        (3.5, job.cabs.toekick_height,
+         3.5, job.cabs.toekick_height - 0.125),
+
+        # Horizontal Lines --------------------------------------------
+
+        # Top of Mounting plate
+        (0, job.cabs.toekick_height,
+         3.5, job.cabs.toekick_height),
+
+        # Bottom of Mounting plate
+        (0, job.cabs.toekick_height - 0.125,
+         3.5, job.cabs.toekick_height - 0.125),
+
+        # Bottom Leg main section
+        (1.75 - (1.625/2), 1,
+         1.75 + (1.625/2), 1),
+
+        # Bottom of adjustable foot
+        (1.75 - (1.25/2), 0,
+         1.75 + (1.25/2), 0),
+        ]
+    return result
+    
+
+    
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     """Return a Group representing a horizontal dimension arrow.
 
