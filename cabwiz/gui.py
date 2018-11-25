@@ -85,8 +85,8 @@ class Application(ttk.Frame):
         self.height.set('')
         self.depth.set('')
         self.num_fillers.set(0)
-        self.material.set('Plywood')
-        self.thickness.set('0.75')
+        self.material.set(cab.materials[0])
+        self.thickness.set(cab.matl_thicknesses[self.material.get()])
         self.diff_btm_thickness.set('no')
         self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
@@ -193,17 +193,18 @@ class Application(ttk.Frame):
                                 column=4, row=0, sticky=W, padx=3, pady=2)
             ttk.Label(miscframe, text='Material:').grid(
                 column=0, row=1, sticky=W, padx=(0, 2), pady=2)
-            material_cbx = ttk.Combobox(miscframe, textvariable=self.material,
-                                width=max(map(len, cab.materials)) + 2)
-            material_cbx['values'] = cab.materials
+            self.material_cbx = ttk.Combobox(
+                miscframe, textvariable=self.material,
+                width=max(map(len, cab.materials)) + 2
+            )
+            self.material_cbx['values'] = cab.materials
             # Prevent direct editing of the value in the combobox:
-            material_cbx.state(['readonly'])
+            self.material_cbx.state(['readonly'])
             # Call the `selection clear' method when the value changes. It looks
             # a bit odd visually without doing that.
-            material_cbx.bind('<<ComboboxSelected>>',
-                              lambda x: material_cbx.selection_clear())
-            material_cbx.grid(column=1, columnspan=2, row=1, sticky=W,
-                              padx=(6, 0), pady=2)
+            self.material_cbx.bind('<<ComboboxSelected>>', self.material_changed)
+            self.material_cbx.grid(column=1, columnspan=2, row=1, sticky=W,
+                                   padx=(6, 0), pady=2)
             ttk.Label(miscframe, text='Thickness:').grid(
                 column=4, row=1, sticky=E, padx=4, pady=2)
             ttk.Entry(miscframe, textvariable=self.thickness,
@@ -287,6 +288,10 @@ class Application(ttk.Frame):
                   and self.height_ent.get() != ''
                   and self.depth_ent.get() != '')
         return result
+
+    def material_changed(self, e):
+        self.thickness.set(cab.matl_thicknesses[self.material.get()])
+        self.material_cbx.selection_clear()
 
     def diff_btm_changed(self):
         if self.diff_btm_thickness.get() == 'yes':
