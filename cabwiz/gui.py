@@ -209,24 +209,27 @@ class Application(ttk.Frame):
                 column=4, row=1, sticky=E, padx=4, pady=2)
             ttk.Entry(miscframe, textvariable=self.thickness,
                       width=6).grid(column=5, row=1, sticky=W, pady=2)
+            ttk.Label(
+                miscframe, text='Please confirm actual\nmaterial thickness.'
+            ).grid(column=4, columnspan=2, row=2, sticky=N, padx=4, pady=2)
             bottom_thickness_chk = ttk.Checkbutton(
                 miscframe, text='Different Bottom Thickness:',
                 command=self.diff_btm_changed, variable=self.diff_btm_thickness,
                 onvalue='yes', offvalue='no').grid(
-                    column=1, columnspan=4, row=2, sticky=E, padx=4, pady=2)
+                    column=1, columnspan=4, row=3, sticky=E, padx=4, pady=2)
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
             self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=5, row=2, sticky=W, pady=2)
+            self.bottom_thickness_ent.grid(column=5, row=3, sticky=W, pady=2)
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
-                column=0, columnspan=2, row=3, sticky=W, padx=(0, 6), pady=2)
+                column=0, columnspan=2, row=4, sticky=W, padx=(0, 6), pady=2)
             ttk.Radiobutton(miscframe, value=1, text='1',
                 variable=self.doors_per_cab).grid(
-                    column=2, row=3, sticky=W, padx=3, pady=2)
+                    column=2, row=4, sticky=W, padx=3, pady=2)
             ttk.Radiobutton(miscframe, value=2, text='2',
                 variable=self.doors_per_cab).grid(
-                    column=3, row=3, sticky=W, padx=3, pady=2)
+                    column=3, row=4, sticky=W, padx=3, pady=2)
 
         def make_buttonframe():
             buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
