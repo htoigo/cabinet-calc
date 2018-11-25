@@ -65,7 +65,7 @@ max_cabinet_width = 36
 door_hinge_gap = 0.125
 
 # List of materials, in the order we want them to appear in the selection list.
-materials = [ 'Standard Plywood'
+materials = [ 'Standard Plywood'        # default choice in UI
             , 'Marine-Grade Plywood'
             , 'Melamine'
             ]
