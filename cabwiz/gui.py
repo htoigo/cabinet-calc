@@ -210,8 +210,9 @@ class Application(ttk.Frame):
             ttk.Entry(miscframe, textvariable=self.thickness,
                       width=6).grid(column=5, row=1, sticky=W, pady=2)
             ttk.Label(
-                miscframe, text='Please confirm actual\nmaterial thickness.'
-            ).grid(column=4, columnspan=2, row=2, sticky=N, padx=4, pady=2)
+                miscframe, text='Please check actual material thickness\n'
+                                'and adjust value here accordingly.'
+            ).grid(column=4, columnspan=2, row=2, sticky=N, padx=4, pady=(2,10))
             bottom_thickness_chk = ttk.Checkbutton(
                 miscframe, text='Different Bottom Thickness:',
                 command=self.diff_btm_changed, variable=self.diff_btm_thickness,
