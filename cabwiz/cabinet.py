@@ -65,7 +65,7 @@ max_cabinet_width = 36
 door_hinge_gap = 0.125
 
 # List of materials, in the order we want them to appear in the selection list.
-materials = [ 'Standard Plywood'        # default choice in UI
+materials = [ 'Standard Plywood'        # default choice if none specified
             , 'Marine-Grade Plywood'
             , 'Melamine'
             ]
@@ -79,8 +79,9 @@ matl_thicknesses = { 'Standard Plywood': 0.74
                    }
 
 
-def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
-                matl_thickness=0.75, topnailer_depth=4, door_thickness=0.75,
+def cabinet_run(fullwidth, height, depth, num_fillers=0, material=materials[0],
+                matl_thickness=matl_thicknesses[materials[0]],
+                topnailer_depth=4, door_thickness=0.75,
                 doortop_space=0.5, doorside_space_l=0.125,
                 doorside_space_m=0.125, doorside_space_r=0.125):
     """Construct a (single) :class:`Run <Run>` of cabinets.
@@ -112,11 +113,13 @@ def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
 
 
 class Run:
-    """A single run of cabinets (lower or upper)."""
+    """A single run of cabinets."""
 
     def __init__(self, fullwidth, height, depth, num_fillers=0,
-                 material='Plywood', matl_thickness=0.75, topnailer_depth=4,
-                 door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
+                 material=materials[0],
+                 matl_thickness=matl_thicknesses[materials[0]],
+                 topnailer_depth=4, door_thickness=0.75,
+                 doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height
