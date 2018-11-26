@@ -366,7 +366,7 @@ def isometric_view(job):
     result.add(arr)
 
     # Depth dimension arrow
-    ddim = job.cabs.cabinet_depth
+    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - cab.door_hinge_gap
     cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
     arr = ddimarrow_iso_str(
         ddim, default_iso_scale, cabwidth_scaled + 5 + 12, 0,
@@ -375,7 +375,7 @@ def isometric_view(job):
     result.add(arr)
     return result
 
-
+  
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     """Return a Group representing a horizontal dimension arrow.
 
