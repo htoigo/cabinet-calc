@@ -203,8 +203,8 @@ def inches_to_pts(line):
 
 def isometric_view(job):
     """Return a Drawing of the isometric view of a single cabinet."""
-    iso45 = math.sin(45) * job.cabs.cabinet_depth / 2
-    isoNlr45 = math.sin(45) * 2
+    iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
+    isoNlr45 = math.sin(math.radians(45)) * 2 
     nlr = 2
 
     isoLines = [    # list of line coordinates in (x1,y1,x2,y2) format
@@ -221,14 +221,17 @@ def isometric_view(job):
          job.cabs.cabinet_height - job.cabs.matl_thickness),
 
         # horizontal top back
+        #(iso45, iso45 + job.cabs.cabinet_height,
+        # iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
         (iso45, iso45 + job.cabs.cabinet_height,
          iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
 
-        # horizontal back bottom inner
-        (iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
+        # horizontal top back lower
+        #(iso45 - job.cabs.matl_thickness,
+        (iso45 - job.cabs.matl_thickness/2,
+         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness/2,
+         job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness/2,
+         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness/2),
 
         # horizontal inside at bottom back
         (iso45, iso45,
@@ -569,7 +572,7 @@ def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     dim_scaled = dim * inch * scale
     # `iso45' is divided by 2 below because that is how it's calculated
     # in the isometric_view, above.
-    iso45 = math.sin(45) * dim_scaled / 2
+    iso45 = math.sin(math.radians(45)) * dim_scaled / 2
     x2, y2 = x + iso45, y + iso45
     result = Group(
         # Arrow
@@ -599,7 +602,7 @@ def add_ddimstr_iso(arrow, dim, scale, x, y, boundsln_len):
     dim_scaled = dim * inch * scale
     # `iso45' is divided by 2 below because that is how it's calculated
     # in the isometric_view, above.
-    iso45 = math.sin(45) * dim_scaled / 2
+    iso45 = math.sin(math.radians(45)) * dim_scaled / 2
     xmid, ymid = x + iso45 / 2, y + iso45 / 2
     dim_str = String(xmid - boundsln_len/2 - 4, ymid - 4,
                      dimstr(dim) + '"',
