@@ -203,8 +203,8 @@ def inches_to_pts(line):
 
 def isometric_view(job):
     """Return a Drawing of the isometric view of a single cabinet."""
-    iso45 = math.sin(45) * job.cabs.cabinet_depth / 2
-    isoNlr45 = math.sin(45) * 2
+    iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
+    isoNlr45 = math.sin(math.radians(45)) * 2 
     nlr = 2
 
     isoLines = [    # list of line coordinates in (x1,y1,x2,y2) format
@@ -221,10 +221,13 @@ def isometric_view(job):
          job.cabs.cabinet_height - job.cabs.matl_thickness),
 
         # horizontal top back
+        #(iso45, iso45 + job.cabs.cabinet_height,
+        # iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
         (iso45, iso45 + job.cabs.cabinet_height,
          iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
 
-        # horizontal back bottom inner
+        # horizontal top back lower
+        #(iso45 - job.cabs.matl_thickness,
         (iso45 - job.cabs.matl_thickness,
          job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness,
          job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness,
