@@ -219,13 +219,18 @@ class Application(ttk.Frame):
             self.bottom_thickness_ent.state(['disabled'])
             self.bottom_thickness_ent.grid(column=5, row=2, sticky=W, pady=2)
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
-                column=0, columnspan=2, row=3, sticky=W, padx=(0, 6), pady=2)
-            ttk.Radiobutton(miscframe, value=1, text='1',
-                variable=self.doors_per_cab).grid(
-                    column=2, row=3, sticky=W, padx=3, pady=2)
+                column=0, columnspan=2, row=3, sticky=W, padx=(0, 6), pady=(10, 2))
+            drs_per_cab_rb1 = ttk.Radiobutton(
+                miscframe, value=1, text='1', variable=self.doors_per_cab
+            )
+            # Do not allow selection of one door per cabinet. This can only be
+            # enabled after major code changes throughout, to allow for upper
+            # cabinet banks, variable height/width cabinets, etc.
+            drs_per_cab_rb1.state(['disabled'])
+            drs_per_cab_rb1.grid(column=2, row=3, sticky=W, padx=3, pady=(10, 2))
             ttk.Radiobutton(miscframe, value=2, text='2',
                 variable=self.doors_per_cab).grid(
-                    column=3, row=3, sticky=W, padx=3, pady=2)
+                    column=3, row=3, sticky=W, padx=3, pady=(10, 2))
 
         def make_buttonframe():
             buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))

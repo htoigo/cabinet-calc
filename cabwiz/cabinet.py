@@ -106,8 +106,12 @@ def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
 
 
 class Run:
-    """A single run of cabinets (lower or upper)."""
+    """A class representing a single run of cabinets.
 
+    At the moment this class assumes that there are exactly two doors per
+    cabinet, as does all code in this module. We may change this later to
+    allow single-door cabinets, but that will require a lot of changes.
+    """
     def __init__(self, fullwidth, height, depth, num_fillers=0,
                  material='Plywood', matl_thickness=0.75, topnailer_depth=4,
                  door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
