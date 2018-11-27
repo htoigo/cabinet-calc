@@ -119,7 +119,7 @@ class Run:
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
-        self._num_fillers = num_fillers
+        self.num_fillers = num_fillers
         self._material = material
         self._matl_thickness = matl_thickness
         self.topnailer_depth = topnailer_depth
@@ -169,7 +169,7 @@ class Run:
     @property
     def cabinet_width(self):
         """The width of each individual cabinet in the run."""
-        if self._num_fillers == 0:
+        if self.num_fillers == 0:
             # With no fillers, must accept a fractional number of inches.
             width = self._fullwidth / self.num_cabinets
         else:
@@ -183,14 +183,9 @@ class Run:
         return self._fullwidth % self.num_cabinets
 
     @property
-    def num_fillers(self):
-        """The number of fillers to be used in this run."""
-        return self._num_fillers
-
-    @property
     def filler_width(self):
         """The width of the filler(s) to be used in the run."""
-        if self._num_fillers == 0:
+        if self.num_fillers == 0:
             width = 0    # or raise exception here?
         else:
             # Should we raise an exception if more than 2 fillers?
@@ -200,7 +195,7 @@ class Run:
     @property
     def filler_height(self):
         """The height of the filler(s) to be used in the run."""
-        if self._num_fillers == 0:
+        if self.num_fillers == 0:
             height = 0    # or raise exception here?
         else:
             # Should we raise an exception if more than 2 fillers?
@@ -210,7 +205,7 @@ class Run:
     @property
     def filler_thickness(self):
         """The thickness of a filler strip."""
-        if self._num_fillers == 0:
+        if self.num_fillers == 0:
             thickness = 0    # or raise exception here?
         else:
             # Should we raise an exception if more than 2 fillers?
