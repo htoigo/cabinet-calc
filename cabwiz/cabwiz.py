@@ -45,7 +45,7 @@ import argparse
 import textwrap
 
 import gui
-import cabinet as cab
+from cabinet import Ends, Run
 import job
 import cutlist
 from text import wrap
@@ -61,9 +61,9 @@ def start_cli(args):
     """Start the command-line version of the program."""
 
     # Create a cabinet Run object which does all the calculating.
-    cab_run = cab.Run(args.fullwidth, args.height, args.depth,
-                      num_fillers=args.fillers,
-                      matl_thickness=args.thick)
+    cab_run = Run(args.fullwidth, args.height, args.depth,
+                  fillers=args.fillers,
+                  matl_thickness=args.thick)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -115,11 +115,12 @@ def get_parser():
                         metavar='DESC',
                         type=str)
     parser.add_argument("-f", "--fillers",
-                        help="number of fillers to be used (0, 1, or 2); "
-                             "if unspecified, defaults to 0",
-                        metavar='N',
-                        type=int,
-                        default='0')
+                        # help="fillers to be used (0, 1, or 2); "
+                        #      "if unspecified, defaults to 0",
+                        # metavar='N',
+                        type=Ends.from_string,
+                        choices=list(Ends))
+                        # default=Ends.from_string('neither'))
     parser.add_argument("-m", "--matl",
                         help="primary building material name",
                         type=str)

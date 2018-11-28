@@ -38,7 +38,7 @@ __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
-import cabinet
+from cabinet import Ends
 from dimension_strs import dimstr, dimstr_col
 
 
@@ -70,18 +70,20 @@ class Job:
                    + 'totalling '
                    + dimstr(self.cabs.cabinet_width
                             * self.cabs.num_cabinets) + '"' )
-        if self.cabs.num_fillers == 0:
+        if self.cabs.fillers is Ends.neither:
             result += ( ', with finished end panels on left and right.'
                         ' No filler panels required.\n' )
-        elif self.cabs.num_fillers == 1:
+        elif self.cabs.fillers is Ends.left:
             result += ( ', with a ' + dimstr(self.cabs.filler_width)
-                        + '" filler.\n' )
-        elif self.cabs.num_fillers == 2:
+                        + '" filler on the left.\n' )
+        elif self.cabs.fillers is Ends.right:
+            result += ( ', with a ' + dimstr(self.cabs.filler_width)
+                        + '" filler on the right.\n' )
+        elif self.cabs.fillers is Ends.both:
             result += ( ', with two (2) ' + dimstr(self.cabs.filler_width)
                         + '" fillers.\n' )
         else:
-            # The number of fillers should never be greater than 2.
-            raise ValueError('number of fillers not 0, 1, or 2')
+            raise ValueError('fillers is not neither, left, right, or both')
         return result
 
     @property
