@@ -223,7 +223,7 @@ class Run:
         elif self.fillers is Ends.both:
             result = 2
         else:
-            raise valueError('fillers is not neither, left, right, or both')
+            raise TypeError('fillers is not Ends.neither, .left, .right, or .both')
         return result
 
     @property

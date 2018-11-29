@@ -115,12 +115,10 @@ def get_parser():
                         metavar='DESC',
                         type=str)
     parser.add_argument("-f", "--fillers",
-                        # help="fillers to be used (0, 1, or 2); "
-                        #      "if unspecified, defaults to 0",
-                        # metavar='N',
+                        help="ends that will have filler panels",
                         type=Ends.from_string,
-                        choices=list(Ends))
-                        # default=Ends.from_string('neither'))
+                        choices=list(Ends),
+                        default=Ends.from_string('neither'))
     parser.add_argument("-m", "--matl",
                         help="primary building material name",
                         type=str)

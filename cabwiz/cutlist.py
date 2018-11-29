@@ -169,11 +169,11 @@ def finished_ends(fillers):
     if fillers is Ends.neither:
         result = 'Both end panels finished.'
     elif fillers is Ends.left:
-        result = 'Left end unfinished.\nRight end panel finished.'
+        result = 'Left end unfinished.<br/>Right end panel finished.'
     elif fillers is Ends.right:
-        result = 'Left end panel finished.\nRight end unfinished.'
+        result = 'Left end panel finished.<br/>Right end unfinished.'
     elif fillers is Ends.both:
-        result = 'Both end panels unfinished.'
+        result = 'Both ends unfinished.'
     return result
 
 
@@ -659,7 +659,7 @@ def panels_table(job):
     rowHeights = (130, 130)       # assumes col_ht of 411 pts
                                   # 6.5 * 72 - 45 - 12
     if job.cabs.fillers is Ends.neither:
-        # No fillers used, so do not create a filler panel drawing.
+        # No fillers used; do not create a filler panel drawing.
         data = ( (backpanel_dr, sidepanel_dr, topnailer_dr),
                  (bottompanel_dr, door_dr)
                  )
