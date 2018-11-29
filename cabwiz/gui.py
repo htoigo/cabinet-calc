@@ -302,7 +302,7 @@ class Application(ttk.Frame):
         return result
 
     def material_changed(self, e):
-        self.thickness.set(cab.matl_thicknesses[self.material.get()])
+        self.thickness.set(matl_thicknesses[self.material.get()])
         self.material_cbx.selection_clear()
 
     def diff_btm_changed(self):

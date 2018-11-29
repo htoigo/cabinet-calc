@@ -45,7 +45,7 @@ import argparse
 import textwrap
 
 import gui
-from cabinet import Ends, Run
+from cabinet import materials, matl_thicknesses, Ends, Run
 import job
 import cutlist
 from text import wrap
@@ -122,12 +122,12 @@ def get_parser():
     parser.add_argument("-m", "--matl",
                         help="primary building material name",
                         type=str,
-                        default=cab.materials[0])
+                        default=materials[0])
     parser.add_argument("-th", "--thick",
                         help="building material thickness",
                         metavar='TH',
                         type=float,
-                        default=cab.matl_thicknesses[cab.materials[0]])
+                        default=matl_thicknesses[materials[0]])
     parser.add_argument("-c", "--cutlist",
                         help="generate a cutlist & save in FN.pdf",
                         metavar='FN',
