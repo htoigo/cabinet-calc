@@ -112,7 +112,7 @@ def pdf_ify(fname):
 
 def makeframes(doc):
     """Return (frameHdr, frameL, frameR), given the document template."""
-    hdr_ht = 60           # pts
+    hdr_ht = 70           # pts
     hdr_spc_after = 12    # pts
     frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
                      doc.width, hdr_ht, id='hdr'
@@ -197,6 +197,7 @@ def hdr_table(job):
         ('ALIGN', (2,0), (2,0), 'RIGHT'),
         # Job description spans across entire 2nd row.
         ('SPAN', (0,1), (2,1)),
+        ('TOPPADDING', (0,1), (2,1), 9),
         # Nice colors:  cornsilk (0xfff8dc), linen (0xfaf0e6),
         #     lightslategrey (0x778899), 0xc8d8e6.
         ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
