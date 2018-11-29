@@ -44,7 +44,7 @@ from tkinter import ttk
 from tkinter import filedialog
 from functools import reduce
 
-import cabinet as cab
+from cabinet import materials, Ends, Run
 import job
 import cutlist
 from text import wrap
@@ -67,7 +67,7 @@ class Application(ttk.Frame):
         self.fullwidth = StringVar()
         self.height = StringVar()
         self.depth = StringVar()
-        self.num_fillers = IntVar()
+        self.fillers = StringVar()
         self.material = StringVar()
         self.thickness = StringVar()
         self.diff_btm_thickness = StringVar()
@@ -84,7 +84,7 @@ class Application(ttk.Frame):
         self.fullwidth.set('')
         self.height.set('')
         self.depth.set('')
-        self.num_fillers.set(0)
+        self.fillers.set('neither')
         self.material.set('Plywood')
         self.thickness.set('0.75')
         self.diff_btm_thickness.set('no')
@@ -180,22 +180,25 @@ class Application(ttk.Frame):
             miscframe.columnconfigure(4, weight=1)
             miscframe.columnconfigure(5, weight=1)
             miscframe.columnconfigure(6, weight=1)
-            ttk.Label(miscframe, text='Number of fillers:').grid(
+            ttk.Label(miscframe, text='Fillers for which ends?').grid(
                 column=0, columnspan=2, row=0, sticky=W, padx=(0, 2), pady=2)
-            ttk.Radiobutton(miscframe, value=0, text='0',
-                            variable=self.num_fillers).grid(
+            ttk.Radiobutton(miscframe, value='neither', text='Neither',
+                            variable=self.fillers).grid(
                                 column=2, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value=1, text='1',
-                            variable=self.num_fillers).grid(
+            ttk.Radiobutton(miscframe, value='left', text='Left',
+                            variable=self.fillers).grid(
                                 column=3, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value=2, text='2',
-                            variable=self.num_fillers).grid(
+            ttk.Radiobutton(miscframe, value='right', text='Right',
+                            variable=self.fillers).grid(
                                 column=4, row=0, sticky=W, padx=3, pady=2)
+            ttk.Radiobutton(miscframe, value='both', text='Both',
+                            variable=self.fillers).grid(
+                                column=5, row=0, sticky=W, padx=3, pady=2)
             ttk.Label(miscframe, text='Material:').grid(
                 column=0, row=1, sticky=W, padx=(0, 2), pady=2)
             material_cbx = ttk.Combobox(miscframe, textvariable=self.material,
-                                width=max(map(len, cab.materials)) + 2)
-            material_cbx['values'] = cab.materials
+                                width=max(map(len, materials)) + 2)
+            material_cbx['values'] = materials
             # Prevent direct editing of the value in the combobox:
             material_cbx.state(['readonly'])
             # Call the `selection clear' method when the value changes. It looks
@@ -313,12 +316,12 @@ class Application(ttk.Frame):
         self.output_lbl.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
-        cab_run = cab.Run(float(self.fullwidth.get()),
-                          float(self.height.get()),
-                          float(self.depth.get()),
-                          num_fillers=self.num_fillers.get(),
-                          material=self.material.get(),
-                          matl_thickness=float(self.thickness.get()))
+        cab_run = Run(float(self.fullwidth.get()),
+                      float(self.height.get()),
+                      float(self.depth.get()),
+                      fillers=Ends.from_string(self.fillers.get()),
+                      material=self.material.get(),
+                      matl_thickness=float(self.thickness.get()))
         if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())

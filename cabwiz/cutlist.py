@@ -46,7 +46,7 @@ from reportlab.graphics.shapes import (
     Drawing, Line, Rect, String, Group
     )
 
-import cabinet as cab
+from cabinet import Ends, door_hinge_gap
 import job
 from dimension_strs import dimstr, dimstr_col
 from text import (
@@ -112,7 +112,7 @@ def pdf_ify(fname):
 
 def makeframes(doc):
     """Return (frameHdr, frameL, frameR), given the document template."""
-    hdr_ht = 60           # pts
+    hdr_ht = 70           # pts
     hdr_spc_after = 12    # pts
     frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
                      doc.width, hdr_ht, id='hdr'
@@ -165,20 +165,28 @@ def content(job):
     return result
 
 
+def finished_ends(fillers):
+    if fillers is Ends.neither:
+        result = 'Both end panels finished.'
+    elif fillers is Ends.left:
+        result = 'Left end unfinished.<br/>Right end panel finished.'
+    elif fillers is Ends.right:
+        result = 'Left end panel finished.<br/>Right end unfinished.'
+    elif fillers is Ends.both:
+        result = 'Both ends unfinished.'
+    return result
+
+
 def hdr_table(job):
     """Return a table layout of the job header."""
     if job.description != '':
         desc = 'Description: ' + job.description
     else:
         desc = ''
-    # Endedness indicates whether the cabinet run is open-ended or closed-ended
-    # on each side. It can be: 'Both ends open.', 'Both ends closed.',
-    # 'Left end closed,  right end open.', etc.
-    endedness = 'Both ends open.'
     data = (
         ( Paragraph('Job Name: ' + job.name, title_style),
           Paragraph(str(job.cabs.fullwidth) + '" Wide', wallwidth_style),
-          Paragraph(endedness, rt_style)
+          Paragraph(finished_ends(job.cabs.fillers), rt_style)
           ),
         ( Paragraph(desc, normal_style), '', '')
     )
@@ -189,11 +197,12 @@ def hdr_table(job):
         ('ALIGN', (2,0), (2,0), 'RIGHT'),
         # Job description spans across entire 2nd row.
         ('SPAN', (0,1), (2,1)),
+        ('TOPPADDING', (0,1), (2,1), 9),
         # Nice colors:  cornsilk (0xfff8dc), linen (0xfaf0e6),
         #     lightslategrey (0x778899), 0xc8d8e6.
         ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
     ]
-    return Table(data, style=styleHdr, colWidths = ['50%','25%','25%'])
+    return Table(data, style=styleHdr, colWidths = ['50%','20%','30%'])
 
 
 def inches_to_pts(line):
@@ -208,7 +217,7 @@ def inches_to_pts(line):
 def isometric_view(job):
     """Return a Drawing of the isometric view of a single cabinet."""
     iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
-    isoNlr45 = math.sin(math.radians(45)) * 2 
+    isoNlr45 = math.sin(math.radians(45)) * 2
     nlr = 2
 
     isoLines = [    # list of line coordinates in (x1,y1,x2,y2) format
@@ -304,7 +313,7 @@ def isometric_view(job):
 
         # iso upper left angle inner
         (job.cabs.matl_thickness, job.cabs.cabinet_height,
-         iso45,iso45 + job.cabs.cabinet_height - job.cabs.matl_thickness),          
+         iso45,iso45 + job.cabs.cabinet_height - job.cabs.matl_thickness),
 
         # iso upper right angle
         (job.cabs.cabinet_width, job.cabs.cabinet_height,
@@ -313,7 +322,7 @@ def isometric_view(job):
         # iso upper right angle inner
         (job.cabs.cabinet_width - job.cabs.matl_thickness, job.cabs.cabinet_height,
          job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness*2,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),          
+         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
 
         # iso lower right angle
         (job.cabs.cabinet_width, 0,
@@ -366,7 +375,7 @@ def isometric_view(job):
     result.add(arr)
 
     # Depth dimension arrow
-    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - cab.door_hinge_gap
+    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - door_hinge_gap
     cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
     arr = ddimarrow_iso_str(
         ddim, default_iso_scale, cabwidth_scaled + 5 + 12, 0,
@@ -375,7 +384,7 @@ def isometric_view(job):
     result.add(arr)
     return result
 
-  
+
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     """Return a Group representing a horizontal dimension arrow.
 
@@ -646,20 +655,20 @@ def panels_table(job):
         'Door', job.cabs.door_width, job.cabs.door_height,
         material=job.cabs.material, thickness=job.cabs.matl_thickness
         )
-    # The filler will be used only if needed (see below):
-    filler_dr = panel_drawing(
-        'Filler', job.cabs.filler_width, job.cabs.filler_height
-        )
-
     # Create table for layout of the panel drawings
     colWidths = ('35%', '35%', '30%')
     rowHeights = (130, 130)       # assumes col_ht of 411 pts
                                   # 6.5 * 72 - 45 - 12
-    if job.cabs.num_fillers == 0:
+    if job.cabs.fillers is Ends.neither:
+        # No fillers used; do not create a filler panel drawing.
         data = ( (backpanel_dr, sidepanel_dr, topnailer_dr),
                  (bottompanel_dr, door_dr)
                  )
     else:
+        # Fillers are used, we need a filler panel drawing.
+        filler_dr = panel_drawing(
+            'Filler', job.cabs.filler_width, job.cabs.filler_height
+        )
         data = ( (backpanel_dr, sidepanel_dr, topnailer_dr),
                  (bottompanel_dr, door_dr, filler_dr)
                  )

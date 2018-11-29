@@ -32,7 +32,7 @@
 This module implements the...
 
 Given the full width, height, depth, material, material thickness, and
-number of fillers to use, (along with job name)...
+which ends will have fillers, (along with job name)...
 
 ... calculate the number of cabinets needed, each cabinet's width (whether
 integral or not), the space left over to be filled by fillers,
@@ -53,6 +53,7 @@ __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 import math
+from enum import Enum
 
 # Module constants
 
@@ -73,22 +74,52 @@ materials = ( 'Plywood'
             , 'Steel' )
 
 
-def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
-                matl_thickness=0.75, topnailer_depth=4, door_thickness=0.75,
-                doortop_space=0.5, doorside_space_l=0.125,
+class Ends(Enum):
+    """An enumeration of the allowable choices for which end or ends of a
+    cabinet run have fillers.
+
+    It must be one of:
+        neither - no fillers used
+        left - only the left end has a filler
+        right - only the right end has a filler
+        both - both ends have fillers
+
+    This also determines whether or not the end panels must be finished. If an
+    end will have a filler then that end can be left unfinished. On the other
+    hand, an end without a filler must have a finished end panel.
+    """
+    neither = 1
+    left = 2
+    right = 3
+    both = 4
+
+    def __str__(self):
+        return self.name
+
+    @staticmethod
+    def from_string(str):
+        try:
+            return Ends[str]
+        except KeyError:
+            raise ValueError()
+
+
+def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
+                material='Plywood', matl_thickness=0.75, topnailer_depth=4,
+                door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
                 doorside_space_m=0.125, doorside_space_r=0.125):
     """Construct a (single) :class:`Run <Run>` of cabinets.
 
     :param fullwidth: Total wall width for this run of cabinets.
     :param height: The distance from the toe kick to top of cabinets.
     :param depth: The distance from front to back, including door.
-    :param num_fillers: The number of fillers to use in this run.
+    :param fillers: Which ends of the run will have fillers.
     :param material: The primary building material name.
     :param matl_thickness: Building material thickness.
     :return: :class:`Run <Run>` object
     :rtype: cabinet.Run
     """
-    return Run(fullwidth, height, depth, num_fillers, material, matl_thickness,
+    return Run(fullwidth, height, depth, fillers, material, matl_thickness,
                topnailer_depth, door_thickness, doortop_space, doorside_space_l,
                doorside_space_m, doorside_space_r)
 
@@ -112,16 +143,17 @@ class Run:
     cabinet, as does all code in this module. We may change this later to
     allow single-door cabinets, but that will require a lot of changes.
     """
-    def __init__(self, fullwidth, height, depth, num_fillers=0,
+    def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
                  material='Plywood', matl_thickness=0.75, topnailer_depth=4,
                  door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
-        self.num_fillers = num_fillers
         self._material = material
         self._matl_thickness = matl_thickness
+        # fillers must be one of: Ends.neither, .left, .right, or .both.
+        self.fillers = fillers
         self.topnailer_depth = topnailer_depth
         self.door_thickness = door_thickness
         # The amount the door is shorter than the cabinet, usually 1/2" or 3/8".
@@ -183,32 +215,41 @@ class Run:
         return self._fullwidth % self.num_cabinets
 
     @property
+    def num_fillers(self):
+        if self.fillers is Ends.neither:
+            result = 0
+        elif self.fillers is Ends.left or self.fillers is Ends.right:
+            result = 1
+        elif self.fillers is Ends.both:
+            result = 2
+        else:
+            raise TypeError('fillers is not Ends.neither, .left, .right, or .both')
+        return result
+
+    @property
     def filler_width(self):
         """The width of the filler(s) to be used in the run."""
-        if self.num_fillers == 0:
-            width = 0    # or raise exception here?
+        if self.fillers is Ends.neither:
+            width = None
         else:
-            # Should we raise an exception if more than 2 fillers?
             width = self.extra_width / self.num_fillers
         return width
 
     @property
     def filler_height(self):
         """The height of the filler(s) to be used in the run."""
-        if self.num_fillers == 0:
-            height = 0    # or raise exception here?
+        if self.fillers is Ends.neither:
+            height = None
         else:
-            # Should we raise an exception if more than 2 fillers?
             height = self.cabinet_height
         return height
 
     @property
     def filler_thickness(self):
         """The thickness of a filler strip."""
-        if self.num_fillers == 0:
-            thickness = 0    # or raise exception here?
+        if self.fillers is Ends.neither:
+            thickness = None
         else:
-            # Should we raise an exception if more than 2 fillers?
             thickness = self.matl_thickness
         return thickness
 
