@@ -65,13 +65,19 @@ max_cabinet_width = 36
 # due to the hinges.
 door_hinge_gap = 0.125
 
-# Primary materials list. Does each material have a standard thickness
-# associated with it?
-
-materials = ( 'Plywood'
+# List of materials, in the order we want them to appear in the selection list.
+materials = [ 'Standard Plywood'        # default choice if none specified
+            , 'Marine-Grade Plywood'
             , 'Melamine'
-            , 'Graphite'
-            , 'Steel' )
+            ]
+
+# Dictionary of materials with default thickness for each in inches.
+# Note: these thicknesses must still be changeable to something else, as lots do
+# vary in thickness. For example, gray melamine lots are often 0.74" thick.
+matl_thicknesses = { 'Standard Plywood': 0.74
+                   , 'Marine-Grade Plywood': 0.75
+                   , 'Melamine': 0.76
+                   }
 
 
 class Ends(Enum):
@@ -105,8 +111,10 @@ class Ends(Enum):
 
 
 def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
-                material='Plywood', matl_thickness=0.75, topnailer_depth=4,
-                door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
+                material=materials[0],
+                matl_thickness=matl_thicknesses[materials[0]],
+                topnailer_depth=4, door_thickness=0.75,
+                doortop_space=0.5, doorside_space_l=0.125,
                 doorside_space_m=0.125, doorside_space_r=0.125):
     """Construct a (single) :class:`Run <Run>` of cabinets.
 
@@ -144,8 +152,10 @@ class Run:
     allow single-door cabinets, but that will require a lot of changes.
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
-                 material='Plywood', matl_thickness=0.75, topnailer_depth=4,
-                 door_thickness=0.75, doortop_space=0.5, doorside_space_l=0.125,
+                 material=materials[0],
+                 matl_thickness=matl_thicknesses[materials[0]],
+                 topnailer_depth=4, door_thickness=0.75,
+                 doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height

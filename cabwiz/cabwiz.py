@@ -63,7 +63,7 @@ def start_cli(args):
     # Create a cabinet Run object which does all the calculating.
     cab_run = Run(args.fullwidth, args.height, args.depth,
                   fillers=args.fillers,
-                  matl_thickness=args.thick)
+                  material=args.matl, matl_thickness=args.thick)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -121,12 +121,13 @@ def get_parser():
                         default=Ends.from_string('neither'))
     parser.add_argument("-m", "--matl",
                         help="primary building material name",
-                        type=str)
+                        type=str,
+                        default=cab.materials[0])
     parser.add_argument("-th", "--thick",
                         help="building material thickness",
                         metavar='TH',
                         type=float,
-                        default='0.75')
+                        default=cab.matl_thicknesses[cab.materials[0]])
     parser.add_argument("-c", "--cutlist",
                         help="generate a cutlist & save in FN.pdf",
                         metavar='FN',
