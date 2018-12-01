@@ -367,7 +367,7 @@ class Application(ttk.Frame):
                       float(self.depth.get()),
                       fillers=Ends.from_string(self.fillers.get()),
                       prim_material=self.prim_material.get(),
-                      prim_thickness=float(self.prim_thickness.get())
+                      prim_thickness=float(self.prim_thickness.get()),
                       door_material=self.door_material.get(),
                       door_thickness=float(self.door_thickness.get()))
         if self.description.get() != '':
