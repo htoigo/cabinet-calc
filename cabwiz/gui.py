@@ -44,7 +44,9 @@ from tkinter import ttk
 from tkinter import filedialog
 from functools import reduce
 
-from cabinet import materials, matl_thicknesses, Ends, Run
+from cabinet import (
+    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
+    )
 import job
 import cutlist
 from text import wrap
@@ -68,8 +70,10 @@ class Application(ttk.Frame):
         self.height = StringVar()
         self.depth = StringVar()
         self.fillers = StringVar()
-        self.material = StringVar()
-        self.thickness = StringVar()
+        self.prim_material = StringVar()
+        self.prim_thickness = StringVar()
+        self.door_material = StringVar()
+        self.door_thickness = StringVar()
         self.diff_btm_thickness = StringVar()
         self.bottom_thickness = StringVar()
         self.doors_per_cab = IntVar()
@@ -85,8 +89,10 @@ class Application(ttk.Frame):
         self.height.set('')
         self.depth.set('')
         self.fillers.set('neither')
-        self.material.set(materials[0])
-        self.thickness.set(matl_thicknesses[self.material.get()])
+        self.prim_material.set(materials[prim_mat_default])
+        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()])
+        self.door_material.set(materials[door_mat_default])
+        self.door_thickness.set(matl_thicknesses[self.door_material.get()])
         self.diff_btm_thickness.set('no')
         self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
@@ -194,40 +200,67 @@ class Application(ttk.Frame):
             ttk.Radiobutton(miscframe, value='both', text='Both',
                             variable=self.fillers).grid(
                                 column=5, row=0, sticky=W, padx=3, pady=2)
-            ttk.Label(miscframe, text='Material:').grid(
+
+            # ttk.Label(miscframe, text='Material choices:').grid(
+            #     column=0, row=1, sticky=W, padx=(0, 2), pady=2)
+
+            ttk.Label(miscframe, text='Primary:').grid(
                 column=0, row=1, sticky=W, padx=(0, 2), pady=2)
-            self.material_cbx = ttk.Combobox(
-                miscframe, textvariable=self.material,
+            self.prim_material_cbx = ttk.Combobox(
+                miscframe, textvariable=self.prim_material,
                 width=max(map(len, materials)) + 2
             )
-            self.material_cbx['values'] = materials
+            self.prim_material_cbx['values'] = materials
             # Prevent direct editing of the value in the combobox:
-            self.material_cbx.state(['readonly'])
+            self.prim_material_cbx.state(['readonly'])
             # Call the `selection clear' method when the value changes. It looks
             # a bit odd visually without doing that.
-            self.material_cbx.bind('<<ComboboxSelected>>', self.material_changed)
-            self.material_cbx.grid(column=1, columnspan=2, row=1, sticky=W,
-                                   padx=(6, 0), pady=2)
+            self.prim_material_cbx.bind('<<ComboboxSelected>>',
+                                        self.prim_material_changed)
+            self.prim_material_cbx.grid(column=1, columnspan=2, row=1,
+                                        sticky=W, padx=(6, 0), pady=2)
             ttk.Label(miscframe, text='Thickness:').grid(
                 column=4, row=1, sticky=E, padx=4, pady=2)
-            ttk.Entry(miscframe, textvariable=self.thickness,
+            ttk.Entry(miscframe, textvariable=self.prim_thickness,
                       width=6).grid(column=5, row=1, sticky=W, pady=2)
+
+            ttk.Label(miscframe, text='Door:').grid(
+                column=0, row=2, sticky=W, padx=(0, 2), pady=2)
+            self.door_material_cbx = ttk.Combobox(
+                miscframe, textvariable=self.door_material,
+                width=max(map(len, materials)) + 2
+            )
+            self.door_material_cbx['values'] = materials
+            # Prevent direct editing of the value in the combobox:
+            self.door_material_cbx.state(['readonly'])
+            # Call the `selection clear' method when the value changes. It looks
+            # a bit odd visually without doing that.
+            self.door_material_cbx.bind('<<ComboboxSelected>>',
+                                        self.door_material_changed)
+            self.door_material_cbx.grid(column=1, columnspan=2, row=2,
+                                        sticky=W, padx=(6, 0), pady=2)
+            ttk.Label(miscframe, text='Thickness:').grid(
+                column=4, row=2, sticky=E, padx=4, pady=2)
+            ttk.Entry(miscframe, textvariable=self.door_thickness,
+                      width=6).grid(column=5, row=2, sticky=W, pady=2)
+
             ttk.Label(
                 miscframe, text='Please check actual material thickness\n'
                                 'and adjust value here accordingly.'
-            ).grid(column=4, columnspan=2, row=2, sticky=N, padx=4, pady=(2,10))
+            ).grid(column=4, columnspan=2, row=3, sticky=N, padx=4, pady=(2,10))
+
             bottom_thickness_chk = ttk.Checkbutton(
                 miscframe, text='Different Bottom Thickness:',
                 command=self.diff_btm_changed, variable=self.diff_btm_thickness,
                 onvalue='yes', offvalue='no').grid(
-                    column=1, columnspan=4, row=3, sticky=E, padx=4, pady=2)
+                    column=1, columnspan=4, row=4, sticky=E, padx=4, pady=2)
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
             self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=5, row=3, sticky=W, pady=2)
+            self.bottom_thickness_ent.grid(column=5, row=4, sticky=W, pady=2)
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
-                column=0, columnspan=2, row=4, sticky=W, padx=(0, 6), pady=(10, 2))
+                column=0, columnspan=2, row=5, sticky=W, padx=(0, 6), pady=(10, 2))
             drs_per_cab_rb1 = ttk.Radiobutton(
                 miscframe, value=1, text='1', variable=self.doors_per_cab
             )
@@ -235,10 +268,10 @@ class Application(ttk.Frame):
             # enabled after major code changes throughout, to allow for upper
             # cabinet banks, variable height/width cabinets, etc.
             drs_per_cab_rb1.state(['disabled'])
-            drs_per_cab_rb1.grid(column=2, row=4, sticky=W, padx=3, pady=(10, 2))
+            drs_per_cab_rb1.grid(column=2, row=5, sticky=W, padx=3, pady=(10, 2))
             ttk.Radiobutton(miscframe, value=2, text='2',
                 variable=self.doors_per_cab).grid(
-                    column=3, row=4, sticky=W, padx=3, pady=(10, 2))
+                    column=3, row=5, sticky=W, padx=3, pady=(10, 2))
 
         def make_buttonframe():
             buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
@@ -301,9 +334,13 @@ class Application(ttk.Frame):
                   and self.depth_ent.get() != '')
         return result
 
-    def material_changed(self, e):
-        self.thickness.set(matl_thicknesses[self.material.get()])
-        self.material_cbx.selection_clear()
+    def prim_material_changed(self, e):
+        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()])
+        self.prim_material_cbx.selection_clear()
+
+    def door_material_changed(self, e):
+        self.door_thickness.set(matl_thicknesses[self.door_material.get()])
+        self.door_material_cbx.selection_clear()
 
     def diff_btm_changed(self):
         if self.diff_btm_thickness.get() == 'yes':
@@ -329,8 +366,10 @@ class Application(ttk.Frame):
                       float(self.height.get()),
                       float(self.depth.get()),
                       fillers=Ends.from_string(self.fillers.get()),
-                      material=self.material.get(),
-                      matl_thickness=float(self.thickness.get()))
+                      prim_material=self.prim_material.get(),
+                      prim_thickness=float(self.prim_thickness.get())
+                      door_material=self.door_material.get(),
+                      door_thickness=float(self.door_thickness.get()))
         if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())
