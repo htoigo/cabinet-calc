@@ -65,15 +65,25 @@ max_cabinet_width = 36
 # due to the hinges.
 door_hinge_gap = 0.125
 
-# List of materials, in the order we want them to appear in the selection list.
+# List of materials
+
+# The list order is the order they will appear in the selection list.
 materials = [ 'Standard Plywood'        # default choice if none specified
             , 'Marine-Grade Plywood'
             , 'Melamine'
             ]
 
+# Primary material defaults to Standard Plywood.
+prim_mat_default = 0
+
+# Door material defaults to Melamine.
+door_mat_default = 2
+
 # Dictionary of materials with default thickness for each in inches.
+
 # Note: these thicknesses must still be changeable to something else, as lots do
 # vary in thickness. For example, gray melamine lots are often 0.74" thick.
+
 matl_thicknesses = { 'Standard Plywood': 0.74
                    , 'Marine-Grade Plywood': 0.75
                    , 'Melamine': 0.76
@@ -111,9 +121,11 @@ class Ends(Enum):
 
 
 def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
-                material=materials[0],
-                matl_thickness=matl_thicknesses[materials[0]],
-                topnailer_depth=4, door_thickness=0.75,
+                prim_material=materials[prim_mat_default],
+                prim_thickness=matl_thicknesses[materials[prim_mat_default]],
+                door_material=materials[door_mat_default],
+                door_thickness=matl_thicknesses[materials[door_mat_default]],
+                topnailer_depth=4,
                 doortop_space=0.5, doorside_space_l=0.125,
                 doorside_space_m=0.125, doorside_space_r=0.125):
     """Construct a (single) :class:`Run <Run>` of cabinets.
@@ -127,8 +139,9 @@ def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
     :return: :class:`Run <Run>` object
     :rtype: cabinet.Run
     """
-    return Run(fullwidth, height, depth, fillers, material, matl_thickness,
-               topnailer_depth, door_thickness, doortop_space, doorside_space_l,
+    return Run(fullwidth, height, depth, fillers, prim_material, prim_thickness,
+               door_material, door_thickness,
+               topnailer_depth, doortop_space, doorside_space_l,
                doorside_space_m, doorside_space_r)
 
 
@@ -152,20 +165,23 @@ class Run:
     allow single-door cabinets, but that will require a lot of changes.
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
-                 material=materials[0],
-                 matl_thickness=matl_thicknesses[materials[0]],
-                 topnailer_depth=4, door_thickness=0.75,
+                 prim_material=materials[prim_mat_default],
+                 prim_thickness=matl_thicknesses[materials[prim_mat_default]],
+                 door_material=materials[door_mat_default],
+                 door_thickness=matl_thicknesses[materials[door_mat_default]],
+                 topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
-        self._material = material
-        self._matl_thickness = matl_thickness
+        self.prim_material = prim_material
+        self.prim_thickness = prim_thickness
+        self.door_material = door_material
+        self.door_thickness = door_thickness
         # fillers must be one of: Ends.neither, .left, .right, or .both.
         self.fillers = fillers
         self.topnailer_depth = topnailer_depth
-        self.door_thickness = door_thickness
         # The amount the door is shorter than the cabinet, usually 1/2" or 3/8".
         self.doortop_space = doortop_space
         # The space to the left, in between, and to the right of the doors.
@@ -173,16 +189,6 @@ class Run:
         self.doorside_space_l = doorside_space_l
         self.doorside_space_m = doorside_space_m
         self.doorside_space_r = doorside_space_r
-
-    @property
-    def material(self):
-        """Primary building material name, as a string."""
-        return self._material
-
-    @property
-    def matl_thickness(self):
-        """Primary building material thickness, as a float."""
-        return self._matl_thickness
 
     @property
     def fullwidth(self):
@@ -260,7 +266,7 @@ class Run:
         if self.fillers is Ends.neither:
             thickness = None
         else:
-            thickness = self.matl_thickness
+            thickness = self.prim_thickness
         return thickness
 
     @property
@@ -287,7 +293,7 @@ class Run:
     @property
     def back_thickness(self):
         """The thickness of a full back panel."""
-        return self.matl_thickness
+        return self.prim_thickness
 
     @property
     def num_bottompanels(self):
@@ -308,7 +314,7 @@ class Run:
     @property
     def bottom_thickness(self):
         """The thickness of a bottom panel."""
-        return self.matl_thickness
+        return self.prim_thickness
 
     @property
     def num_sidepanels(self):
@@ -334,7 +340,7 @@ class Run:
     @property
     def side_thickness(self):
         """The thickness of a side panel."""
-        return self.matl_thickness
+        return self.prim_thickness
 
     @property
     def num_topnailers(self):
@@ -348,12 +354,16 @@ class Run:
 
     @property
     def topnailer_thickness(self):
-        """."""
-        return self.matl_thickness
+        """The thickness of a top nailer panel."""
+        return self.prim_thickness
 
     @property
     def num_doors(self):
-        """The number of doors needed for this run."""
+        """The number of doors needed for this run.
+
+        This function assumes there are exactly 2 doors per cabinet. This may
+        change later.
+        """
         return 2 * self.num_cabinets
 
     @property
@@ -366,7 +376,8 @@ class Run:
     def door_width(self):
         """The width of a single door.
 
-        This function assumes there are exactly 2 doors per cabinet.
+        This function assumes there are exactly 2 doors per cabinet. This may
+        change later.
         """
         width = (self.cabinet_width - self.doorside_space) / 2
         return width

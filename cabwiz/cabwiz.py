@@ -45,7 +45,9 @@ import argparse
 import textwrap
 
 import gui
-from cabinet import materials, matl_thicknesses, Ends, Run
+from cabinet import (
+    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
+    )
 import job
 import cutlist
 from text import wrap
@@ -63,7 +65,8 @@ def start_cli(args):
     # Create a cabinet Run object which does all the calculating.
     cab_run = Run(args.fullwidth, args.height, args.depth,
                   fillers=args.fillers,
-                  material=args.matl, matl_thickness=args.thick)
+                  prim_material=args.prim_matl, prim_thickness=args.prim_thick,
+                  door_material=args.door_matl, door_thickness=args.door_thick)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -119,15 +122,26 @@ def get_parser():
                         type=Ends.from_string,
                         choices=list(Ends),
                         default=Ends.from_string('neither'))
-    parser.add_argument("-m", "--matl",
-                        help="primary building material name",
+    parser.add_argument("-pm", "--prim_matl",
+                        help="primary material name",
+                        metavar='MTL',
                         type=str,
-                        default=materials[0])
-    parser.add_argument("-th", "--thick",
-                        help="building material thickness",
+                        default=materials[prim_mat_default])
+    parser.add_argument("-pt", "--prim_thick",
+                        help="primary thickness",
                         metavar='TH',
                         type=float,
-                        default=matl_thicknesses[materials[0]])
+                        default=matl_thicknesses[materials[prim_mat_default]])
+    parser.add_argument("-dm", "--door_matl",
+                        help="door material name",
+                        metavar='MTL',
+                        type=str,
+                        default=materials[door_mat_default])
+    parser.add_argument("-dt", "--door_thick",
+                        help="door thickness",
+                        metavar='TH',
+                        type=float,
+                        default=matl_thicknesses[materials[door_mat_default]])
     parser.add_argument("-c", "--cutlist",
                         help="generate a cutlist & save in FN.pdf",
                         metavar='FN',

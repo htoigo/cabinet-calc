@@ -100,9 +100,14 @@ class Job:
     def materialinfo(self):
         """A list of strings."""
         result = []
-        result.append('Material:  ' + self.cabs.material)
-        result.append('Material thickness:  '
-                      + dimstr(self.cabs.matl_thickness) + '"')
+        result.append('Primary Material:  ' + dimstr(self.cabs.prim_thickness)
+                      + '" ' + self.cabs.prim_material)
+        # result.append('Primary thickness:  '
+        #               + dimstr(self.cabs.prim_thickness) + '"')
+        result.append('Door Material:  ' + dimstr(self.cabs.door_thickness)
+                      + '" ' + self.cabs.door_material)
+        # result.append('Door thickness:  '
+        #               + dimstr(self.cabs.door_thickness) + '"')
         return result
 
     @property

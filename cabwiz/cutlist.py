@@ -224,14 +224,14 @@ def isometric_view(job):
         # horizontal lines------------------------------------------------------
 
         # horizontal bottom inner line
-        (job.cabs.matl_thickness, job.cabs.matl_thickness,
-         (job.cabs.cabinet_width - job.cabs.matl_thickness),
-         job.cabs.matl_thickness),
+        (job.cabs.prim_thickness, job.cabs.prim_thickness,
+         (job.cabs.cabinet_width - job.cabs.prim_thickness),
+         job.cabs.prim_thickness),
 
         # horizontal top inner line - front nailer bottom front edge
-        (job.cabs.matl_thickness, job.cabs.cabinet_height - job.cabs.matl_thickness,
-         job.cabs.cabinet_width - job.cabs.matl_thickness,
-         job.cabs.cabinet_height - job.cabs.matl_thickness),
+        (job.cabs.prim_thickness, job.cabs.cabinet_height - job.cabs.prim_thickness,
+         job.cabs.cabinet_width - job.cabs.prim_thickness,
+         job.cabs.cabinet_height - job.cabs.prim_thickness),
 
         # horizontal top back
         #(iso45, iso45 + job.cabs.cabinet_height,
@@ -240,71 +240,71 @@ def isometric_view(job):
          iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
 
         # horizontal top back lower
-        #(iso45 - job.cabs.matl_thickness,
-        (iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
+        #(iso45 - job.cabs.prim_thickness,
+        (iso45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_height + iso45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_width + iso45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_height + iso45 - job.cabs.prim_thickness),
 
         # horizontal inside at bottom back
         (iso45, iso45,
-         job.cabs.cabinet_width - job.cabs.matl_thickness, iso45),
+         job.cabs.cabinet_width - job.cabs.prim_thickness, iso45),
 
         # horizontal front nailer - rear edge
-        (isoNlr45 + job.cabs.matl_thickness, job.cabs.cabinet_height + nlr,
-         job.cabs.cabinet_width - job.cabs.matl_thickness + isoNlr45,
+        (isoNlr45 + job.cabs.prim_thickness, job.cabs.cabinet_height + nlr,
+         job.cabs.cabinet_width - job.cabs.prim_thickness + isoNlr45,
          job.cabs.cabinet_height + nlr),
 
         # horizontal back nailer
         (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.matl_thickness*2,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness),
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness),
 
         # horizontal back nailer bottom
         (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness*2,
-         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.matl_thickness*3,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness*2),
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
+         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.prim_thickness*3,
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2),
 
         # vertical lines--------------------------------------------------------
 
         # vertical left inner line
-        (job.cabs.matl_thickness, 0,
-         job.cabs.matl_thickness, job.cabs.cabinet_height),
+        (job.cabs.prim_thickness, 0,
+         job.cabs.prim_thickness, job.cabs.cabinet_height),
 
         # vertical right inner line
-        (job.cabs.cabinet_width - job.cabs.matl_thickness, 0,
-         job.cabs.cabinet_width - job.cabs.matl_thickness, job.cabs.cabinet_height),
+        (job.cabs.cabinet_width - job.cabs.prim_thickness, 0,
+         job.cabs.cabinet_width - job.cabs.prim_thickness, job.cabs.cabinet_height),
 
         # vertical right back
         (iso45 + job.cabs.cabinet_width, iso45,
          iso45 + job.cabs.cabinet_width, job.cabs.cabinet_height + iso45),
 
         # vertical right back inner
-        (job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness,
-         iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
+        (job.cabs.cabinet_width + iso45 - job.cabs.prim_thickness,
+         iso45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_width + iso45 - job.cabs.prim_thickness,
+         job.cabs.cabinet_height + iso45 - job.cabs.prim_thickness),
 
         # vertical back nailer small inner line
         (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness*2,
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
          iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness),
+         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness),
 
         # vertical inside line between nailers
         (iso45, job.cabs.cabinet_height + nlr,
-         iso45, job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.matl_thickness*2),
+         iso45, job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2),
 
         # vertical inside line at back of left side
         (iso45, iso45,
-         iso45, job.cabs.cabinet_height - job.cabs.matl_thickness),
+         iso45, job.cabs.cabinet_height - job.cabs.prim_thickness),
 
         # angled lines----------------------------------------------------------
 
         # iso bottom left inner angle
-        (job.cabs.matl_thickness, job.cabs.matl_thickness,
+        (job.cabs.prim_thickness, job.cabs.prim_thickness,
          iso45, iso45),
 
         # iso upper left angle
@@ -312,17 +312,17 @@ def isometric_view(job):
          iso45, job.cabs.cabinet_height + iso45),
 
         # iso upper left angle inner
-        (job.cabs.matl_thickness, job.cabs.cabinet_height,
-         iso45,iso45 + job.cabs.cabinet_height - job.cabs.matl_thickness),
+        (job.cabs.prim_thickness, job.cabs.cabinet_height,
+         iso45,iso45 + job.cabs.cabinet_height - job.cabs.prim_thickness),
 
         # iso upper right angle
         (job.cabs.cabinet_width, job.cabs.cabinet_height,
          iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
 
         # iso upper right angle inner
-        (job.cabs.cabinet_width - job.cabs.matl_thickness, job.cabs.cabinet_height,
-         job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness*2,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
+        (job.cabs.cabinet_width - job.cabs.prim_thickness, job.cabs.cabinet_height,
+         job.cabs.cabinet_width + iso45 - job.cabs.prim_thickness*2,
+         job.cabs.cabinet_height + iso45 - job.cabs.prim_thickness),
 
         # iso lower right angle
         (job.cabs.cabinet_width, 0,
@@ -636,15 +636,15 @@ def panels_table(job):
     """Return a table filled with drawings of the individual panels."""
     backpanel_dr = panel_drawing(
         'Back', job.cabs.back_width, job.cabs.back_height,
-        material=job.cabs.material, thickness=job.cabs.matl_thickness
+        material=job.cabs.prim_material, thickness=job.cabs.back_thickness
         )
     bottompanel_dr = panel_drawing(
         'Bottom', job.cabs.bottom_width, job.cabs.bottom_depth,
-        material=job.cabs.material, thickness=job.cabs.matl_thickness
+        material=job.cabs.prim_material, thickness=job.cabs.bottom_thickness
         )
     sidepanel_dr = panel_drawing(
         'Side', job.cabs.side_depth, job.cabs.side_height,
-        material=job.cabs.material, thickness=job.cabs.matl_thickness
+        material=job.cabs.prim_material, thickness=job.cabs.side_thickness
         )
     # Nailer scale may need to be 1/16 for hdim to fit
     topnailer_dr = panel_drawing(
@@ -653,7 +653,7 @@ def panels_table(job):
     # Door scale may need to be 1/20 for hdim to fit
     door_dr = panel_drawing(
         'Door', job.cabs.door_width, job.cabs.door_height,
-        material=job.cabs.material, thickness=job.cabs.matl_thickness
+        material=job.cabs.door_material, thickness=job.cabs.door_thickness
         )
     # Create table for layout of the panel drawings
     colWidths = ('35%', '35%', '30%')
