@@ -166,9 +166,9 @@ class Run:
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
                  prim_material=materials[prim_mat_default],
-                 prim_thickness=matl_thicknesses[self.prim_material],
+                 prim_thickness=matl_thicknesses[materials[prim_mat_default]],
                  door_material=materials[door_mat_default],
-                 door_thickness=matl_thicknesses[self.door_material],
+                 door_thickness=matl_thicknesses[materials[door_mat_default]],
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
