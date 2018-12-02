@@ -396,7 +396,7 @@ def isometric_view(job):
     arr = vdimarrow_iso_str(
         vdim, default_iso_scale,
         brb_x_scaled + arrow_sep_horiz, brb_y_scaled + arrow_sep_vert,
-        0.67, boundsln_len=14
+        0.67, boundsln_len
         )
     result.add(arr)
 
@@ -408,7 +408,7 @@ def isometric_view(job):
     arr = hdimarrow_iso_str(
         hdim, default_iso_scale,
         blt_x_scaled + arrow_sep_horiz, blt_y_scaled + arrow_sep_vert,
-        0.67, boundsln_len=14
+        0.67, boundsln_len
         )
     result.add(arr)
 
@@ -418,13 +418,13 @@ def isometric_view(job):
     arr = ddimarrow_iso_str(
         ddim, default_iso_scale,
         cabwidth_scaled + arrow_sep, 0,
-        0.67, boundsln_len=14
+        0.67, boundsln_len
         )
     result.add(arr)
     return result
 
 
-def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
+def hdimarrow(dim, scale, x, y, strwid, boundsln_len):
     """Return a horizontal dimension arrow for a flat panel drawing.
 
     The return value is a Group.
@@ -452,7 +452,7 @@ def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     return result
 
 
-def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
+def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
     """Return a horizontal dimension arrow for the isometric drawing.
 
     The isometric version of the dimension arrow has angled boundary lines
@@ -482,14 +482,14 @@ def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     return result
 
 
-def hdimarrow_str(dim, scale, x, y, strwid, boundsln_len=10):
+def hdimarrow_str(dim, scale, x, y, strwid, boundsln_len):
     """Return a horizontal dimension arrow with labeled measurement."""
     result = hdimarrow(dim, scale, x, y, strwid, boundsln_len)
     add_hdimstr(result, dim, scale, x, y)
     return result
 
 
-def hdimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len=10):
+def hdimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len):
     """Return an isometric horiz dimension arrow with labeled measurement."""
     result = hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len)
     add_hdimstr(result, dim, scale, x, y)
@@ -514,7 +514,7 @@ def add_hdimstr(arrow, dim, scale, x, y):
     return arrow
 
 
-def vdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
+def vdimarrow(dim, scale, x, y, strwid, boundsln_len):
     """Return a vertical dimension arrow for a flat panel drawing.
 
     The return value is a Group.
@@ -542,7 +542,7 @@ def vdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
     return result
 
 
-def vdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
+def vdimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
     """Return a vertical dimension arrow for the isometric drawing.
 
     The isometric version of the dimension arrow has angled boundary lines
@@ -572,14 +572,14 @@ def vdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     return result
 
 
-def vdimarrow_str(dim, scale, x, y, strwid, boundsln_len=10):
+def vdimarrow_str(dim, scale, x, y, strwid, boundsln_len):
     """Return a vertical dimension arrow with labeled measurement."""
     result = vdimarrow(dim, scale, x, y, strwid, boundsln_len)
     add_vdimstr(result, dim, scale, x, y, boundsln_len)
     return result
 
 
-def vdimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len=10):
+def vdimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len):
     """Return an isometric vert dimension arrow with labeled measurement."""
     result = vdimarrow_iso(dim, scale, x, y, strwid, boundsln_len)
     add_vdimstr_iso(result, dim, scale, x, y, boundsln_len)
@@ -623,7 +623,7 @@ def add_vdimstr_iso(arrow, dim, scale, x, y, boundsln_len):
     return arrow
 
 
-def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
+def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
     """Return a depth dimension arrow for the isometric drawing.
 
     The isometric version of the dimension arrow has angled boundary lines
@@ -656,7 +656,7 @@ def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     return result
 
 
-def ddimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len=10):
+def ddimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len):
     """Return an isometric depth dimension arrow with labeled measurement."""
     result = ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len)
     add_ddimstr_iso(result, dim, scale, x, y, boundsln_len)
@@ -760,8 +760,9 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
                textAnchor='middle'
                )
         )
-    result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67))
-    result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67))
+    boundsln_len = 10
+    result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67, boundsln_len))
+    result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67, boundsln_len))
     if material is not None and thickness is not None:
         matl_thick_str = String(
             rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
