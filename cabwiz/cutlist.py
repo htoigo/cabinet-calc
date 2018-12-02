@@ -155,6 +155,7 @@ def content(job):
     result.append(Spacer(1, 10))
     for line in job.materialinfo:
         result.append(Paragraph(line, normal_style))
+    result.append(Spacer(1, 24))
     result.append(isometric_view(job))
     result.append(FrameBreak())
 
@@ -216,11 +217,53 @@ def inches_to_pts(line):
 
 def isometric_view(job):
     """Return a Drawing of the isometric view of a single cabinet."""
-    iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
-    isoNlr45 = math.sin(math.radians(45)) * 2
-    nlr = 2
 
-    isoLines = [    # list of line coordinates in (x1,y1,x2,y2) format
+    # Determine the width and height required for the drawing.
+
+    # The below distances are all in points, unless noted otherwise.
+
+    # Extra space at top of drawing, for separation from text above.
+    top_margin = 10
+    # Extra width added so long vdim text doesn't go past right edge.
+    long_vdimtxt_margin = 30
+    # The length of the dimension bounds lines.
+    boundsln_len = 14
+    # If the bounds line is angled, half of its vertical projection.
+    half_boundsln_vert = math.sqrt((boundsln_len / 2) ** 2 / 2)
+    # The separation of the arrowhead from the nearest cabinet corner.
+    arrow_sep = 18
+    # If the arrow separation is angled, its vertical projection.
+    arrow_sep_vert = math.sqrt(arrow_sep ** 2 / 2)
+    # The horizontal projection is the same, since the angle is 45 degrees.
+    arrow_sep_horiz = arrow_sep_vert
+
+    # The horizontal (or vertical, since they are equal) projection of the
+    # angled cabinet depth lines -- in inches, unscaled.
+    iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
+
+    d_width = ( (job.cabs.cabinet_width + iso45) * inch * default_iso_scale
+                + arrow_sep + boundsln_len/2 + long_vdimtxt_margin )
+    d_ht = ( (job.cabs.cabinet_height + iso45) * inch * default_iso_scale
+             + arrow_sep_vert + half_boundsln_vert + top_margin )
+
+    result = Drawing(d_width, d_ht)
+    result.hAlign = 'CENTER'
+
+
+    # The horizontal (or vertical, since they are equal) projection of the
+    # angled topnailer depth lines -- in inches, unscaled.
+    isoNlr45 = math.sin(math.radians(45)) * job.cabs.topnailer_depth / 2
+    # isoNlr45 = math.sin(math.radians(45)) * 2
+
+    # nlr = 2
+    nlr = isoNlr45
+
+    # Construct a list of the lines that make up the isometric view of a single
+    # cabinet. Each line is a tuple in (x1, y1, x2, y2) format, and all
+    # coordinates are in inches, unscaled. These are converted to points and
+    # then scaled, below.
+
+    isoLines = [
         # horizontal lines------------------------------------------------------
 
         # horizontal bottom inner line
@@ -251,9 +294,9 @@ def isometric_view(job):
          job.cabs.cabinet_width - job.cabs.prim_thickness, iso45),
 
         # horizontal front nailer - rear edge
-        (isoNlr45 + job.cabs.prim_thickness, job.cabs.cabinet_height + nlr,
+        (isoNlr45 + job.cabs.prim_thickness, job.cabs.cabinet_height + isoNlr45,
          job.cabs.cabinet_width - job.cabs.prim_thickness + isoNlr45,
-         job.cabs.cabinet_height + nlr),
+         job.cabs.cabinet_height + isoNlr45),
 
         # horizontal back nailer
         (iso45 - isoNlr45,
@@ -294,7 +337,7 @@ def isometric_view(job):
          job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness),
 
         # vertical inside line between nailers
-        (iso45, job.cabs.cabinet_height + nlr,
+        (iso45, job.cabs.cabinet_height + isoNlr45,
          iso45, job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2),
 
         # vertical inside line at back of left side
@@ -347,7 +390,6 @@ def isometric_view(job):
         (coord * default_iso_scale for coord in line) for line in isoLines_pts
         ]
 
-    result = Drawing(260, 210)
     for line in isoLines_scaled:
         result.add(Line(*line, strokeWidth=0.5))
 
@@ -356,9 +398,9 @@ def isometric_view(job):
     # (x,y) of back right bottom of cabinet, scaled
     brb_x_scaled = (job.cabs.cabinet_width + iso45) * inch * default_iso_scale
     brb_y_scaled = iso45 * inch * default_iso_scale
-    arr_off = 12.7    # sqrt(18^2 / 2), an angled distance of 18 pts
     arr = vdimarrow_iso_str(
-        vdim, default_iso_scale, brb_x_scaled + arr_off, brb_y_scaled + arr_off,
+        vdim, default_iso_scale,
+        brb_x_scaled + arrow_sep_horiz, brb_y_scaled + arrow_sep_vert,
         0.67, boundsln_len=14
         )
     result.add(arr)
@@ -369,7 +411,8 @@ def isometric_view(job):
     blt_x_scaled = iso45 * inch * default_iso_scale
     blt_y_scaled = (job.cabs.cabinet_height + iso45) * inch * default_iso_scale
     arr = hdimarrow_iso_str(
-        hdim, default_iso_scale, blt_x_scaled + arr_off, blt_y_scaled + arr_off,
+        hdim, default_iso_scale,
+        blt_x_scaled + arrow_sep_horiz, blt_y_scaled + arrow_sep_vert,
         0.67, boundsln_len=14
         )
     result.add(arr)
@@ -378,7 +421,8 @@ def isometric_view(job):
     ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - door_hinge_gap
     cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
     arr = ddimarrow_iso_str(
-        ddim, default_iso_scale, cabwidth_scaled + 5 + 12, 0,
+        ddim, default_iso_scale,
+        cabwidth_scaled + arrow_sep, 0,
         0.67, boundsln_len=14
         )
     result.add(arr)
