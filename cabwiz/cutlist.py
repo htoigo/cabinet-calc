@@ -249,14 +249,9 @@ def isometric_view(job):
     result = Drawing(d_width, d_ht)
     result.hAlign = 'CENTER'
 
-
     # The horizontal (or vertical, since they are equal) projection of the
     # angled topnailer depth lines -- in inches, unscaled.
     isoNlr45 = math.sin(math.radians(45)) * job.cabs.topnailer_depth / 2
-    # isoNlr45 = math.sin(math.radians(45)) * 2
-
-    # nlr = 2
-    nlr = isoNlr45
 
     # Construct a list of the lines that make up the isometric view of a single
     # cabinet. Each line is a tuple in (x1, y1, x2, y2) format, and all
