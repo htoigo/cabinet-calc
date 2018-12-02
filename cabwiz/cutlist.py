@@ -425,11 +425,15 @@ def isometric_view(job):
 
 
 def hdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
-    """Return a Group representing a horizontal dimension arrow.
+    """Return a horizontal dimension arrow for a flat panel drawing.
 
-    x and y  are the coordinates of the left end of the arrow.
-    dim      is the dimension measurement.
-    strwid   is the stroke width of the lines.
+    The return value is a Group.
+
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the left end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
     """
     x2, y2 = x + dim * inch * scale, y
     result = Group(
@@ -454,9 +458,11 @@ def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     The isometric version of the dimension arrow has angled boundary lines
     and arrowheads.
 
-    x and y  are the coordinates of the left end of the arrow.
-    dim      is the dimension measurement.
-    strwid   is the stroke width of the lines.
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the left end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
     """
     x2, y2 = x + dim * inch * scale, y
     off = math.sqrt((boundsln_len / 2) ** 2 / 2)
@@ -509,11 +515,15 @@ def add_hdimstr(arrow, dim, scale, x, y):
 
 
 def vdimarrow(dim, scale, x, y, strwid, boundsln_len=10):
-    """Return a Group representing a vertical dimension arrow.
+    """Return a vertical dimension arrow for a flat panel drawing.
 
-    x and y  are the coordinates of the bottom end of the arrow.
-    dim      is the dimension measurement.
-    strwid   is the stroke width of the lines.
+    The return value is a Group.
+
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the bottom end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
     """
     x2, y2 = x, y + dim * inch * scale
     result = Group(
@@ -538,9 +548,11 @@ def vdimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     The isometric version of the dimension arrow has angled boundary lines
     and arrowheads.
 
-    x and y  are the coordinates of the bottom end of the arrow.
-    dim      is the dimension measurement.
-    strwid   is the stroke width of the lines.
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the bottom end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
     """
     x2, y2 = x, y + dim * inch * scale
     off = math.sqrt((boundsln_len / 2) ** 2 / 2)
@@ -617,9 +629,11 @@ def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len=10):
     The isometric version of the dimension arrow has angled boundary lines
     and arrowheads.
 
-    x and y  are the coordinates of the lower left end of the arrow.
-    dim      is the dimension measurement.
-    strwid   is the stroke width of the lines.
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the lower left end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
     """
     dim_scaled = dim * inch * scale
     # `iso45' is divided by 2 below because that is how it's calculated
