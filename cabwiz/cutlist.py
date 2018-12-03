@@ -266,7 +266,7 @@ def isometric_view(job):
          job.cabs.cabinet_width - job.cabs.side_thickness,
          job.cabs.bottom_thickness),
 
-        # Front nailer front edge bottom
+        # Front nailer - front edge bottom
         (job.cabs.side_thickness,
          job.cabs.cabinet_height - job.cabs.topnailer_thickness,
          job.cabs.cabinet_width - job.cabs.side_thickness,
