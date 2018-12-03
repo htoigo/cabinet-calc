@@ -251,7 +251,7 @@ def isometric_view(job):
 
     # The horizontal (or vertical, since they are equal) projection of the
     # angled topnailer depth lines -- in inches, unscaled.
-    isoNlr45 = math.sin(math.radians(45)) * job.cabs.topnailer_depth / 2
+    isoNlr45 = job.cabs.topnailer_depth * math.sin(math.radians(45)) / 2
 
     # Construct a list of the lines that make up the isometric view of a single
     # cabinet. Each line is a tuple in (x1, y1, x2, y2) format, and all
@@ -289,21 +289,30 @@ def isometric_view(job):
          job.cabs.cabinet_width - job.cabs.prim_thickness, iso45),
 
         # horizontal front nailer - rear edge
-        (isoNlr45 + job.cabs.prim_thickness, job.cabs.cabinet_height + isoNlr45,
-         job.cabs.cabinet_width - job.cabs.prim_thickness + isoNlr45,
+        (job.cabs.side_thickness + isoNlr45, job.cabs.cabinet_height + isoNlr45,
+         job.cabs.cabinet_width - job.cabs.side_thickness + isoNlr45,
          job.cabs.cabinet_height + isoNlr45),
 
         # horizontal back nailer
         (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness,
-         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness),
+         job.cabs.cabinet_height + iso45 - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         job.cabs.cabinet_width - job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
 
-        # horizontal back nailer bottom
+        # horizontal back nailer bottom front edge
         (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
-         job.cabs.cabinet_width + iso45 - isoNlr45 - job.cabs.prim_thickness*3,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2),
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+             - job.cabs.topnailer_thickness,
+         job.cabs.cabinet_width + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45))
+             - job.cabs.side_thickness * math.sin(math.radians(45)) - isoNlr45
+             - job.cabs.topnailer_thickness,
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+             - job.cabs.topnailer_thickness),
 
         # vertical lines--------------------------------------------------------
 
