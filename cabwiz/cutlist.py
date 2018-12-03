@@ -294,21 +294,23 @@ def isometric_view(job):
          job.cabs.cabinet_height + isoNlr45),
 
         # horizontal back nailer
-        (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+        (job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_width - job.cabs.side_thickness + iso45
              - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
              - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
 
         # horizontal back nailer bottom front edge
-        (iso45 - isoNlr45,
+        (job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
              - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
              - job.cabs.topnailer_thickness,
-         job.cabs.cabinet_width + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45))
-             - job.cabs.side_thickness * math.sin(math.radians(45)) - isoNlr45
+         job.cabs.cabinet_width - job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
              - job.cabs.topnailer_thickness,
          job.cabs.cabinet_height + iso45
              - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
@@ -335,14 +337,21 @@ def isometric_view(job):
          job.cabs.cabinet_height + iso45 - job.cabs.back_thickness * math.sin(math.radians(45))),
 
         # vertical back nailer small inner line
-        (iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2,
-         iso45 - isoNlr45,
-         job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness),
+        (job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+             - job.cabs.topnailer_thickness,
+         job.cabs.side_thickness + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         job.cabs.cabinet_height + iso45
+             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
 
         # vertical inside line between nailers
         (iso45, job.cabs.cabinet_height + isoNlr45,
-         iso45, job.cabs.cabinet_height + iso45 - isoNlr45 - job.cabs.prim_thickness*2),
+         iso45, job.cabs.cabinet_height + iso45
+                - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+                - job.cabs.topnailer_thickness),
 
         # vertical inside line at back of left side
         (iso45, iso45,
