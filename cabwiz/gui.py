@@ -375,8 +375,9 @@ class Application(ttk.Frame):
                                self.description.get())
         else:
             self.job = job.Job(self.jobname.get(), cab_run)
-        # Ensure output lines are no longer than 60 chars
-        self.output.set('\n'.join(wrap(self.job.specification, 60)))
+        # Display the computed job specification, ensuring output lines are no
+        # longer than 65 chars.
+        self.output.set('\n'.join(wrap(self.job.specification, 65)))
         self.output_lbl.grid_configure(pady=0)
         self.cutlist_button.state(['!disabled'])
 

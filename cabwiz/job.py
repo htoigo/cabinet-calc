@@ -165,7 +165,7 @@ class Job:
     @property
     def specification(self):
         """Return a complete specification of the job as a list of strings."""
-        sep = '-' * 60
+        sep = '-' * 65
         result = ( [sep] + self.header + [sep]
                    + ['Overview:\n'] + self.overview + [sep]
                    + ['Parts List:\n'] + self.partslist + [sep] )

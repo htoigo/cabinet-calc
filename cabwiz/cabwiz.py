@@ -75,8 +75,8 @@ def start_cli(args):
         j = job.Job(args.name, cab_run)
 
     # Output the job specification to the terminal, ensuring lines are no
-    # longer than 60 chars.
-    for line in wrap(j.specification, 60):
+    # longer than 65 chars.
+    for line in wrap(j.specification, 65):
         print(line)
 
     # If requested, produce and save a cutlist pdf file.
