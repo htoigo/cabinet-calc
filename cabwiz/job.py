@@ -39,7 +39,7 @@ __author__ = 'Harry H. Toigo II'
 
 
 from cabinet import Ends
-from dimension_strs import dimstr, dimstr_col
+from dimension_strs import dimstr, dimstr_col, thickness_str
 
 
 class Job:
@@ -100,13 +100,14 @@ class Job:
     def materialinfo(self):
         """A list of strings."""
         result = []
-        result.append('Primary Material:  ' + dimstr(self.cabs.prim_thickness)
+        result.append('Primary Material:  ' + thickness_str(self.cabs.prim_thickness)
                       + '" ' + self.cabs.prim_material)
-        result.append('Door Material:  ' + dimstr(self.cabs.door_thickness)
+        result.append('Door Material:  ' + thickness_str(self.cabs.door_thickness)
                       + '" ' + self.cabs.door_material)
-        if self.cabs.bottom_thickness != self.cabs.prim_thickness:
+        if ( thickness_str(self.cabs.bottom_thickness)
+             != thickness_str(self.cabs.prim_thickness) ):
             result.append('Bottom Material:  '
-                          + dimstr(self.cabs.bottom_thickness) + '" '
+                          + thickness_str(self.cabs.bottom_thickness) + '" '
                           + self.cabs.prim_material)
         return result
 
@@ -128,38 +129,38 @@ class Job:
                 self.cabs.num_backpanels,
                 dimstr_col(self.cabs.back_width) + '"',
                 dimstr_col(self.cabs.back_height) + '"',
-                dimstr(self.cabs.back_thickness) + '"') )
+                thickness_str(self.cabs.back_thickness) + '"') )
         result.append(
             'Bottom Panels:   {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_bottompanels,
                 dimstr_col(self.cabs.bottom_width) + '"',
                 dimstr_col(self.cabs.bottom_depth) + '"',
-                dimstr(self.cabs.bottom_thickness) + '"') )
+                thickness_str(self.cabs.bottom_thickness) + '"') )
         result.append(
             'Side Panels:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_sidepanels,
                 dimstr_col(self.cabs.side_depth) + '"',
                 dimstr_col(self.cabs.side_height) + '"',
-                dimstr(self.cabs.side_thickness) + '"') )
+                thickness_str(self.cabs.side_thickness) + '"') )
         result.append(
             'Top Nailers:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_topnailers,
                 dimstr_col(self.cabs.topnailer_width) + '"',
                 dimstr_col(self.cabs.topnailer_depth) + '"',
-                dimstr(self.cabs.topnailer_thickness) + '"') )
+                thickness_str(self.cabs.topnailer_thickness) + '"') )
         if self.cabs.num_fillers > 0:
             result.append(
                 'Fillers:         {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                     self.cabs.num_fillers,
                     dimstr_col(self.cabs.filler_width) + '"',
                     dimstr_col(self.cabs.filler_height) + '"',
-                    dimstr(self.cabs.filler_thickness) + '"') )
+                    thickness_str(self.cabs.filler_thickness) + '"') )
         result.append(
             'Doors:           {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_doors,
                 dimstr_col(self.cabs.door_width) + '"',
                 dimstr_col(self.cabs.door_height) + '"',
-                dimstr(self.cabs.door_thickness) + '"') )
+                thickness_str(self.cabs.door_thickness) + '"') )
         return result
 
     @property

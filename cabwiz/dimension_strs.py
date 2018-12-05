@@ -108,6 +108,41 @@ def dimstr_col(x):
     return sdalign( dimstr(x) )
 
 
+def thickness_str(x):
+    """Return a fractional inch string for the floating point thickness x.
+
+    This is similar to dimstr(x), but is intended to return values closer to the
+    common nominal thicknesses of panel materials. As such, the values are
+    rounded to the nearest common thickness value, usually to the nearest 1/4,
+    without the `strong' (+) or `shy' (-) indications.
+    """
+
+    n = 4          # 4 means an nth is one fourth
+
+    # x = nths / n    (In general, `nths' will NOT be an integral value.)
+    nths = x * n
+    # Separate the number of 'nths' into integral & fractional parts:
+    nths_frac, nths_int = math.modf(nths)
+    # Change nths_int/n into the mixed number `i nths_int/n':
+    #     from 5/4      to    1 1/4
+    #          nths_int/n     i nths_int/n
+    i, nths_int = divmod(int(nths_int), n)
+    lowernth_frac = Fraction(nths_int, n)
+    uppernth_frac = Fraction(nths_int + 1, n)
+
+    if nths_frac < 0.5:
+        result = lowerval_str(i, lowernth_frac)
+    elif nths_frac == 0.5:
+        # Exactly in the middle; round to the even value.
+        if is_even(nths_int):
+            result = lowerval_str(i, lowernth_frac)
+        else:
+            result = upperval_str(i, uppernth_frac)
+    else:
+        result = upperval_str(i, uppernth_frac)
+    return result
+
+
 # Implementation
 
 
