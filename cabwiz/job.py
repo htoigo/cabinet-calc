@@ -83,7 +83,7 @@ class Job:
             result += ( ', with two (2) ' + dimstr(self.cabs.filler_width)
                         + '" fillers.\n' )
         else:
-            raise ValueError('fillers is not neither, left, right, or both')
+            raise TypeError('fillers is not Ends.neither, .left, .right, or .both')
         return result
 
     @property
