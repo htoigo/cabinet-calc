@@ -102,12 +102,12 @@ class Job:
         result = []
         result.append('Primary Material:  ' + dimstr(self.cabs.prim_thickness)
                       + '" ' + self.cabs.prim_material)
-        # result.append('Primary thickness:  '
-        #               + dimstr(self.cabs.prim_thickness) + '"')
         result.append('Door Material:  ' + dimstr(self.cabs.door_thickness)
                       + '" ' + self.cabs.door_material)
-        # result.append('Door thickness:  '
-        #               + dimstr(self.cabs.door_thickness) + '"')
+        if self.cabs.bottom_thickness != self.cabs.prim_thickness:
+            result.append('Bottom Material:  '
+                          + dimstr(self.cabs.bottom_thickness) + '" '
+                          + self.cabs.prim_material)
         return result
 
     @property

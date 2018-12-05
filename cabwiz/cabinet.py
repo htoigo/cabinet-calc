@@ -79,14 +79,19 @@ prim_mat_default = 0
 # Door material defaults to Melamine.
 door_mat_default = 2
 
-# Dictionary of materials with default thickness for each in inches.
+# Dictionary of materials with default thicknesses for each in inches.
+
+# Each material has two default thicknesses: the default thickness generally
+# used for cabinet panels, and the default thickness for bottom panels when legs
+# will be attached, which need to be thicker than 3/4" so that the leg screws
+# can grab.
 
 # Note: these thicknesses must still be changeable to something else, as lots do
 # vary in thickness. For example, gray melamine lots are often 0.74" thick.
 
-matl_thicknesses = { 'Standard Plywood': 0.74
-                   , 'Marine-Grade Plywood': 0.75
-                   , 'Melamine': 0.76
+matl_thicknesses = { 'Standard Plywood': (0.74, 1.5)
+                   , 'Marine-Grade Plywood': (0.75, 1.5)
+                   , 'Melamine': (0.76, 1.0)
                    }
 
 
@@ -122,9 +127,11 @@ class Ends(Enum):
 
 def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
                 prim_material=materials[prim_mat_default],
-                prim_thickness=matl_thicknesses[materials[prim_mat_default]],
+                prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
                 door_material=materials[door_mat_default],
-                door_thickness=matl_thicknesses[materials[door_mat_default]],
+                door_thickness=matl_thicknesses[materials[door_mat_default]][0],
+                bottom_thickness=None,
+                has_legs=False,
                 topnailer_depth=4,
                 doortop_space=0.5, doorside_space_l=0.125,
                 doorside_space_m=0.125, doorside_space_r=0.125):
@@ -141,6 +148,7 @@ def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
     """
     return Run(fullwidth, height, depth, fillers, prim_material, prim_thickness,
                door_material, door_thickness,
+               bottom_thickness, has_legs,
                topnailer_depth, doortop_space, doorside_space_l,
                doorside_space_m, doorside_space_r)
 
@@ -166,19 +174,29 @@ class Run:
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
                  prim_material=materials[prim_mat_default],
-                 prim_thickness=matl_thicknesses[materials[prim_mat_default]],
+                 prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
                  door_material=materials[door_mat_default],
-                 door_thickness=matl_thicknesses[materials[door_mat_default]],
+                 door_thickness=matl_thicknesses[materials[door_mat_default]][0],
+                 bottom_thickness=None,
+                 has_legs=False,
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
+        self._has_legs = has_legs
         self.prim_material = prim_material
         self.prim_thickness = prim_thickness
         self.door_material = door_material
         self.door_thickness = door_thickness
+        if bottom_thickness is not None:
+            self.bottom_thickness = bottom_thickness
+        else:
+            if self.has_legs:
+                self.bottom_thickness = matl_thicknesses[self.prim_material][1]
+            else:
+                self.bottom_thickness = self.prim_thickness
         # fillers must be one of: Ends.neither, .left, .right, or .both.
         self.fillers = fillers
         self.topnailer_depth = topnailer_depth
@@ -229,6 +247,27 @@ class Run:
     def extra_width(self):
         """The extra space to be filled by fillers."""
         return self._fullwidth % self.num_cabinets
+
+    @property
+    def has_legs(self):
+        """True if the cabinet run will have legs, False otherwise."""
+        return self._has_legs
+
+    @has_legs.setter
+    def has_legs(self, value):
+        if self._has_legs != value:
+            self._has_legs = value
+            if self._has_legs:
+                # Just added legs; this requires a thicker bottom panel.
+                self.bottom_thickness = matl_thicknesses[self.prim_material][1]
+            else:
+                # Just removed legs; bottom thickness can be same as primary
+                # material thickness.
+                self.bottom_thickness = self.prim_thickness
+
+    @has_legs.deleter
+    def has_legs(self):
+        del self._has_legs
 
     @property
     def num_fillers(self):
@@ -310,11 +349,6 @@ class Run:
     def bottom_depth(self):
         """The depth (front to back) of a bottom panel."""
         return self.side_depth
-
-    @property
-    def bottom_thickness(self):
-        """The thickness of a bottom panel."""
-        return self.prim_thickness
 
     @property
     def num_sidepanels(self):

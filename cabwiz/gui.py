@@ -52,6 +52,23 @@ import cutlist
 from text import wrap
 
 
+def yn_to_bool(str):
+    """True if str is 'y' or 'yes', False if str is 'n' or 'no', else error.
+
+    String matching is case-insensitive.
+
+    We need the function yn_to_bool because the built-in function bool() does
+    not do what we want. For example, bool('no') returns True.
+    """
+    if str.lower() in ['y', 'yes']:
+        result = True
+    elif str.lower() in ['n', 'no']:
+        result = False
+    else:
+        raise ValueError('str is not one of "y", "yes", "n" or "no"')
+    return result
+
+
 class Application(ttk.Frame):
     """The application, which is the main content frame in the root window."""
     def __init__(self, root=None, title='Cabinet Wiz'):
@@ -74,7 +91,7 @@ class Application(ttk.Frame):
         self.prim_thickness = StringVar()
         self.door_material = StringVar()
         self.door_thickness = StringVar()
-        self.diff_btm_thickness = StringVar()
+        self.legs = StringVar()
         self.bottom_thickness = StringVar()
         self.doors_per_cab = IntVar()
         self.output = StringVar()
@@ -90,10 +107,10 @@ class Application(ttk.Frame):
         self.depth.set('')
         self.fillers.set('neither')
         self.prim_material.set(materials[prim_mat_default])
-        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()])
+        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.door_material.set(materials[door_mat_default])
-        self.door_thickness.set(matl_thicknesses[self.door_material.get()])
-        self.diff_btm_thickness.set('no')
+        self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
+        self.legs.set('no')
         self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
         self.output.set('No job yet.')
@@ -249,16 +266,18 @@ class Application(ttk.Frame):
                                 'and adjust value here accordingly.'
             ).grid(column=4, columnspan=2, row=4, sticky=N, padx=4, pady=(2,10))
 
-            bottom_thickness_chk = ttk.Checkbutton(
-                miscframe, text='Different Bottom Thickness:',
-                command=self.diff_btm_changed, variable=self.diff_btm_thickness,
+            legs_chk = ttk.Checkbutton(
+                miscframe, text='The cabinets will have legs.',
+                variable=self.legs, command=self.legs_changed,
                 onvalue='yes', offvalue='no').grid(
-                    column=1, columnspan=4, row=5, sticky=E, padx=4, pady=2)
+                    column=0, columnspan=3, row=5, sticky=W, padx=4, pady=2)
+            ttk.Label(miscframe, text='Bottom thickness:').grid(
+                column=3, row=5, sticky=E, padx=4, pady=2)
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
             self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=5, row=5, sticky=W, pady=2)
+            self.bottom_thickness_ent.grid(column=4, row=5, sticky=W, pady=2)
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
                 column=0, columnspan=2, row=6, sticky=W, padx=(0, 6), pady=(10, 2))
             drs_per_cab_rb1 = ttk.Radiobutton(
@@ -335,16 +354,19 @@ class Application(ttk.Frame):
         return result
 
     def prim_material_changed(self, e):
-        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()])
+        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
+        if self.legs.get() == 'yes':
+            self.bottom_thickness.set(matl_thicknesses[self.prim_material.get()][1])
 
     def door_material_changed(self, e):
-        self.door_thickness.set(matl_thicknesses[self.door_material.get()])
+        self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
         self.door_material_cbx.selection_clear()
 
-    def diff_btm_changed(self):
-        if self.diff_btm_thickness.get() == 'yes':
+    def legs_changed(self):
+        if self.legs.get() == 'yes':
             self.bottom_thickness_ent.state(['!disabled'])
+            self.bottom_thickness.set(matl_thicknesses[self.prim_material.get()][1])
         else:
             self.bottom_thickness.set('')
             self.bottom_thickness_ent.state(['disabled'])
@@ -362,14 +384,27 @@ class Application(ttk.Frame):
         self.output_lbl.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
-        cab_run = Run(float(self.fullwidth.get()),
-                      float(self.height.get()),
-                      float(self.depth.get()),
-                      fillers=Ends.from_string(self.fillers.get()),
-                      prim_material=self.prim_material.get(),
-                      prim_thickness=float(self.prim_thickness.get()),
-                      door_material=self.door_material.get(),
-                      door_thickness=float(self.door_thickness.get()))
+        if self.bottom_thickness.get() != '':
+            cab_run = Run(float(self.fullwidth.get()),
+                          float(self.height.get()),
+                          float(self.depth.get()),
+                          fillers=Ends.from_string(self.fillers.get()),
+                          prim_material=self.prim_material.get(),
+                          prim_thickness=float(self.prim_thickness.get()),
+                          door_material=self.door_material.get(),
+                          door_thickness=float(self.door_thickness.get()),
+                          bottom_thickness=float(self.bottom_thickness.get()),
+                          has_legs=yn_to_bool(self.legs.get()))
+        else:
+            cab_run = Run(float(self.fullwidth.get()),
+                          float(self.height.get()),
+                          float(self.depth.get()),
+                          fillers=Ends.from_string(self.fillers.get()),
+                          prim_material=self.prim_material.get(),
+                          prim_thickness=float(self.prim_thickness.get()),
+                          door_material=self.door_material.get(),
+                          door_thickness=float(self.door_thickness.get()),
+                          has_legs=yn_to_bool(self.legs.get()))
         if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())
