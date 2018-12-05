@@ -146,15 +146,15 @@ def get_parser():
                         help="generate a cutlist & save in FN.pdf",
                         metavar='FN',
                         type=str)
-    parser.add_argument("-ctl", "--ctopleft",
-                        help="countertop overhang left side",
-                        type=float)
-    parser.add_argument("-ctr", "--ctopright",
-                        help="countertop overhang right side",
-                        type=float)
-    parser.add_argument("-ctf", "--ctopfront",
-                        help="countertop overhang front side",
-                        type=float)
+    # parser.add_argument("-ctl", "--ctopleft",
+    #                     help="countertop overhang left side",
+    #                     type=float)
+    # parser.add_argument("-ctr", "--ctopright",
+    #                     help="countertop overhang right side",
+    #                     type=float)
+    # parser.add_argument("-ctf", "--ctopfront",
+    #                     help="countertop overhang front side",
+    #                     type=float)
     return parser
 
 
