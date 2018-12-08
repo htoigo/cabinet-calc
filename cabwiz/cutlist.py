@@ -46,7 +46,7 @@ from reportlab.graphics.shapes import (
     Drawing, Line, Rect, String, Group
     )
 
-from cabinet import Ends, door_hinge_gap
+from cabinet import Ends, door_hinge_gap, materials, matl_abbrevs
 import job
 from dimension_strs import dimstr, dimstr_col
 from text import (
@@ -794,13 +794,21 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67, boundsln_len))
     result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67, boundsln_len))
     if material is not None and thickness is not None:
-        matl_thick_str = String(
+        thick_str = String(
             rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
-            dimstr(thickness) + '"  ' + material[:3],
+            dimstr(thickness) + '"',
             textAnchor='end',
             fontSize=7
             )
-        result.add(matl_thick_str)
+        result.add(thick_str)
+        abbrev = matl_abbrevs[material]
+        matl_str = String(
+            rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8 - 8,
+            abbrev,
+            textAnchor='end',
+            fontSize=6 if len(abbrev) > 4 else 7
+            )
+        result.add(matl_str)
     return result
 
 
