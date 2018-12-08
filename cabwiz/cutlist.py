@@ -48,7 +48,7 @@ from reportlab.graphics.shapes import (
 
 from cabinet import Ends, door_hinge_gap
 import job
-from dimension_strs import dimstr, dimstr_col
+from dimension_strs import dimstr, dimstr_col, thickness_str
 from text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
     fixed_style
@@ -796,7 +796,7 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     if material is not None and thickness is not None:
         matl_thick_str = String(
             rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
-            dimstr(thickness) + '"  ' + material[:3],
+            thickness_str(thickness) + '"  ' + material[:3],
             textAnchor='end',
             fontSize=7
             )
