@@ -75,7 +75,7 @@ materials = [ 'Standard Plywood'        # default choice if none specified
 
 # Material abbreviations used where full names will not fit.
 matl_abbrevs = { 'Standard Plywood': 'PLY'
-               , 'Marine-Grade Plywood': 'MARPLY'
+               , 'Marine-Grade Plywood': 'MarPLY'
                , 'Melamine': 'MEL'
                }
 

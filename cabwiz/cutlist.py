@@ -45,6 +45,7 @@ from reportlab.platypus import (
 from reportlab.graphics.shapes import (
     Drawing, Line, Rect, String, Group
     )
+from reportlab.pdfbase.pdfmetrics import stringWidth
 
 from cabinet import Ends, door_hinge_gap, materials, matl_abbrevs
 import job
@@ -794,19 +795,29 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67, boundsln_len))
     result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67, boundsln_len))
     if material is not None and thickness is not None:
+        matl = matl_abbrevs[material]
+        # Default Graphics FontName is Times-Roman.
+        font_nm = 'Helvetica'
+        font_sz = 6    # 6 if len(matl) > 4 else 7
+        str_wd = stringWidth(matl, font_nm, font_sz)    # in points
+        rt_padding = min(6, (hdim_scaled - str_wd) / 2)
+        str_x = rx + hdim_scaled - rt_padding
+
+        thickn = dimstr(thickness) + '"'
         thick_str = String(
-            rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8,
-            dimstr(thickness) + '"',
+            str_x, ry + vdim_scaled - 7 - 8,
+            thickn,
             textAnchor='end',
+            fontName=font_nm,
             fontSize=7
             )
         result.add(thick_str)
-        abbrev = matl_abbrevs[material]
         matl_str = String(
-            rx + hdim_scaled - 6, ry + vdim_scaled - 7 - 8 - 8,
-            abbrev,
+            str_x, ry + vdim_scaled - 7 - 8 - 8,
+            matl,
             textAnchor='end',
-            fontSize=6 if len(abbrev) > 4 else 7
+            fontName=font_nm,
+            fontSize= 6
             )
         result.add(matl_str)
     return result
