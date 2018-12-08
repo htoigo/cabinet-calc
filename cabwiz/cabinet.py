@@ -73,6 +73,12 @@ materials = [ 'Standard Plywood'        # default choice if none specified
             , 'Melamine'
             ]
 
+# Material abbreviations used where full names will not fit.
+matl_abbrevs = { 'Standard Plywood': 'PLY'
+               , 'Marine-Grade Plywood': 'MarPLY'
+               , 'Melamine': 'MEL'
+               }
+
 # Primary material defaults to Standard Plywood.
 prim_mat_default = 0
 
