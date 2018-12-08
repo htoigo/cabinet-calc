@@ -808,7 +808,7 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
 
 
 def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
-    """Return thickness and material String objects for the given panel.
+    """Return thickness and material Strings to display on the given panel.
 
     Returns the two strings as a pair (thick_str, matl_str).
     """
