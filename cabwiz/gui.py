@@ -384,27 +384,18 @@ class Application(ttk.Frame):
         self.output_lbl.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
-        if self.bottom_thickness.get() != '':
-            cab_run = Run(float(self.fullwidth.get()),
-                          float(self.height.get()),
-                          float(self.depth.get()),
-                          fillers=Ends.from_string(self.fillers.get()),
-                          prim_material=self.prim_material.get(),
-                          prim_thickness=float(self.prim_thickness.get()),
-                          door_material=self.door_material.get(),
-                          door_thickness=float(self.door_thickness.get()),
-                          bottom_thickness=float(self.bottom_thickness.get()),
-                          has_legs=yn_to_bool(self.legs.get()))
-        else:
-            cab_run = Run(float(self.fullwidth.get()),
-                          float(self.height.get()),
-                          float(self.depth.get()),
-                          fillers=Ends.from_string(self.fillers.get()),
-                          prim_material=self.prim_material.get(),
-                          prim_thickness=float(self.prim_thickness.get()),
-                          door_material=self.door_material.get(),
-                          door_thickness=float(self.door_thickness.get()),
-                          has_legs=yn_to_bool(self.legs.get()))
+        cab_run = Run(float(self.fullwidth.get()),
+                      float(self.height.get()),
+                      float(self.depth.get()),
+                      fillers=Ends.from_string(self.fillers.get()),
+                      prim_material=self.prim_material.get(),
+                      prim_thickness=float(self.prim_thickness.get()),
+                      door_material=self.door_material.get(),
+                      door_thickness=float(self.door_thickness.get()),
+                      bottom_thickness=( float(self.bottom_thickness.get())
+                                         if self.bottom_thickness.get() != ''
+                                         else None ),
+                      has_legs=yn_to_bool(self.legs.get()))
         if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())

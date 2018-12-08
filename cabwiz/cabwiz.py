@@ -65,8 +65,12 @@ def start_cli(args):
     # Create a cabinet Run object which does all the calculating.
     cab_run = Run(args.fullwidth, args.height, args.depth,
                   fillers=args.fillers,
-                  prim_material=args.prim_matl, prim_thickness=args.prim_thick,
-                  door_material=args.door_matl, door_thickness=args.door_thick)
+                  prim_material=args.prim_matl,
+                  prim_thickness=args.prim_thick,
+                  door_material=args.door_matl,
+                  door_thickness=args.door_thick,
+                  bottom_thickness=args.bottom_thick,
+                  has_legs=args.legs)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -130,8 +134,7 @@ def get_parser():
     parser.add_argument("-pt", "--prim_thick",
                         help="primary thickness",
                         metavar='TH',
-                        type=float,
-                        default=matl_thicknesses[materials[prim_mat_default]])
+                        type=float)
     parser.add_argument("-dm", "--door_matl",
                         help="door material name",
                         metavar='MTL',

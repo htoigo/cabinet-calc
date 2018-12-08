@@ -168,15 +168,32 @@ def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
 class Run:
     """A class representing a single run of cabinets.
 
+    Args:
+        fullwidth: Full bank width available for all cabinets combined.
+        height: The height from toe kick to top of cabinets.
+        depth: Depth from front to back, including the door.
+        fillers: Which ends will have filler panels.
+        prim_material: Primary material name.
+        prim_thickness: Primary material thickness.
+            Defaults to the standard thickness of the primary material.
+        door_material: Door material name.
+        door_thickness: Door material thickness.
+            Defaults to standard thickness of the chosen door material.
+        bottom_thickness: Bottom panel thickness, if different from others.
+            Defaults to the primary material thickness if the cabinets will not
+            have legs, or to the increased thickness of the chosen primary
+            material if they will have legs.
+        has_legs: True if the cabinets will have legs.
+
     At the moment this class assumes that there are exactly two doors per
     cabinet, as does all code in this module. We may change this later to
     allow single-door cabinets, but that will require a lot of changes.
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
                  prim_material=materials[prim_mat_default],
-                 prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
+                 prim_thickness=None,
                  door_material=materials[door_mat_default],
-                 door_thickness=matl_thicknesses[materials[door_mat_default]][0],
+                 door_thickness=None,
                  bottom_thickness=None,
                  has_legs=False,
                  topnailer_depth=4,
@@ -187,9 +204,15 @@ class Run:
         self._depth = depth
         self._has_legs = has_legs
         self.prim_material = prim_material
-        self.prim_thickness = prim_thickness
+        if prim_thickness is not None:
+            self.prim_thickness = prim_thickness
+        else:
+            self.prim_thickness = matl_thicknesses[self.prim_material][0]
         self.door_material = door_material
-        self.door_thickness = door_thickness
+        if door_thickness is not None:
+            self.door_thickness = door_thickness
+        else:
+            self.door_thickness = matl_thicknesses[self.door_material][0]
         if bottom_thickness is not None:
             self.bottom_thickness = bottom_thickness
         else:
