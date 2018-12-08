@@ -766,6 +766,8 @@ def panels_table(job):
 def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
                   material=None, thickness=None):
     """Create an individual panel Drawing of the named panel."""
+
+    # Calculate the width and height of the panel rectangle in points.
     hdim_scaled = hdim * inch * scale
     vdim_scaled = vdim * inch * scale
     # We might need 36 pts of space on left of rectangle to be safe,
@@ -784,6 +786,7 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
              strokeWidth=0.75
              )
         )
+    # Add the panel name to the top of the drawing.
     result.add(
         String(rx + hdim_scaled / 2,
                ry + vdim_scaled + 4,
@@ -794,33 +797,46 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     boundsln_len = 10
     result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67, boundsln_len))
     result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67, boundsln_len))
-    if material is not None and thickness is not None:
-        matl = matl_abbrevs[material]
-        # Default Graphics FontName is Times-Roman.
-        font_nm = 'Helvetica'
-        font_sz = 6    # 6 if len(matl) > 4 else 7
-        str_wd = stringWidth(matl, font_nm, font_sz)    # in points
-        rt_padding = min(6, (hdim_scaled - str_wd) / 2)
-        str_x = rx + hdim_scaled - rt_padding
 
-        thickn = dimstr(thickness) + '"'
-        thick_str = String(
-            str_x, ry + vdim_scaled - 7 - 8,
-            thickn,
-            textAnchor='end',
-            fontName=font_nm,
-            fontSize=7
+    if material is not None and thickness is not None:
+        thick_str, matl_str = matl_thick_strs(
+            material, thickness, rx, ry, hdim_scaled, vdim_scaled
             )
         result.add(thick_str)
-        matl_str = String(
-            str_x, ry + vdim_scaled - 7 - 8 - 8,
-            matl,
-            textAnchor='end',
-            fontName=font_nm,
-            fontSize= 6
-            )
         result.add(matl_str)
     return result
+
+
+def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
+    """Return thickness and material String objects for the given panel.
+
+    Returns the two strings as a pair (thick_str, matl_str).
+    """
+    thickn = dimstr(thickness) + '"'
+    matl = matl_abbrevs[material]
+    font_nm = 'Helvetica'      # Default Graphics FontName is Times-Roman
+    thick_font_sz = 7
+    matl_font_sz = 6           # 6 if len(matl) > 4 else 7
+    # Find the material string width in points.
+    str_width = stringWidth(matl, font_nm, matl_font_sz)
+    rt_padding = min(6, (rect_width - str_width) / 2)
+    str_x = rx + rect_width - rt_padding
+
+    thick_str = String(
+        str_x, ry + rect_ht - 7 - 8,
+        thickn,
+        textAnchor='end',
+        fontName=font_nm,
+        fontSize=thick_font_sz
+        )
+    matl_str = String(
+        str_x, ry + rect_ht - 7 - 8 - 8,
+        matl,
+        textAnchor='end',
+        fontName=font_nm,
+        fontSize= matl_font_sz
+        )
+    return (thick_str, matl_str)
 
 
 # cutlist.py ends here
