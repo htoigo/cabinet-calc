@@ -140,10 +140,16 @@ def get_parser():
     parser.add_argument("-dt", "--door_thick",
                         help="door thickness",
                         metavar='TH',
-                        type=float,
-                        default=matl_thicknesses[materials[door_mat_default]])
+                        type=float)
+    parser.add_argument("-l", "--legs",
+                        help="add cabinet legs",
+                        action="store_true")
+    parser.add_argument("-bt","--bottom_thick",
+                        help="bottom thickness, if different from other panels",
+                        metavar='TH',
+                        type=float)
     parser.add_argument("-c", "--cutlist",
-                        help="generate a cutlist & save in FN.pdf",
+                        help="generate cutlist & save in FN.pdf",
                         metavar='FN',
                         type=str)
     # parser.add_argument("-ctl", "--ctopleft",
