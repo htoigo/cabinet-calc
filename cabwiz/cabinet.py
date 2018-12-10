@@ -52,8 +52,11 @@ to be cut, an isometric view of a single cabinet, with all diagrams to scale.
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
+
 import math
 from enum import Enum
+from dimension_strs import thickness_str
+
 
 # Module constants
 
@@ -360,7 +363,12 @@ class Run:
     @property
     def num_bottompanels(self):
         """The number of bottom panels needed for this run."""
-        return self.num_cabinets
+        if thickness_str(self.bottom_thickness) == '1 1/2':
+            # To get to a thickness of 1 1/2", we need to stack 2 3/4" panels.
+            result = 2 * self.num_cabinets
+        else:
+            result = self.num_cabinets
+        return result
 
     @property
     def bottom_width(self):

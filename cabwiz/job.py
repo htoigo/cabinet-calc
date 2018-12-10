@@ -104,11 +104,13 @@ class Job:
                       + '" ' + self.cabs.prim_material)
         result.append('Door Material:  ' + thickness_str(self.cabs.door_thickness)
                       + '" ' + self.cabs.door_material)
-        if ( thickness_str(self.cabs.bottom_thickness)
-             != thickness_str(self.cabs.prim_thickness) ):
-            result.append('Bottom Material:  '
-                          + thickness_str(self.cabs.bottom_thickness) + '" '
-                          + self.cabs.prim_material)
+        btm_thick_str = thickness_str(self.cabs.bottom_thickness)
+        if ( btm_thick_str != thickness_str(self.cabs.prim_thickness) ):
+            btm_mat_str = ( 'Bottom Material:  '
+                            + btm_thick_str + '" '
+                            + self.cabs.prim_material
+                            + (' Stacked' if btm_thick_str == '1 1/2' else '') )
+            result.append(btm_mat_str)
         return result
 
     @property
@@ -135,7 +137,9 @@ class Job:
                 self.cabs.num_bottompanels,
                 dimstr_col(self.cabs.bottom_width) + '"',
                 dimstr_col(self.cabs.bottom_depth) + '"',
-                thickness_str(self.cabs.bottom_thickness) + '"') )
+                ( thickness_str(self.cabs.bottom_thickness / 2)
+                  if thickness_str(self.cabs.bottom_thickness) == '1 1/2'
+                  else thickness_str(self.cabs.bottom_thickness) ) + '"') )
         result.append(
             'Side Panels:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_sidepanels,
