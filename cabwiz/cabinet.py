@@ -92,9 +92,9 @@ door_mat_default = 2
 # Note: these thicknesses must still be changeable to something else, as lots do
 # vary in thickness. For example, gray melamine lots are often 0.74" thick.
 
-matl_thicknesses = { 'Standard Plywood': (0.74, 1.5)
-                   , 'Marine-Grade Plywood': (0.75, 1.5)
-                   , 'Melamine': (0.76, 1.0)
+matl_thicknesses = { 'Standard Plywood': (0.74, [0.74, 0.74])
+                   , 'Marine-Grade Plywood': (0.75, [0.75, 0.75])
+                   , 'Melamine': (0.76, [1.0])
                    }
 
 
@@ -177,15 +177,15 @@ class Run:
         depth: Depth from front to back, including the door.
         fillers: Which ends will have filler panels.
         prim_material: Primary material name.
-        prim_thickness: Primary material thickness.
+        prim_thickness: Primary material thickness (float).
             Defaults to the standard thickness of the primary material.
         door_material: Door material name.
-        door_thickness: Door material thickness.
+        door_thickness: Door material thickness (float).
             Defaults to standard thickness of the chosen door material.
-        bottom_thickness: Bottom panel thickness, if different from others.
-            Defaults to the primary material thickness if the cabinets will not
-            have legs, or to the increased thickness of the chosen primary
-            material if they will have legs.
+        btmpanel_thicknesses: List of bottom panel thicknesses, in order from
+            top to bottom. Defaults to a singleton list containing the primary
+            material thickness, if the cabinets will not have legs attached, or
+            if they will, to the list of stacked panels for the primary material.
         has_legs: True if the cabinets will have legs.
 
     At the moment this class assumes that there are exactly two doors per
@@ -197,7 +197,7 @@ class Run:
                  prim_thickness=None,
                  door_material=materials[door_mat_default],
                  door_thickness=None,
-                 bottom_thickness=None,
+                 btmpanel_thicknesses=None,
                  has_legs=False,
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
@@ -216,13 +216,13 @@ class Run:
             self.door_thickness = door_thickness
         else:
             self.door_thickness = matl_thicknesses[self.door_material][0]
-        if bottom_thickness is not None:
-            self.bottom_thickness = bottom_thickness
+        if btmpanel_thicknesses is not None:
+            self.btmpanel_thicknesses = btmpanel_thicknesses
         else:
             if self.has_legs:
-                self.bottom_thickness = matl_thicknesses[self.prim_material][1]
+                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
             else:
-                self.bottom_thickness = self.prim_thickness
+                self.btmpanel_thicknesses = [self.prim_thickness]
         # fillers must be one of: Ends.neither, .left, .right, or .both.
         self.fillers = fillers
         self.topnailer_depth = topnailer_depth
@@ -361,14 +361,35 @@ class Run:
         return self.prim_thickness
 
     @property
+    def btmpanels_per_cab(self):
+        return len(self.btmpanel_thicknesses)
+
+    @property
+    def bottom_stacked(self):
+        return (self.btmpanels_per_cab > 1)
+
+    @property
     def num_bottompanels(self):
-        """The number of bottom panels needed for this run."""
-        if thickness_str(self.bottom_thickness) == '1 1/2':
-            # To get to a thickness of 1 1/2", we need to stack 2 3/4" panels.
-            result = 2 * self.num_cabinets
+        """The number of bottom panels needed for the entire run."""
+        return (self.btmpanels_per_cab * self.num_cabinets)
+
+    @property
+    def bottom_thickness(self):
+        """The total thickness of all bottom panels used in a single cabinet."""
+        return sum(self.btmpanel_thicknesses)
+
+    @bottom_thickness.setter
+    def bottom_thickness(self, value):
+        if value > 0.375 and value < 1.375:
+            self.btmpanel_thicknesses = [value]
+        elif value < 1.625:
+            self.btmpanel_thicknesses = [0.75, 0.75]
+        elif value < 1.875:
+            self.btmpanel_thicknesses = [0.75, 1.0]
+        elif value < 2.125:
+            self.btmpanel_thicknesses = [1.0, 1.0]
         else:
-            result = self.num_cabinets
-        return result
+            raise ValueError('bottom thickness is not between 1/2" and 2"')
 
     @property
     def bottom_width(self):
