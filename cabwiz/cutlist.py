@@ -153,12 +153,30 @@ def content(job):
         result.append(Paragraph(line, normal_style))
     result.append(isometric_view(job))
     result.append(FrameBreak())
-
     result.append(panels_table(job))
     result.append(Paragraph('Parts List:', heading_style))
     for line in job.partslist:
         result.append(XPreformatted(line, fixed_style))
+
+        
+    for line in job.toekickinfo:
+        result.append(Paragraph(line, normal_style))
+    result.append(Spacer(1, 10))
     return result
+
+    #for line in job.cabinfo:
+    #    result.append(Paragraph(line, normal_style))
+    #result.append(Spacer(1, 10))
+    #for line in job.materialinfo:
+    #    result.append(Paragraph(line, normal_style))
+    ##result.append(isometric_view(job))
+    #result.append(FrameBreak())
+
+    #result.append(panels_table(job))
+    #result.append(Paragraph('Parts List:', heading_style))
+    #for line in job.partslist:
+    #    result.append(XPreformatted(line, fixed_style))
+    
 
 
 def hdr_table(job):
@@ -368,9 +386,8 @@ def isometric_view(job):
     result.add(arr)
     return result
 
-  def elevation_view(job):
-
-    elevationLines = [
+def elevation_view(job):
+      elevationLines = [
 
         # Front view of full cabinet run
 

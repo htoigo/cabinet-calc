@@ -76,7 +76,9 @@ materials = ( 'Plywood'
 def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
                 matl_thickness=0.75, topnailer_depth=4, door_thickness=0.75,
                 doortop_space=0.5, doorside_space_l=0.125,
-                doorside_space_m=0.125, doorside_space_r=0.125):
+                doorside_space_m=0.125, doorside_space_r=0.125,
+                toekick_material='Plywood', toekick_height=6,
+                toekick_inset=3):
     """Construct a (single) :class:`Run <Run>` of cabinets.
 
     :param fullwidth: Total wall width for this run of cabinets.
@@ -90,7 +92,8 @@ def cabinet_run(fullwidth, height, depth, num_fillers=0, material='Plywood',
     """
     return Run(fullwidth, height, depth, num_fillers, material, matl_thickness,
                topnailer_depth, door_thickness, doortop_space, doorside_space_l,
-               doorside_space_m, doorside_space_r)
+               doorside_space_m, doorside_space_r, toekick_material,
+               toekick_height, toekick_inset)
 
 
 # Should we expose the following functions for ad hoc use?
@@ -332,17 +335,17 @@ class Run:
         height = self.cabinet_height - self.doortop_space
         return height
 
-    #@property
-    #def toekick_material(self)
-    #    return tk_material'''
+   # @property
+   # def toekick_material(self):
+   #     return tk_material
     
-    #@property
-    #def toekick_height(self):
-    #    return tk_height'''
+   # @property
+   # def toekick_height(self):
+   #     return tk_height
 
-    #@property
-    #def toekick_inset(self):
-    #    return tk_inset'''
+   # @property
+   # def toekick_inset(self):
+   #     return tk_inset
 
     
 # cabinet.py ends here

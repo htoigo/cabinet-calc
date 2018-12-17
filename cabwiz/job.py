@@ -104,12 +104,22 @@ class Job:
         return result
 
     @property
+    def toekickinfo(self):
+        """A list of strings."""
+        result = []
+        result.append('Material:  ' + self.cabs.toekick_material)
+        result.append('Material thickness:  '
+                      + dimstr(self.cabs.matl_thickness) + '"')
+        return result
+
+    @property
     def overview(self):
         result = []
         # result.append('Overview:\n')
         result.append(self.summaryln)
         result.extend(self.cabinfo)
         result.extend(self.materialinfo)
+        result.extend(self.toekickinfo)
         return result
 
     @property
