@@ -40,7 +40,7 @@ from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import (
     BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, FrameBreak,
-    Table, TableStyle, XPreformatted
+    Table, TableStyle, XPreformatted, NextPageTemplate, PageBreak
     )
 from reportlab.graphics.shapes import (
     Drawing, Line, Rect, String, Group
@@ -83,11 +83,13 @@ def save_cutlist(fname, job):
                           creator='Cabinet Wiz version 0.1',
                           showBoundary=0
                           )
-    frameHdr, frameL, frameR = makeframes(doc)
+    frameHdr, frameL, frameR = mkframes_twoCol(doc)
+    frameHdr, frameT, frameB = mkframes_oneCol(doc)
     doc.addPageTemplates(
-        [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
-                      onPage=all_pages
-                      )
+        [ PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
+                       onPage=all_pages)
+        , PageTemplate(id='oneCol', frames=[frameHdr, frameT, frameB],
+                       onPage=all_pages)
         ]
     )
     # Construct the cutlist content--i.e., the `elements' list of Flowables
@@ -106,8 +108,11 @@ def pdf_ify(fname):
     return result
 
 
-def makeframes(doc):
-    """Return (frameHdr, frameL, frameR), given the document template."""
+def mkframes_twoCol(doc):
+    """Return (frameHdr, frameL, frameR), given the document template.
+
+    Used for page one of the cutlist.
+    """
     hdr_ht = 60           # pts
     hdr_spc_after = 12    # pts
     frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
@@ -125,6 +130,28 @@ def makeframes(doc):
                    rtcol_width, col_ht, id='col2'
                    )
     return (frameHdr, frameL, frameR)
+
+
+def mkframes_oneCol(doc):
+    """Return (frameHdr, frameT, frameB), given the document template.
+
+    Used for page two of the cutlist.
+    """
+    hdr_ht = 60           # pts
+    hdr_spc_after = 12    # pts
+    frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
+                     doc.width, hdr_ht, id='hdr'
+                     )
+    # Two body frames, extending across the entire page, one above the other.
+    interfrm_spc = 24     # pts
+    body_ht = doc.height - (hdr_ht + hdr_spc_after)
+    topfrm_ht = (body_ht - interfrm_spc) * 0.5
+    btmfrm_ht = (body_ht - interfrm_spc) * 0.5
+    frameT = Frame(doc.leftMargin, doc.bottomMargin + btmfrm_ht + interfrm_spc,
+                   doc.width, topfrm_ht, id='bodyTop')
+    frameB = Frame(doc.leftMargin, doc.bottomMargin,
+                   doc.width, btmfrm_ht, id='bodyBtm')
+    return (frameHdr, frameT, frameB)
 
 
 def all_pages(canvas, doc):
@@ -154,14 +181,30 @@ def content(job):
     result.append(isometric_view(job))
     result.append(FrameBreak())
     result.append(panels_table(job))
+    result.append(NextPageTemplate('oneCol'))
     result.append(Paragraph('Parts List:', heading_style))
     for line in job.partslist:
         result.append(XPreformatted(line, fixed_style))
 
-        
+    result.append(PageBreak())    # If this doesn't work, use FrameBreak(), below.
+    # result.append(FrameBreak())
+
+    # Begin page two.
+    result.append(hdr_table(job))
+    result.append(FrameBreak())
+
+    # Elevation
+    result.append(Paragraph('Elevation:', heading_style))
+    # TODO: append elevation text and drawing here.
+    result.append(FrameBreak())
+
+    # Toekick details
+    result.append(Paragraph('Toe Kick:', heading_style))
+    # TODO: append toekick text and drawings here.
     for line in job.toekickinfo:
         result.append(Paragraph(line, normal_style))
     result.append(Spacer(1, 10))
+
     return result
 
     #for line in job.cabinfo:
