@@ -81,7 +81,7 @@ def save_cutlist(fname, job):
                           subject='Cabinet Wiz Cutlist Report',
                           #TODO: Get version below from program source
                           creator='Cabinet Wiz version 0.1',
-                          showBoundary=0
+                          showBoundary=1
                           )
     frameHdr, frameL, frameR = mkframes_twoCol(doc)
     frameHdr, frameT, frameB = mkframes_oneCol(doc)
@@ -186,8 +186,7 @@ def content(job):
     for line in job.partslist:
         result.append(XPreformatted(line, fixed_style))
 
-    result.append(PageBreak())    # If this doesn't work, use FrameBreak(), below.
-    # result.append(FrameBreak())
+    result.append(PageBreak())
 
     # Begin page two.
     result.append(hdr_table(job))
