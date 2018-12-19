@@ -282,28 +282,28 @@ class Application(ttk.Frame):
                 column=2, row=5, sticky=W, padx=4, pady=2)
             ttk.Label(miscframe, text='Bottom:').grid(
                 column=0, row=6, sticky=W, padx=(0, 2), pady=2)
-            ttk.Label(miscframe, text='Same as primary material above.').grid(
+            ttk.Label(miscframe, text='Same as primary material.').grid(
                 column=1, row=6, sticky=W, padx=2, pady=2)
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
             self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=4, row=6, sticky=W, pady=2)
+            self.bottom_thickness_ent.grid(column=2, row=6, sticky=W, pady=2)
             ttk.Label(miscframe, text='Top Panel:').grid(
-                column=0, row=7, sticky=E, padx=(10, 2), pady=2)
+                column=0, row=7, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel1_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel1_thickness, width=6
             )
             self.btmpanel1_thickness_ent.state(['disabled'])
-            self.btmpanel1_thickness_ent.grid(column=4, row=7, sticky=W, pady=2)
+            self.btmpanel1_thickness_ent.grid(column=2, row=7, sticky=W, pady=2)
 
             ttk.Label(miscframe, text='Bottom Panel:').grid(
-                column=0, row=8, sticky=E, padx=(10, 2), pady=2)
+                column=0, row=8, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel2_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel2_thickness, width=6
             )
             self.btmpanel2_thickness_ent.state(['disabled'])
-            self.btmpanel2_thickness_ent.grid(column=4, row=8, sticky=W, pady=2)
+            self.btmpanel2_thickness_ent.grid(column=2, row=8, sticky=W, pady=2)
 
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
                 column=0, columnspan=2, row=9, sticky=W, padx=(0, 6), pady=(10, 2))
