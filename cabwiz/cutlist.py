@@ -81,7 +81,7 @@ def save_cutlist(fname, job):
                           subject='Cabinet Wiz Cutlist Report',
                           #TODO: Get version below from program source
                           creator='Cabinet Wiz version 0.1',
-                          showBoundary=0
+                          showBoundary=1
                           )
     frameHdr, frameL, frameR = mkframes_twoCol(doc)
     frameHdr, frameT, frameB = mkframes_oneCol(doc)
