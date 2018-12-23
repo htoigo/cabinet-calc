@@ -186,8 +186,7 @@ def content(job):
     for line in job.partslist:
         result.append(XPreformatted(line, fixed_style))
 
-    result.append(PageBreak())    # If this doesn't work, use FrameBreak(), below.
-    # result.append(FrameBreak())
+    result.append(PageBreak())
 
     # Begin page two.
     result.append(hdr_table(job))
