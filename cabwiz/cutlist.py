@@ -194,9 +194,8 @@ def content(job):
 
     # Elevation
     result.append(Paragraph('Elevation:', heading_style))
-    # TODO: append elevation text and drawing here.
-    for line in job.elevationinfo:
-        result.append(Paragraph(line, normal_style))
+    #for line in job.elevationinfo:
+    #    result.append(Paragraph(line, normal_style))
     result.append(elevation_view(job))
     result.append(FrameBreak())
 
@@ -459,7 +458,7 @@ def elevation_view(job):
     elevationLines_scaled = [
         (coord * default_iso_scale for coord in line) for line in elevationLines_pts
         ]
-    result = Drawing(635, 173)
+    result = Drawing(300, 173)
     for line in elevationLines_scaled:
         result.add(Line(*line, strokeWidth=0.5))
     return result
