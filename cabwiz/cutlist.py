@@ -195,6 +195,9 @@ def content(job):
     # Elevation
     result.append(Paragraph('Elevation:', heading_style))
     # TODO: append elevation text and drawing here.
+    for line in job.elevationinfo:
+        result.append(Paragraph(line, normal_style))
+    result.append(elevation_view(job))
     result.append(FrameBreak())
 
     # Toekick details
@@ -364,10 +367,11 @@ def isometric_view(job):
          iso45 + job.cabs.cabinet_width, iso45 + job.cabs.cabinet_height),
 
         # iso upper right angle inner
-        (job.cabs.cabinet_width - job.cabs.matl_thickness, job.cabs.cabinet_height,
+        (job.cabs.cabinet_width - job.cabs.matl_thickness,
+         job.cabs.cabinet_height,
          job.cabs.cabinet_width + iso45 - job.cabs.matl_thickness*2,
-         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),          
-
+         job.cabs.cabinet_height + iso45 - job.cabs.matl_thickness),
+        
         # iso lower right angle
         (job.cabs.cabinet_width, 0,
          iso45 + job.cabs.cabinet_width, iso45),
@@ -378,13 +382,15 @@ def isometric_view(job):
         (0, 0, job.cabs.cabinet_width, 0),
 
         # Horizontal top line
-        (0, job.cabs.cabinet_height, job.cabs.cabinet_width, job.cabs.cabinet_height),
+        (0, job.cabs.cabinet_height,
+         job.cabs.cabinet_width, job.cabs.cabinet_height),
 
         # Vertical left line
         (0, 0, 0, job.cabs.cabinet_height),
 
         # Vertical right line
-        (job.cabs.cabinet_width, 0, job.cabs.cabinet_width, job.cabs.cabinet_height)
+        (job.cabs.cabinet_width, 0,
+         job.cabs.cabinet_width, job.cabs.cabinet_height)
     ]
     isoLines_pts = [inches_to_pts(line) for line in isoLines]
     isoLines_scaled = [
@@ -429,13 +435,13 @@ def isometric_view(job):
     return result
 
 def elevation_view(job):
-      elevationLines = [
+    elevationLines = [
 
         # Front view of full cabinet run
 
         # Horizontal bottom line
-        (0, job.cab.toekick_height,
-         job.cabs.fullwidth, job.cab.toekick_height),
+        (0, job.cabs.toekick_height,
+         job.cabs.fullwidth, job.cabs.toekick_height),
 
         # Horizontal top line
         (0, job.cabs.cabinet_height + job.cabs.toekick_height,
@@ -448,13 +454,22 @@ def elevation_view(job):
         # Vertical right line
         (job.cabs.fullwidth, job.cabs.toekick_height,
          job.cabs.fullwidth, job.cabs.cabinet_height + job.cabs.toekick_height),
+        ]
+    elevationLines_pts = [inches_to_pts(line) for line in elevationLines]
+    elevationLines_scaled = [
+        (coord * default_iso_scale for coord in line) for line in elevationLines_pts
+        ]
+    result = Drawing(635, 173)
+    for line in elevationLines_scaled:
+        result.add(Line(*line, strokeWidth=0.5))
+    return result
 
-        '''Need to add vertical lines showing cabinet divisions (side walls)
+    '''Need to add vertical lines showing cabinet divisions (side walls)
             and maybe add doors. Not sure on adding doors. Also need to add
             toekick drawing or incorporate basic rectangle or legs from
             added drawing code'''
 
-        ]
+        
 
 def toekick_view(job):
 

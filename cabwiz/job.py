@@ -104,6 +104,14 @@ class Job:
         return result
 
     @property
+    def elevationinfo(self):
+        """Information regarding the elevation drawing section"""
+        result = []
+        result.append('Number of cabinets needed: '
+                      + str(self.cabs.num_cabinets))
+        return result
+
+    @property
     def toekickinfo(self):
         """A list of strings."""
         result = []
@@ -119,6 +127,7 @@ class Job:
         result.append(self.summaryln)
         result.extend(self.cabinfo)
         result.extend(self.materialinfo)
+        result.extend(self.elevationinfo)
         result.extend(self.toekickinfo)
         return result
 
