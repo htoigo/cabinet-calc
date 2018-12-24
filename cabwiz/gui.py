@@ -223,9 +223,19 @@ class Application(ttk.Frame):
                                 column=5, row=0, sticky=W, padx=3, pady=2)
 
             ttk.Label(miscframe, text='Material choices:').grid(
-                column=0, columnspan=2, row=1, sticky=W, padx=(0, 2), pady=2)
-            ttk.Label(miscframe, text='Thickness:').grid(
-                column=2, row=1, sticky=W, padx=4, pady=2)
+                column=0, columnspan=2, row=1, sticky=(N, W), padx=(0, 2), pady=2)
+            ttk.Label(
+                miscframe,
+                text='Thickness:\n'
+                     'Please check actual material thickness'
+                     ' and adjust values below accordingly.').grid(
+                    column=2, columnspan=4, row=1, sticky=W, padx=4, pady=2
+                    )
+
+            # ttk.Label(
+            #     miscframe, text='Please check actual material thickness\n'
+            #                     'and adjust value here accordingly.'
+            # ).grid(column=4, columnspan=2, row=4, sticky=N, padx=4, pady=(2,10))
 
             ttk.Label(miscframe, text='Primary:').grid(
                 column=0, row=2, sticky=W, padx=(0, 2), pady=2)
@@ -241,9 +251,9 @@ class Application(ttk.Frame):
             self.prim_material_cbx.bind('<<ComboboxSelected>>',
                                         self.prim_material_changed)
             self.prim_material_cbx.grid(column=1, columnspan=2, row=2,
-                                        sticky=W, padx=(6, 0), pady=2)
+                                        sticky=W, padx=(6, 3), pady=2)
             ttk.Entry(miscframe, textvariable=self.prim_thickness,
-                      width=6).grid(column=2, row=2, sticky=W, pady=2)
+                      width=6).grid(column=2, row=2, sticky=W, padx=3, pady=2)
 
             ttk.Label(miscframe, text='Door:').grid(
                 column=0, row=3, sticky=W, padx=(0, 2), pady=2)
@@ -259,27 +269,25 @@ class Application(ttk.Frame):
             self.door_material_cbx.bind('<<ComboboxSelected>>',
                                         self.door_material_changed)
             self.door_material_cbx.grid(column=1, columnspan=2, row=3,
-                                        sticky=W, padx=(6, 0), pady=2)
+                                        sticky=W, padx=(6, 3), pady=2)
 
             # ttk.Label(miscframe, text='Thickness:').grid(
             #     column=4, row=3, sticky=E, padx=4, pady=2)
             ttk.Entry(miscframe, textvariable=self.door_thickness,
-                      width=6).grid(column=2, row=3, sticky=W, pady=2)
-
-            ttk.Label(
-                miscframe, text='Please check actual material thickness\n'
-                                'and adjust value here accordingly.'
-            ).grid(column=4, columnspan=2, row=4, sticky=N, padx=4, pady=(2,10))
+                      width=6).grid(column=2, row=3, sticky=W, padx=3, pady=2)
 
             legs_chk = ttk.Checkbutton(
-                miscframe, text='The cabinets will have legs.',
+                miscframe, text=(
+                    'The cabinets will have legs.\n'
+                    'Mounting legs requires bottoms to be greater than 3/4"'
+                    ' thick so that leg mounting screws will grab.'),
                 variable=self.legs, command=self.legs_changed,
                 onvalue='yes', offvalue='no').grid(
                     column=0, columnspan=3, row=5, sticky=W, padx=4, pady=2)
-            ttk.Label(miscframe,
-                      text='Mounting legs requires bottoms to be greater than\n'
-                           '3/4" thick so that leg mounting screws will grab.').grid(
-                column=2, row=5, sticky=W, padx=4, pady=2)
+            # ttk.Label(miscframe,
+            #           text='Mounting legs requires bottoms to be greater than\n'
+            #                '3/4" thick so that leg mounting screws will grab.').grid(
+            #     column=2, row=5, sticky=W, padx=4, pady=2)
             ttk.Label(miscframe, text='Bottom:').grid(
                 column=0, row=6, sticky=W, padx=(0, 2), pady=2)
             ttk.Label(miscframe, text='Same as primary material.').grid(
