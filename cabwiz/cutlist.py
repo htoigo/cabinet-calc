@@ -61,7 +61,8 @@ debug = False
 
 default_iso_scale = 1 / 16
 default_panel_scale = 1 / 32
-
+default_elevation_scale = '''shrink to fit cabinet runs that are wider than page
+    keep regular scale for runs shorter than width of page'''
 
 def landscape(pagesize):
     """Return pagesize in landscape mode (with width and height reversed)."""
@@ -194,8 +195,8 @@ def content(job):
 
     # Elevation
     result.append(Paragraph('Elevation:', heading_style))
-    #for line in job.elevationinfo:
-    #    result.append(Paragraph(line, normal_style))
+    for line in job.elevationinfo:
+        result.append(Paragraph(line, normal_style))
     result.append(elevation_view(job))
     result.append(FrameBreak())
 
@@ -433,6 +434,19 @@ def isometric_view(job):
     result.add(arr)
     return result
 
+def elevation_scale(job):
+    
+    page_points_available = 280 #300 points alloted on elevation drawing width
+
+    if job.cabs.fullwidth >= 280:
+        neg_points_reduced = page_points_available - job.cabs.fullwidth
+        scale_reduced = float(neg_points_reduced / job.cabs.fullwidth) * -1
+        elevation_scale = float(1 - scale_reduced)
+    else:
+        elevation_scale = default_iso_scale
+    return result
+        
+    
 def elevation_view(job):
     elevationLines = [
 
@@ -456,9 +470,9 @@ def elevation_view(job):
         ]
     elevationLines_pts = [inches_to_pts(line) for line in elevationLines]
     elevationLines_scaled = [
-        (coord * default_iso_scale for coord in line) for line in elevationLines_pts
+        (coord * float(elevation_scale) for coord in line) for line in elevationLines_pts
         ]
-    result = Drawing(300, 173)
+    result = Drawing(300, 50)
     for line in elevationLines_scaled:
         result.add(Line(*line, strokeWidth=0.5))
     return result
