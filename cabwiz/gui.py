@@ -95,6 +95,7 @@ class Application(ttk.Frame):
         self.bottom_thickness = StringVar()
         self.btmpanel1_thickness = StringVar()
         self.btmpanel2_thickness = StringVar()
+        self.stacked_btm = StringVar()
         self.doors_per_cab = IntVar()
         self.output = StringVar()
         self.job = None
@@ -116,6 +117,7 @@ class Application(ttk.Frame):
         self.bottom_thickness.set('')
         self.btmpanel1_thickness.set('')
         self.btmpanel2_thickness.set('')
+        self.stacked_btm.set('no')
         self.doors_per_cab.set(2)
         self.output.set('No job yet.')
         self.job = None
@@ -297,16 +299,23 @@ class Application(ttk.Frame):
             )
             self.bottom_thickness_ent.state(['disabled'])
             self.bottom_thickness_ent.grid(column=2, row=6, sticky=W, pady=2)
-            ttk.Label(miscframe, text='Top Panel:').grid(
-                column=0, row=7, sticky=W, padx=(10, 2), pady=2)
+
+            self.stacked_btm_chk = ttk.Checkbutton(
+                miscframe, text='Stacked', variable=self.stacked_btm,
+                command=self.stacked_btm_changed,
+                onvalue='yes', offvalue='no')
+            self.stacked_btm_chk.state(['disabled'])
+            self.stacked_btm_chk.grid(column=0, row=7, pady=2)
+            ttk.Label(miscframe, text='Upper panel:').grid(
+                column=1, row=7, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel1_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel1_thickness, width=6
             )
             self.btmpanel1_thickness_ent.state(['disabled'])
             self.btmpanel1_thickness_ent.grid(column=2, row=7, sticky=W, pady=2)
 
-            ttk.Label(miscframe, text='Bottom Panel:').grid(
-                column=0, row=8, sticky=W, padx=(10, 2), pady=2)
+            ttk.Label(miscframe, text='Lower panel:').grid(
+                column=1, row=8, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel2_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel2_thickness, width=6
             )
@@ -392,7 +401,22 @@ class Application(ttk.Frame):
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
         if self.legs.get() == 'yes':
-            self.bottom_thickness.set(matl_thicknesses[self.prim_material.get()][1])
+            btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
+            self.bottom_thickness.set(sum(btm_thicknesses))
+            if len(btm_thicknesses) > 1:
+                self.stacked_btm.set('yes')
+                self.btmpanel1_thickness.set(btm_thicknesses[0])
+                self.btmpanel1_thickness_ent.state(['!disabled'])
+                self.btmpanel2_thickness.set(btm_thicknesses[1])
+                self.btmpanel2_thickness_ent.state(['!disabled'])
+                self.bottom_thickness_ent.state(['disabled'])
+            else:
+                self.stacked_btm.set('no')
+                self.btmpanel1_thickness.set('')
+                self.btmpanel1_thickness_ent.state(['disabled'])
+                self.btmpanel2_thickness.set('')
+                self.btmpanel2_thickness_ent.state(['disabled'])
+                self.bottom_thickness_ent.state(['!disabled'])
 
     def door_material_changed(self, e):
         self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
@@ -400,11 +424,30 @@ class Application(ttk.Frame):
 
     def legs_changed(self):
         if self.legs.get() == 'yes':
+            btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
+            self.bottom_thickness.set(sum(btm_thicknesses))
             self.bottom_thickness_ent.state(['!disabled'])
-            self.bottom_thickness.set(matl_thicknesses[self.prim_material.get()][1])
+            self.stacked_btm.set('no')
+            self.stacked_btm_chk.state(['!disabled'])
+            if len(btm_thicknesses) > 1:
+                self.stacked_btm.set('yes')
+                self.btmpanel1_thickness.set(btm_thicknesses[0])
+                self.btmpanel1_thickness_ent.state(['!disabled'])
+                self.btmpanel2_thickness.set(btm_thicknesses[1])
+                self.btmpanel2_thickness_ent.state(['!disabled'])
+                self.bottom_thickness_ent.state(['disabled'])
         else:
             self.bottom_thickness.set('')
             self.bottom_thickness_ent.state(['disabled'])
+            self.btmpanel1_thickness.set('')
+            self.btmpanel1_thickness_ent.state(['disabled'])
+            self.btmpanel2_thickness.set('')
+            self.btmpanel2_thickness_ent.state(['disabled'])
+            self.stacked_btm.set('no')
+            self.stacked_btm_chk.state(['disabled'])
+
+    def stacked_btm_changed(self):
+        pass
 
     def quit(self):
         # Destroying the app's top-level window quits the app.
