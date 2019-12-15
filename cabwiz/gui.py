@@ -96,6 +96,7 @@ class Application(ttk.Frame):
         self.btmpanel1_thickness = StringVar()
         self.btmpanel2_thickness = StringVar()
         self.stacked_btm = StringVar()
+        self.btm_material = StringVar()
         self.doors_per_cab = IntVar()
         self.output = StringVar()
         self.job = None
@@ -116,8 +117,11 @@ class Application(ttk.Frame):
         self.legs.set('no')
         self.bottom_thickness.set('')
         self.btmpanel1_thickness.set('')
+        self.btmpanel1_thickness.trace('w', self.btmpnl_thickness_changed)
         self.btmpanel2_thickness.set('')
+        self.btmpanel2_thickness.trace('w', self.btmpnl_thickness_changed)
         self.stacked_btm.set('no')
+        self.btm_material.set(self.prim_material.get())
         self.doors_per_cab.set(2)
         self.output.set('No job yet.')
         self.job = None
@@ -224,26 +228,22 @@ class Application(ttk.Frame):
                             variable=self.fillers).grid(
                                 column=5, row=0, sticky=W, padx=3, pady=2)
 
-            ttk.Label(miscframe, text='Material choices:').grid(
-                column=0, columnspan=2, row=1, sticky=(N, W), padx=(0, 2), pady=2)
-            ttk.Label(
-                miscframe,
-                text='Thickness:\n'
-                     'Please check actual material thickness'
-                     ' and adjust values below accordingly.').grid(
-                    column=2, columnspan=4, row=1, sticky=W, padx=4, pady=2
-                    )
+            ttk.Label(miscframe, text='Material:').grid(
+                column=1, row=1, sticky=(N, W), padx=4, pady=(15, 2))
+            ttk.Label(miscframe, text='Thickness:').grid(
+                column=2, row=1, sticky=W, padx=4, pady=(15, 2))
 
-            # ttk.Label(
-            #     miscframe, text='Please check actual material thickness\n'
-            #                     'and adjust value here accordingly.'
-            # ).grid(column=4, columnspan=2, row=4, sticky=N, padx=4, pady=(2,10))
+            ttk.Label(
+                miscframe, text='Measure actual material thickness to the\n'
+                                'nearest 0.01" and adjust values accordingly.'
+            ).grid(column=3, columnspan=3, row=2, rowspan=2, sticky=(N,W),
+                   padx=(8,4), pady=2)
 
             ttk.Label(miscframe, text='Primary:').grid(
                 column=0, row=2, sticky=W, padx=(0, 2), pady=2)
             self.prim_material_cbx = ttk.Combobox(
                 miscframe, textvariable=self.prim_material,
-                width=max(map(len, materials)) + 2
+                width=max(map(len, materials)) - 2
             )
             self.prim_material_cbx['values'] = materials
             # Prevent direct editing of the value in the combobox:
@@ -252,16 +252,16 @@ class Application(ttk.Frame):
             # a bit odd visually without doing that.
             self.prim_material_cbx.bind('<<ComboboxSelected>>',
                                         self.prim_material_changed)
-            self.prim_material_cbx.grid(column=1, columnspan=2, row=2,
+            self.prim_material_cbx.grid(column=1, row=2,
                                         sticky=W, padx=(6, 3), pady=2)
             ttk.Entry(miscframe, textvariable=self.prim_thickness,
-                      width=6).grid(column=2, row=2, sticky=W, padx=3, pady=2)
+                      width=6).grid(column=2, row=2, padx=6, pady=2)
 
-            ttk.Label(miscframe, text='Door:').grid(
+            ttk.Label(miscframe, text='Doors:').grid(
                 column=0, row=3, sticky=W, padx=(0, 2), pady=2)
             self.door_material_cbx = ttk.Combobox(
                 miscframe, textvariable=self.door_material,
-                width=max(map(len, materials)) + 2
+                width=max(map(len, materials)) - 2
             )
             self.door_material_cbx['values'] = materials
             # Prevent direct editing of the value in the combobox:
@@ -270,60 +270,66 @@ class Application(ttk.Frame):
             # a bit odd visually without doing that.
             self.door_material_cbx.bind('<<ComboboxSelected>>',
                                         self.door_material_changed)
-            self.door_material_cbx.grid(column=1, columnspan=2, row=3,
+            self.door_material_cbx.grid(column=1, row=3,
                                         sticky=W, padx=(6, 3), pady=2)
 
             # ttk.Label(miscframe, text='Thickness:').grid(
             #     column=4, row=3, sticky=E, padx=4, pady=2)
             ttk.Entry(miscframe, textvariable=self.door_thickness,
-                      width=6).grid(column=2, row=3, sticky=W, padx=3, pady=2)
+                      width=6).grid(column=2, row=3, padx=6, pady=2)
+
+            ttk.Label(
+                miscframe, text='Mounting legs requires bottoms thicker than\n'
+                                '3/4" so that leg mounting screws will grab.'
+            ).grid(column=3, columnspan=3, row=6, rowspan=2, sticky=(N,W),
+                   padx=(8,4), pady=(15, 2))
 
             legs_chk = ttk.Checkbutton(
-                miscframe, text=(
-                    'The cabinets will have legs.\n'
-                    'Mounting legs requires bottoms to be greater than 3/4"'
-                    ' thick so that leg mounting screws will grab.'),
+                miscframe, text='Mount legs on cabinets.',
                 variable=self.legs, command=self.legs_changed,
-                onvalue='yes', offvalue='no').grid(
-                    column=0, columnspan=3, row=5, sticky=W, padx=4, pady=2)
-            # ttk.Label(miscframe,
-            #           text='Mounting legs requires bottoms to be greater than\n'
-            #                '3/4" thick so that leg mounting screws will grab.').grid(
-            #     column=2, row=5, sticky=W, padx=4, pady=2)
-            ttk.Label(miscframe, text='Bottom:').grid(
-                column=0, row=6, sticky=W, padx=(0, 2), pady=2)
-            ttk.Label(miscframe, text='Same as primary material.').grid(
-                column=1, row=6, sticky=W, padx=2, pady=2)
+                onvalue='yes', offvalue='no'
+            ).grid(column=0, columnspan=3, row=6, sticky=W,
+                   padx=2, pady=(15, 2))
+
+            ttk.Label(miscframe, text='Bottoms:').grid(
+                column=0, row=9, sticky=W, padx=2, pady=(6, 2))
+            self.btm_material_lbl = ttk.Label(
+                miscframe, textvariable=self.btm_material,
+                width=max(map(len, materials)) - 2
+            )
+            self.btm_material_lbl.grid(column=1, row=9, sticky=W, padx=2, pady=(6, 2))
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
             self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=2, row=6, sticky=W, pady=2)
+            self.bottom_thickness_ent.grid(column=2, row=9, padx=6, pady=(6, 2))
 
             self.stacked_btm_chk = ttk.Checkbutton(
-                miscframe, text='Stacked', variable=self.stacked_btm,
+                miscframe, text='Stack bottom panels:', variable=self.stacked_btm,
                 command=self.stacked_btm_changed,
                 onvalue='yes', offvalue='no')
             self.stacked_btm_chk.state(['disabled'])
-            self.stacked_btm_chk.grid(column=0, row=7, pady=2)
-            ttk.Label(miscframe, text='Upper panel:').grid(
-                column=1, row=7, sticky=W, padx=(10, 2), pady=2)
+            self.stacked_btm_chk.grid(column=0, columnspan=2, row=7, sticky=W,
+                                      padx=(25, 2), pady=2)
+
+#            ttk.Label(miscframe, text='Upper panel:').grid(
+#                column=1, row=7, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel1_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel1_thickness, width=6
             )
             self.btmpanel1_thickness_ent.state(['disabled'])
-            self.btmpanel1_thickness_ent.grid(column=2, row=7, sticky=W, pady=2)
+            self.btmpanel1_thickness_ent.grid(column=2, row=7, padx=6, pady=2)
 
-            ttk.Label(miscframe, text='Lower panel:').grid(
-                column=1, row=8, sticky=W, padx=(10, 2), pady=2)
+#            ttk.Label(miscframe, text='Lower panel:').grid(
+#                column=1, row=8, sticky=W, padx=(10, 2), pady=2)
             self.btmpanel2_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.btmpanel2_thickness, width=6
             )
             self.btmpanel2_thickness_ent.state(['disabled'])
-            self.btmpanel2_thickness_ent.grid(column=2, row=8, sticky=W, pady=2)
+            self.btmpanel2_thickness_ent.grid(column=2, row=8, padx=6, pady=2)
 
             ttk.Label(miscframe, text='Doors per Cabinet:').grid(
-                column=0, columnspan=2, row=9, sticky=W, padx=(0, 6), pady=(10, 2))
+                column=0, columnspan=2, row=10, sticky=W, padx=(0, 6), pady=(15, 2))
             drs_per_cab_rb1 = ttk.Radiobutton(
                 miscframe, value=1, text='1', variable=self.doors_per_cab
             )
@@ -331,10 +337,10 @@ class Application(ttk.Frame):
             # enabled after major code changes throughout, to allow for upper
             # cabinet banks, variable height/width cabinets, etc.
             drs_per_cab_rb1.state(['disabled'])
-            drs_per_cab_rb1.grid(column=2, row=9, sticky=W, padx=3, pady=(10, 2))
+            drs_per_cab_rb1.grid(column=2, row=10, sticky=W, padx=3, pady=(15, 2))
             ttk.Radiobutton(miscframe, value=2, text='2',
                 variable=self.doors_per_cab).grid(
-                    column=3, row=9, sticky=W, padx=3, pady=(10, 2))
+                    column=3, row=10, sticky=W, padx=3, pady=(15, 2))
 
         def make_buttonframe():
             buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
@@ -400,6 +406,7 @@ class Application(ttk.Frame):
     def prim_material_changed(self, e):
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
+        self.btm_material.set(self.prim_material.get())
         if self.legs.get() == 'yes':
             btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
@@ -447,7 +454,30 @@ class Application(ttk.Frame):
             self.stacked_btm_chk.state(['disabled'])
 
     def stacked_btm_changed(self):
-        pass
+        if self.stacked_btm.get() == 'yes':
+            half_btm = float(self.bottom_thickness.get()) / 2
+            self.btmpanel1_thickness_ent.state(['!disabled'])
+            self.btmpanel1_thickness.set(half_btm)
+            self.btmpanel2_thickness_ent.state(['!disabled'])
+            self.btmpanel2_thickness.set(half_btm)
+            self.bottom_thickness_ent.state(['disabled'])
+        else:
+            self.btmpanel1_thickness.set('')
+            self.btmpanel1_thickness_ent.state(['disabled'])
+            self.btmpanel2_thickness.set('')
+            self.btmpanel2_thickness_ent.state(['disabled'])
+            self.bottom_thickness_ent.state(['!disabled'])
+
+    def btmpnl_thickness_changed(self, *args):
+        if self.btmpanel1_thickness.get() == '':
+            bp1 = 0.0
+        else:
+            bp1 = float(self.btmpanel1_thickness.get())
+        if self.btmpanel2_thickness.get() == '':
+            bp2 = 0.0
+        else:
+            bp2 = float(self.btmpanel2_thickness.get())
+        self.bottom_thickness.set(str(bp1 + bp2))
 
     def quit(self):
         # Destroying the app's top-level window quits the app.
