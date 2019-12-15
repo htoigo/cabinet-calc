@@ -469,15 +469,16 @@ class Application(ttk.Frame):
             self.bottom_thickness_ent.state(['!disabled'])
 
     def btmpnl_thickness_changed(self, *args):
-        if self.btmpanel1_thickness.get() == '':
-            bp1 = 0.0
-        else:
-            bp1 = float(self.btmpanel1_thickness.get())
-        if self.btmpanel2_thickness.get() == '':
-            bp2 = 0.0
-        else:
-            bp2 = float(self.btmpanel2_thickness.get())
-        self.bottom_thickness.set(str(bp1 + bp2))
+        if self.stacked_btm.get() == 'yes':
+            if self.btmpanel1_thickness.get() == '':
+                bp1 = 0.0
+            else:
+                bp1 = float(self.btmpanel1_thickness.get())
+            if self.btmpanel2_thickness.get() == '':
+                bp2 = 0.0
+            else:
+                bp2 = float(self.btmpanel2_thickness.get())
+            self.bottom_thickness.set(str(bp1 + bp2))
 
     def quit(self):
         # Destroying the app's top-level window quits the app.
