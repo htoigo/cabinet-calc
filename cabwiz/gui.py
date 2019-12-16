@@ -121,7 +121,7 @@ class Application(ttk.Frame):
         self.btmpanel2_thickness.set('')
         self.btmpanel2_thickness.trace('w', self.btmpnl_thickness_changed)
         self.stacked_btm.set('no')
-        self.btm_material.set(self.prim_material.get())
+        self.btm_material.set('')
         self.doors_per_cab.set(2)
         self.output.set('No job yet.')
         self.job = None
@@ -278,11 +278,15 @@ class Application(ttk.Frame):
             ttk.Entry(miscframe, textvariable=self.door_thickness,
                       width=6).grid(column=2, row=3, padx=6, pady=2)
 
-            ttk.Label(
+            self.legs_thicker_btm_lbl = ttk.Label(
                 miscframe, text='Mounting legs requires bottoms thicker than\n'
                                 '3/4" so that leg mounting screws will grab.'
-            ).grid(column=3, columnspan=3, row=6, rowspan=2, sticky=(N,W),
-                   padx=(8,4), pady=(15, 2))
+            )
+            self.legs_thicker_btm_lbl.state(['disabled'])
+            self.legs_thicker_btm_lbl.grid(
+                column=3, columnspan=3, row=7, rowspan=2, sticky=(N,W),
+                padx=(8, 4), pady=2
+            )
 
             legs_chk = ttk.Checkbutton(
                 miscframe, text='Mount legs on cabinets.',
@@ -291,8 +295,11 @@ class Application(ttk.Frame):
             ).grid(column=0, columnspan=3, row=6, sticky=W,
                    padx=2, pady=(15, 2))
 
-            ttk.Label(miscframe, text='Bottoms:').grid(
-                column=0, row=9, sticky=W, padx=2, pady=(6, 2))
+            self.bottoms_lbl = ttk.Label(miscframe, text='Bottoms:')
+            self.bottoms_lbl.state(['disabled'])
+            self.bottoms_lbl.grid(
+                column=0, row=9, sticky=W, padx=2, pady=(6, 2)
+            )
             self.btm_material_lbl = ttk.Label(
                 miscframe, textvariable=self.btm_material,
                 width=max(map(len, materials)) - 2
@@ -406,8 +413,8 @@ class Application(ttk.Frame):
     def prim_material_changed(self, e):
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
-        self.btm_material.set(self.prim_material.get())
         if self.legs.get() == 'yes':
+            self.btm_material.set(self.prim_material.get())
             btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
             if len(btm_thicknesses) > 1:
@@ -431,6 +438,9 @@ class Application(ttk.Frame):
 
     def legs_changed(self):
         if self.legs.get() == 'yes':
+            self.legs_thicker_btm_lbl.state(['!disabled'])
+            self.bottoms_lbl.state(['!disabled'])
+            self.btm_material.set(self.prim_material.get())
             btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
             self.bottom_thickness_ent.state(['!disabled'])
@@ -444,6 +454,9 @@ class Application(ttk.Frame):
                 self.btmpanel2_thickness_ent.state(['!disabled'])
                 self.bottom_thickness_ent.state(['disabled'])
         else:
+            self.legs_thicker_btm_lbl.state(['disabled'])
+            self.bottoms_lbl.state(['disabled'])
+            self.btm_material.set('')
             self.bottom_thickness.set('')
             self.bottom_thickness_ent.state(['disabled'])
             self.btmpanel1_thickness.set('')
@@ -478,7 +491,12 @@ class Application(ttk.Frame):
                 bp2 = 0.0
             else:
                 bp2 = float(self.btmpanel2_thickness.get())
-            self.bottom_thickness.set(str(bp1 + bp2))
+            new_thickness = bp1 + bp2
+            if new_thickness == 0.0:
+                thickness_str = ''
+            else:
+                thickness_str = str(new_thickness)
+            self.bottom_thickness.set(thickness_str)
 
     def quit(self):
         # Destroying the app's top-level window quits the app.
@@ -486,7 +504,12 @@ class Application(ttk.Frame):
 
     def clear_input(self):
         self.initialize_vars()
+        self.legs_thicker_btm_lbl.state(['disabled'])
+        self.bottoms_lbl.state(['disabled'])
         self.bottom_thickness_ent.state(['disabled'])
+        self.btmpanel1_thickness_ent.state(['disabled'])
+        self.btmpanel2_thickness_ent.state(['disabled'])
+        self.stacked_btm_chk.state(['disabled'])
         self.calc_button.state(['disabled'])
         self.cutlist_button.state(['disabled'])
         self.panel_layout_btn.state(['disabled'])
