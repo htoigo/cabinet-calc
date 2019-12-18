@@ -43,6 +43,10 @@ from cabinet import Ends
 from dimension_strs import dimstr, dimstr_col, thickness_str
 
 
+def all_equal(lst):
+    return lst[1:] == lst[:-1]
+
+
 class Job:
     """A job with name, an optional description, and a run of cabinets."""
 
@@ -73,19 +77,22 @@ class Job:
                            * self.cabs.num_cabinets) + '"')
         if self.cabs.fillers is Ends.neither:
             result += (', with finished end panels on left and right.'
-                       ' No filler panels required.\n')
+                       ' No filler panels required.')
         elif self.cabs.fillers is Ends.left:
             result += (', with a ' + dimstr(self.cabs.filler_width)
-                       + '" filler on the left.\n')
+                       + '" filler on the left.')
         elif self.cabs.fillers is Ends.right:
             result += (', with a ' + dimstr(self.cabs.filler_width)
-                       + '" filler on the right.\n')
+                       + '" filler on the right.')
         elif self.cabs.fillers is Ends.both:
             result += (', with two (2) ' + dimstr(self.cabs.filler_width)
-                       + '" fillers.\n')
+                       + '" fillers.')
         else:
             raise TypeError('fillers is not Ends.neither, .left, .right,'
                             ' or .both')
+        if self.cabs.has_legs:
+            result += (' Mounted on legs.')
+        result += '\n'
         return result
 
     @property
@@ -95,7 +102,8 @@ class Job:
         result.append('Number of cabinets needed:  '
                       + str(self.cabs.num_cabinets))
         result.append('Single cabinet width:  '
-                      + dimstr(self.cabs.cabinet_width) + '"\n')
+                      + dimstr(self.cabs.cabinet_width) + '"')
+        result.append('')
         return result
 
     @property
@@ -108,12 +116,23 @@ class Job:
         result.append('Door Material:  '
                       + thickness_str(self.cabs.door_thickness)
                       + '" ' + self.cabs.door_material)
-        btm_thick_str = thickness_str(self.cabs.bottom_thickness)
-        if (btm_thick_str != thickness_str(self.cabs.prim_thickness)):
-            btm_mat_str = ('Bottom Material:  '
-                           + btm_thick_str + '" '
-                           + self.cabs.prim_material
-                           + (' Stacked' if btm_thick_str == '1 1/2' else ''))
+        if self.cabs.has_legs:
+            if self.cabs.bottom_stacked:
+                mat_thick_strs = list(map(
+                    thickness_str, self.cabs.btmpanel_thicknesses))
+                if not all_equal(mat_thick_strs):
+                    raise ValueError('stacked bottom panels have different'
+                                     ' thicknesses')
+                mat_thick_str = mat_thick_strs[0]
+                btm_mat_str = (
+                    'Bottom Material:  ' + mat_thick_str + '" '
+                    + self.cabs.prim_material
+                    + ' x ' + str(self.cabs.btmpanels_per_cab) + ', stacked')
+            else:
+                mat_thick_str = thickness_str(self.cabs.bottom_thickness)
+                btm_mat_str = (
+                    'Bottom Material:  ' + mat_thick_str + '" '
+                    + self.cabs.prim_material)
             result.append(btm_mat_str)
         return result
 

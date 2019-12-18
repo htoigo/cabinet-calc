@@ -284,12 +284,13 @@ class Run:
         if self._has_legs != value:
             self._has_legs = value
             if self._has_legs:
-                # Just added legs; this requires a thicker bottom panel.
-                self.bottom_thickness = matl_thicknesses[self.prim_material][1]
+                # Just added legs; this requires a thicker bottom, which may be
+                # stacked panels depending on the material, so use a list.
+                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
             else:
                 # Just removed legs; bottom thickness can be same as primary
-                # material thickness.
-                self.bottom_thickness = self.prim_thickness
+                # material thickness (still a list).
+                self.btmpanel_thicknesses = [self.prim_thickness]
 
     @has_legs.deleter
     def has_legs(self):
