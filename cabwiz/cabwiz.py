@@ -69,7 +69,7 @@ def start_cli(args):
                   prim_thickness=args.prim_thick,
                   door_material=args.door_matl,
                   door_thickness=args.door_thick,
-                  bottom_thickness=args.bottom_thick,
+                  btmpanel_thicknesses=args.btm_thicks,
                   has_legs=args.legs)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
@@ -147,9 +147,10 @@ def get_parser():
     parser.add_argument("-l", "--legs",
                         help="add cabinet legs",
                         action="store_true")
-    parser.add_argument("-bt","--bottom_thick",
-                        help="bottom thickness, if different from other panels",
+    parser.add_argument("-bt","--btm_thicks",
+                        help="bottom panel thicknesses",
                         metavar='TH',
+                        nargs='+',
                         type=float)
     parser.add_argument("-c", "--cutlist",
                         help="generate cutlist & save in FN.pdf",
