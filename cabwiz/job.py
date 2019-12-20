@@ -57,7 +57,7 @@ class Job:
     def header(self):
         result = []
         result.append('Job Name: ' + self.name)
-        if self.description is not '':
+        if self.description != '':
             result.append('Description: ' + self.description)
         result.append('Total Wall Space: ' + str(self.cabs.fullwidth) + '"')
         return result
