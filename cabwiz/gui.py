@@ -49,7 +49,7 @@ from cabinet import (
     )
 import job
 import cutlist
-from text import wrap
+from textwrap import fill
 
 
 class Application(ttk.Frame):
@@ -77,7 +77,7 @@ class Application(ttk.Frame):
         self.diff_btm_thickness = StringVar()
         self.bottom_thickness = StringVar()
         self.doors_per_cab = IntVar()
-        self.output = StringVar()
+        self.output = ''
         self.job = None
         self.initialize_vars()
         self.make_widgets()
@@ -96,7 +96,7 @@ class Application(ttk.Frame):
         self.diff_btm_thickness.set('no')
         self.bottom_thickness.set('')
         self.doors_per_cab.set(2)
-        self.output.set('No job yet.')
+        self.output = 'No job yet.'
         self.job = None
 
     def make_widgets(self):
@@ -302,9 +302,18 @@ class Application(ttk.Frame):
         inpframe.columnconfigure(0, weight=1)
 
     def fill_outputframe(self, outpframe):
-        self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
-                                    font='TkFixedFont')
-        self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
+        # self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
+        #                             font='TkFixedFont')
+        # self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
+        self.output_txt = Text(outpframe, height=3, background='gray85',
+                               font='TkFixedFont')
+        self.output_sb = ttk.Scrollbar(outpframe, orient='vertical',
+                                       command=self.output_txt.yview)
+        self.output_txt.configure(yscrollcommand=self.output_sb.set)
+        self.output_txt.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
+        self.output_sb.grid(column=1, row=0, sticky=(N, S, E, W))
+        self.output_txt.insert('end', self.output)
+        self.output_txt.configure(state='disabled')
 
     def fill_outp_btnsframe(self, outp_btnsframe):
         outp_btnsframe.columnconfigure(0, weight=1)
@@ -359,7 +368,11 @@ class Application(ttk.Frame):
         self.calc_button.state(['disabled'])
         self.cutlist_button.state(['disabled'])
         self.panel_layout_btn.state(['disabled'])
-        self.output_lbl.grid_configure(pady=(0, 50))
+        self.output_txt.configure(state='normal')
+        self.output_txt.delete('1.0', 'end')
+        self.output_txt.insert('end', self.output)
+        self.output_txt.configure(state='disabled')
+        self.output_txt.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
         cab_run = Run(float(self.fullwidth.get()),
@@ -376,8 +389,13 @@ class Application(ttk.Frame):
         else:
             self.job = job.Job(self.jobname.get(), cab_run)
         # Ensure output lines are no longer than 60 chars
-        self.output.set('\n'.join(wrap(self.job.specification, 60)))
-        self.output_lbl.grid_configure(pady=0)
+        # self.output.set('\n'.join(wrap(self.job.specification, 60)))
+        self.output = fill(self.job.specification, width=60)
+        self.output_txt.configure(state='normal')
+        self.output_txt.delete('1.0', 'end')
+        self.output_txt.insert('end', self.output)
+        self.output_txt.configure(state='disabled')
+        self.output_txt.grid_configure(pady=0)
         self.cutlist_button.state(['!disabled'])
 
     def save_cutlist(self):
