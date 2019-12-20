@@ -49,7 +49,7 @@ from cabinet import (
     )
 import job
 import cutlist
-from textwrap import fill
+from text import wrap
 
 
 class Application(ttk.Frame):
@@ -389,12 +389,12 @@ class Application(ttk.Frame):
         else:
             self.job = job.Job(self.jobname.get(), cab_run)
         # Ensure output lines are no longer than 60 chars
-        # self.output.set('\n'.join(wrap(self.job.specification, 60)))
-        self.output = fill(self.job.specification, width=60)
+        lines = len(self.job.specification)
+        self.output = '\n'.join(wrap(self.job.specification, 60))
         self.output_txt.configure(state='normal')
         self.output_txt.delete('1.0', 'end')
         self.output_txt.insert('end', self.output)
-        self.output_txt.configure(state='disabled')
+        self.output_txt.configure(state='disabled', height=lines + 1)
         self.output_txt.grid_configure(pady=0)
         self.cutlist_button.state(['!disabled'])
 
