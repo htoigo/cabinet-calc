@@ -33,13 +33,18 @@
 This module implements the job facilities of Cabinet Wiz.
 """
 
-#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets, Run, Job]
+# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+#            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
 from cabinet import Ends
-from dimension_strs import dimstr, dimstr_col
+from dimension_strs import dimstr, dimstr_col, thickness_str
+
+
+def all_equal(lst):
+    return lst[1:] == lst[:-1]
 
 
 class Job:
@@ -65,25 +70,29 @@ class Job:
     @property
     def summaryln(self):
         """Return a single string summary of the job."""
-        result = ( str(self.cabs.num_cabinets) + ' cabinets measuring '
-                   + dimstr(self.cabs.cabinet_width) + '" '
-                   + 'totalling '
-                   + dimstr(self.cabs.cabinet_width
-                            * self.cabs.num_cabinets) + '"' )
+        result = (str(self.cabs.num_cabinets) + ' cabinets measuring '
+                  + dimstr(self.cabs.cabinet_width) + '" '
+                  + 'totalling '
+                  + dimstr(self.cabs.cabinet_width
+                           * self.cabs.num_cabinets) + '"')
         if self.cabs.fillers is Ends.neither:
-            result += ( ', with finished end panels on left and right.'
-                        ' No filler panels required.\n' )
+            result += (', with finished end panels on left and right.'
+                       ' No filler panels required.')
         elif self.cabs.fillers is Ends.left:
-            result += ( ', with a ' + dimstr(self.cabs.filler_width)
-                        + '" filler on the left.\n' )
+            result += (', with a ' + dimstr(self.cabs.filler_width)
+                       + '" filler on the left.')
         elif self.cabs.fillers is Ends.right:
-            result += ( ', with a ' + dimstr(self.cabs.filler_width)
-                        + '" filler on the right.\n' )
+            result += (', with a ' + dimstr(self.cabs.filler_width)
+                       + '" filler on the right.')
         elif self.cabs.fillers is Ends.both:
-            result += ( ', with two (2) ' + dimstr(self.cabs.filler_width)
-                        + '" fillers.\n' )
+            result += (', with two (2) ' + dimstr(self.cabs.filler_width)
+                       + '" fillers.')
         else:
-            raise ValueError('fillers is not neither, left, right, or both')
+            raise TypeError('fillers is not Ends.neither, .left, .right,'
+                            ' or .both')
+        if self.cabs.has_legs:
+            result += (' To be mounted on legs.')
+        result += '\n'
         return result
 
     @property
@@ -93,21 +102,38 @@ class Job:
         result.append('Number of cabinets needed:  '
                       + str(self.cabs.num_cabinets))
         result.append('Single cabinet width:  '
-                      + dimstr(self.cabs.cabinet_width) + '"\n')
+                      + dimstr(self.cabs.cabinet_width) + '"')
+        result.append('')
         return result
 
     @property
     def materialinfo(self):
         """A list of strings."""
         result = []
-        result.append('Primary Material:  ' + dimstr(self.cabs.prim_thickness)
+        result.append('Primary Material:  '
+                      + thickness_str(self.cabs.prim_thickness)
                       + '" ' + self.cabs.prim_material)
-        # result.append('Primary thickness:  '
-        #               + dimstr(self.cabs.prim_thickness) + '"')
-        result.append('Door Material:  ' + dimstr(self.cabs.door_thickness)
+        result.append('Door Material:  '
+                      + thickness_str(self.cabs.door_thickness)
                       + '" ' + self.cabs.door_material)
-        # result.append('Door thickness:  '
-        #               + dimstr(self.cabs.door_thickness) + '"')
+        if self.cabs.has_legs:
+            if self.cabs.bottom_stacked:
+                mat_thick_strs = list(map(
+                    thickness_str, self.cabs.btmpanel_thicknesses))
+                if not all_equal(mat_thick_strs):
+                    raise ValueError('stacked bottom panels have different'
+                                     ' thicknesses')
+                mat_thick_str = mat_thick_strs[0]
+                btm_mat_str = (
+                    'Bottom Material:  ' + mat_thick_str + '" '
+                    + self.cabs.prim_material
+                    + ', stacked x ' + str(self.cabs.btmpanels_per_cab))
+            else:
+                mat_thick_str = thickness_str(self.cabs.bottom_thickness)
+                btm_mat_str = (
+                    'Bottom Material:  ' + mat_thick_str + '" '
+                    + self.cabs.prim_material)
+            result.append(btm_mat_str)
         return result
 
     @property
@@ -128,47 +154,49 @@ class Job:
                 self.cabs.num_backpanels,
                 dimstr_col(self.cabs.back_width) + '"',
                 dimstr_col(self.cabs.back_height) + '"',
-                dimstr(self.cabs.back_thickness) + '"') )
+                thickness_str(self.cabs.back_thickness) + '"'))
         result.append(
             'Bottom Panels:   {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_bottompanels,
                 dimstr_col(self.cabs.bottom_width) + '"',
                 dimstr_col(self.cabs.bottom_depth) + '"',
-                dimstr(self.cabs.bottom_thickness) + '"') )
+                (thickness_str(self.cabs.bottom_thickness / 2)
+                 if thickness_str(self.cabs.bottom_thickness) == '1 1/2'
+                 else thickness_str(self.cabs.bottom_thickness)) + '"'))
         result.append(
             'Side Panels:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_sidepanels,
                 dimstr_col(self.cabs.side_depth) + '"',
                 dimstr_col(self.cabs.side_height) + '"',
-                dimstr(self.cabs.side_thickness) + '"') )
+                thickness_str(self.cabs.side_thickness) + '"'))
         result.append(
             'Top Nailers:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_topnailers,
                 dimstr_col(self.cabs.topnailer_width) + '"',
                 dimstr_col(self.cabs.topnailer_depth) + '"',
-                dimstr(self.cabs.topnailer_thickness) + '"') )
+                thickness_str(self.cabs.topnailer_thickness) + '"'))
         if self.cabs.num_fillers > 0:
             result.append(
                 'Fillers:         {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                     self.cabs.num_fillers,
                     dimstr_col(self.cabs.filler_width) + '"',
                     dimstr_col(self.cabs.filler_height) + '"',
-                    dimstr(self.cabs.filler_thickness) + '"') )
+                    thickness_str(self.cabs.filler_thickness) + '"'))
         result.append(
             'Doors:           {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_doors,
                 dimstr_col(self.cabs.door_width) + '"',
                 dimstr_col(self.cabs.door_height) + '"',
-                dimstr(self.cabs.door_thickness) + '"') )
+                thickness_str(self.cabs.door_thickness) + '"'))
         return result
 
     @property
     def specification(self):
         """Return a complete specification of the job as a list of strings."""
-        sep = '-' * 60
-        result = ( [sep] + self.header + [sep]
-                   + ['Overview:', ''] + self.overview + [sep]
-                   + ['Parts List:', ''] + self.partslist + [sep] )
+        sep = '-' * 65
+        result = ([sep] + self.header + [sep]
+                  + ['Overview:', ''] + self.overview + [sep]
+                  + ['Parts List:', ''] + self.partslist + [sep])
         return result
 
 

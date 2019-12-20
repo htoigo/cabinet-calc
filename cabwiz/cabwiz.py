@@ -65,8 +65,12 @@ def start_cli(args):
     # Create a cabinet Run object which does all the calculating.
     cab_run = Run(args.fullwidth, args.height, args.depth,
                   fillers=args.fillers,
-                  prim_material=args.prim_matl, prim_thickness=args.prim_thick,
-                  door_material=args.door_matl, door_thickness=args.door_thick)
+                  prim_material=args.prim_matl,
+                  prim_thickness=args.prim_thick,
+                  door_material=args.door_matl,
+                  door_thickness=args.door_thick,
+                  btmpanel_thicknesses=args.btm_thicks,
+                  has_legs=args.legs)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -75,8 +79,8 @@ def start_cli(args):
         j = job.Job(args.name, cab_run)
 
     # Output the job specification to the terminal, ensuring lines are no
-    # longer than 60 chars.
-    for line in wrap(j.specification, 60):
+    # longer than 65 chars.
+    for line in wrap(j.specification, 65):
         print(line)
 
     # If requested, produce and save a cutlist pdf file.
@@ -130,8 +134,7 @@ def get_parser():
     parser.add_argument("-pt", "--prim_thick",
                         help="primary thickness",
                         metavar='TH',
-                        type=float,
-                        default=matl_thicknesses[materials[prim_mat_default]])
+                        type=float)
     parser.add_argument("-dm", "--door_matl",
                         help="door material name",
                         metavar='MTL',
@@ -140,21 +143,28 @@ def get_parser():
     parser.add_argument("-dt", "--door_thick",
                         help="door thickness",
                         metavar='TH',
-                        type=float,
-                        default=matl_thicknesses[materials[door_mat_default]])
+                        type=float)
+    parser.add_argument("-l", "--legs",
+                        help="add cabinet legs",
+                        action="store_true")
+    parser.add_argument("-bt","--btm_thicks",
+                        help="bottom panel thicknesses",
+                        metavar='TH',
+                        nargs='+',
+                        type=float)
     parser.add_argument("-c", "--cutlist",
-                        help="generate a cutlist & save in FN.pdf",
+                        help="generate cutlist & save in FN.pdf",
                         metavar='FN',
                         type=str)
-    parser.add_argument("-ctl", "--ctopleft",
-                        help="countertop overhang left side",
-                        type=float)
-    parser.add_argument("-ctr", "--ctopright",
-                        help="countertop overhang right side",
-                        type=float)
-    parser.add_argument("-ctf", "--ctopfront",
-                        help="countertop overhang front side",
-                        type=float)
+    # parser.add_argument("-ctl", "--ctopleft",
+    #                     help="countertop overhang left side",
+    #                     type=float)
+    # parser.add_argument("-ctr", "--ctopright",
+    #                     help="countertop overhang right side",
+    #                     type=float)
+    # parser.add_argument("-ctf", "--ctopfront",
+    #                     help="countertop overhang front side",
+    #                     type=float)
     return parser
 
 

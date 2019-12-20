@@ -49,7 +49,7 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 
 from cabinet import Ends, door_hinge_gap, materials, matl_abbrevs
 import job
-from dimension_strs import dimstr, dimstr_col
+from dimension_strs import dimstr, dimstr_col, thickness_str
 from text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
     fixed_style
@@ -812,7 +812,7 @@ def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
 
     Returns the two strings as a pair (thick_str, matl_str).
     """
-    thickn = dimstr(thickness) + '"'
+    thickn = thickness_str(thickness) + '"'
     matl = matl_abbrevs[material]
     font_nm = 'Helvetica'      # Default Graphics FontName is Times-Roman
     thick_font_sz = 7
