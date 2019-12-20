@@ -127,7 +127,7 @@ class Job:
                 btm_mat_str = (
                     'Bottom Material:  ' + mat_thick_str + '" '
                     + self.cabs.prim_material
-                    + ' x ' + str(self.cabs.btmpanels_per_cab) + ', stacked')
+                    + ', stacked x ' + str(self.cabs.btmpanels_per_cab))
             else:
                 mat_thick_str = thickness_str(self.cabs.bottom_thickness)
                 btm_mat_str = (
