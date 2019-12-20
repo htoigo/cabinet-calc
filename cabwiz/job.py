@@ -167,8 +167,8 @@ class Job:
         """Return a complete specification of the job as a list of strings."""
         sep = '-' * 60
         result = ( [sep] + self.header + [sep]
-                   + ['Overview:\n'] + self.overview + [sep]
-                   + ['Parts List:\n'] + self.partslist + [sep] )
+                   + ['Overview:', ''] + self.overview + [sep]
+                   + ['Parts List:', ''] + self.partslist + [sep] )
         return result
 
 
