@@ -111,8 +111,7 @@ class Application(ttk.Frame):
             relief='groove', padding=5)
         ttk.Label(self, text='Job Specification:').grid(
             column=0, row=2, sticky=W, pady=2)
-        outputframe = ttk.Frame(self, borderwidth=1, relief='sunken',
-                                padding=5)
+        outputframe = ttk.Frame(self, borderwidth=1, relief='sunken')
         outp_btnsframe = ttk.Frame(self, padding=(0, 10))
         self.grid(column=0, row=0, sticky=(N, S, W, E))
         inputframe.grid(column=0, row=1, sticky=(N, S, W, E), pady=10)
@@ -305,13 +304,16 @@ class Application(ttk.Frame):
         # self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
         #                             font='TkFixedFont')
         # self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
-        self.output_txt = Text(outpframe, height=3, background='gray85',
-                               font='TkFixedFont')
+        outpframe.columnconfigure(0, weight=1)
+        outpframe.columnconfigure(1, weight=0)
+        outpframe.rowconfigure(0, weight=1)
+        self.output_txt = Text(outpframe, height=3, relief='flat',
+                               background='gray85', font='TkFixedFont')
         self.output_sb = ttk.Scrollbar(outpframe, orient='vertical',
                                        command=self.output_txt.yview)
         self.output_txt.configure(yscrollcommand=self.output_sb.set)
-        self.output_txt.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
-        self.output_sb.grid(column=1, row=0, sticky=(N, S, E, W))
+        self.output_txt.grid(column=0, row=0, sticky=(N, S, W, E))
+        self.output_sb.grid(column=1, row=0, sticky=(N, S, E))
         self.output_txt.insert('end', self.output)
         self.output_txt.configure(state='disabled')
 
@@ -368,11 +370,10 @@ class Application(ttk.Frame):
         self.calc_button.state(['disabled'])
         self.cutlist_button.state(['disabled'])
         self.panel_layout_btn.state(['disabled'])
-        self.output_txt.configure(state='normal')
+        self.output_txt.configure(state='normal', height=3)
         self.output_txt.delete('1.0', 'end')
         self.output_txt.insert('end', self.output)
         self.output_txt.configure(state='disabled')
-        self.output_txt.grid_configure(pady=(0, 50))
 
     def calculate_job(self):
         cab_run = Run(float(self.fullwidth.get()),
@@ -389,8 +390,8 @@ class Application(ttk.Frame):
         else:
             self.job = job.Job(self.jobname.get(), cab_run)
         # Ensure output lines are no longer than 60 chars
-        lines = len(self.job.specification)
         self.output = '\n'.join(wrap(self.job.specification, 60))
+        lines = self.output.count('\n') + 1
         self.output_txt.configure(state='normal')
         self.output_txt.delete('1.0', 'end')
         self.output_txt.insert('end', self.output)
