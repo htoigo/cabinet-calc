@@ -91,7 +91,7 @@ class Job:
             raise TypeError('fillers is not Ends.neither, .left, .right,'
                             ' or .both')
         if self.cabs.has_legs:
-            result += (' Mounted on legs.')
+            result += (' To be mounted on legs.')
         result += '\n'
         return result
 
