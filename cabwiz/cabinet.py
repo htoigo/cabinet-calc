@@ -281,28 +281,6 @@ class Run:
         return self._fullwidth % self.num_cabinets
 
     @property
-    def has_legs(self):
-        """True if the cabinet run will have legs, False otherwise."""
-        return self._has_legs
-
-    @has_legs.setter
-    def has_legs(self, value):
-        if self._has_legs != value:
-            self._has_legs = value
-            if self._has_legs:
-                # Just added legs; this requires a thicker bottom, which may be
-                # stacked panels depending on the material, so use a list.
-                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
-            else:
-                # Just removed legs; bottom thickness can be same as primary
-                # material thickness (still a list).
-                self.btmpanel_thicknesses = [self.prim_thickness]
-
-    @has_legs.deleter
-    def has_legs(self):
-        del self._has_legs
-
-    @property
     def num_fillers(self):
         if self.fillers is Ends.neither:
             result = 0
@@ -366,6 +344,28 @@ class Run:
     def back_thickness(self):
         """The thickness of a full back panel."""
         return self.prim_thickness
+
+    @property
+    def has_legs(self):
+        """True if the cabinet run will have legs, False otherwise."""
+        return self._has_legs
+
+    @has_legs.setter
+    def has_legs(self, value):
+        if self._has_legs != value:
+            self._has_legs = value
+            if self._has_legs:
+                # Just added legs; this requires a thicker bottom, which may be
+                # stacked panels depending on the material, so use a list.
+                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
+            else:
+                # Just removed legs; bottom thickness can be same as primary
+                # material thickness (still a list).
+                self.btmpanel_thicknesses = [self.prim_thickness]
+
+    @has_legs.deleter
+    def has_legs(self):
+        del self._has_legs
 
     @property
     def btmpanels_per_cab(self):
