@@ -73,6 +73,10 @@ def landscape(pagesize):
 page_width, page_ht = landscape(letter)
 
 
+def all_equal(lst):
+    return lst[1:] == lst[:-1]
+
+
 def save_cutlist(fname, job):
     """Generate a cutlist for the job and save in fname.pdf."""
     doc = BaseDocTemplate(pdf_ify(fname),
@@ -722,9 +726,13 @@ def panels_table(job):
         'Back', job.cabs.back_width, job.cabs.back_height,
         material=job.cabs.prim_material, thickness=job.cabs.back_thickness
         )
+    if not all_equal(job.cabs.btmpanel_thicknesses):
+        raise ValueError('stacked bottom panels have different'
+                         ' thicknesses')
     bottompanel_dr = panel_drawing(
         'Bottom', job.cabs.bottom_width, job.cabs.bottom_depth,
-        material=job.cabs.prim_material, thickness=job.cabs.bottom_thickness
+        material=job.cabs.prim_material,
+        thickness=job.cabs.btmpanel_thicknesses[0]
         )
     sidepanel_dr = panel_drawing(
         'Side', job.cabs.side_depth, job.cabs.side_height,
