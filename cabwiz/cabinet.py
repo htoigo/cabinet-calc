@@ -62,7 +62,9 @@ from dimension_strs import thickness_str
 
 # All measurements are in inches, unless otherwise specified.
 
-max_cabinet_width = 36
+max_cabinet_width = 36.0
+min_filler_width = 1.0
+max_filler_width = 4.0
 
 # The gap between the back of the door and the front of the cabinet,
 # due to the hinges.
@@ -211,7 +213,9 @@ class Run:
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
-        self._has_legs = has_legs
+        # fillers must be one of: Ends.neither, Ends.left, Ends.right, or
+        # Ends.both.
+        self.fillers = fillers
         self.prim_material = prim_material
         if prim_thickness is not None:
             self.prim_thickness = prim_thickness
@@ -222,6 +226,7 @@ class Run:
             self.door_thickness = door_thickness
         else:
             self.door_thickness = matl_thicknesses[self.door_material][0]
+        self._has_legs = has_legs
         if btmpanel_thicknesses is not None:
             self.btmpanel_thicknesses = btmpanel_thicknesses
         else:
@@ -229,8 +234,6 @@ class Run:
                 self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
             else:
                 self.btmpanel_thicknesses = [self.prim_thickness]
-        # fillers must be one of: Ends.neither, .left, .right, or .both.
-        self.fillers = fillers
         self.topnailer_depth = topnailer_depth
         # The amount the door is shorter than the cabinet, usually 1/2" or 3/8".
         self.doortop_space = doortop_space
@@ -244,6 +247,14 @@ class Run:
     def fullwidth(self):
         """The total wall width for this run of cabinets."""
         return self._fullwidth
+
+    @fullwidth.setter
+    def fullwidth(self, value):
+        self._fullwidth = value
+
+    @fullwidth.deleter
+    def fullwidth(self):
+        del self._fullwidth
 
     @property
     def num_cabinets(self):
@@ -266,19 +277,34 @@ class Run:
 
     @property
     def cabinet_width(self):
-        """The width of each individual cabinet in the run."""
+        """The width of each individual cabinet in this run."""
         if self.num_fillers == 0:
-            # With no fillers, must accept a fractional number of inches.
+            # With no fillers, we have no choice about the cabinet width.
             width = self._fullwidth / self.num_cabinets
         else:
-            # Restrict cabinet width to a whole number of inches.
+            # Restrict cabinet width to an easy-to-cut value, if possible,
+            # while keeping filler widths within allowable range. We start with
+            # integral values for the cabinet width.
             width = self._fullwidth // self.num_cabinets
+            filler_w = ((self._fullwidth - width * self.num_cabinets)
+                        / self.num_fillers)
+            delta = 1.0
+            while filler_w < min_filler_width:
+                width -= delta
+                filler_w = ((self._fullwidth - width * self.num_cabinets)
+                            / self.num_fillers)
+            while filler_w > max_filler_width:
+                delta /= 2
+                width += delta
+                filler_w = ((self._fullwidth - width * self.num_cabinets)
+                            / self.num_fillers)
         return width
 
     @property
     def extra_width(self):
-        """The extra space to be filled by fillers."""
-        return self._fullwidth % self.num_cabinets
+        """The extra space beside the cabinets, to be filled by fillers."""
+        # return self._fullwidth % self.num_cabinets
+        return self._fullwidth - self.num_cabinets * self.cabinet_width
 
     @property
     def num_fillers(self):
