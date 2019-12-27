@@ -48,14 +48,14 @@ to be cut, an isometric view of a single cabinet, with all diagrams to scale.
 """
 
 
-#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets, Run, Job]
+# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+#            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
 import math
 from enum import Enum
-from dimension_strs import thickness_str
 
 
 # Module constants
@@ -73,16 +73,15 @@ door_hinge_gap = 0.125
 # List of materials
 
 # The list order is the order they will appear in the selection list.
-materials = [ 'Standard Plywood'        # default choice if none specified
-            , 'Marine-Grade Plywood'
-            , 'Melamine'
-            ]
+# The default primary material is Standard Plywood, if none is specified.
+materials = ['Standard Plywood',
+             'Marine-Grade Plywood',
+             'Melamine']
 
-# Material abbreviations used where full names will not fit.
-matl_abbrevs = { 'Standard Plywood': 'PLY'
-               , 'Marine-Grade Plywood': 'MarPLY'
-               , 'Melamine': 'MEL'
-               }
+# Material abbreviations to be used where full names will not fit.
+matl_abbrevs = {'Standard Plywood': 'PLY',
+                'Marine-Grade Plywood': 'MarPLY',
+                'Melamine': 'MEL'}
 
 # Primary material defaults to Standard Plywood.
 prim_mat_default = 0
@@ -93,17 +92,16 @@ door_mat_default = 2
 # Dictionary of materials with default thicknesses for each in inches.
 
 # Each material has two default thicknesses: the default thickness generally
-# used for cabinet panels, and the default thickness for bottom panels when legs
-# will be attached, which need to be thicker than 3/4" so that the leg screws
-# can grab.
+# used for cabinet panels, and the default thickness for bottom panels when
+# legs will be attached, which need to be thicker than 3/4" so that the leg
+# screws can grab.
 
-# Note: these thicknesses must still be changeable to something else, as lots do
-# vary in thickness. For example, gray melamine lots are often 0.74" thick.
+# Note: these thicknesses must still be changeable to something else, as lots
+# do vary in thickness. For example, gray melamine lots are often 0.74" thick.
 
-matl_thicknesses = { 'Standard Plywood': (0.74, [0.74, 0.74])
-                   , 'Marine-Grade Plywood': (0.75, [0.75, 0.75])
-                   , 'Melamine': (0.76, [1.0])
-                   }
+matl_thicknesses = {'Standard Plywood': (0.74, [0.74, 0.74]),
+                    'Marine-Grade Plywood': (0.75, [0.75, 0.75]),
+                    'Melamine': (0.76, [1.0])}
 
 
 class Ends(Enum):
@@ -136,28 +134,33 @@ class Ends(Enum):
             raise ValueError()
 
 
-def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
-                prim_material=materials[prim_mat_default],
-                prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
-                door_material=materials[door_mat_default],
-                door_thickness=matl_thicknesses[materials[door_mat_default]][0],
-                bottom_thickness=None,
-                has_legs=False,
-                topnailer_depth=4,
-                doortop_space=0.5, doorside_space_l=0.125,
-                doorside_space_m=0.125, doorside_space_r=0.125):
+def cabinet_run(
+        fullwidth, height, depth, fillers=Ends.neither,
+        prim_material=materials[prim_mat_default],
+        prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
+        door_material=materials[door_mat_default],
+        door_thickness=matl_thicknesses[materials[door_mat_default]][0],
+        bottom_thickness=None,
+        has_legs=False,
+        topnailer_depth=4,
+        doortop_space=0.5, doorside_space_l=0.125,
+        doorside_space_m=0.125, doorside_space_r=0.125):
     """Construct a (single) :class:`Run <Run>` of cabinets.
 
     :param fullwidth: Total wall width for this run of cabinets.
     :param height: The distance from the toe kick to top of cabinets.
     :param depth: The distance from front to back, including door.
     :param fillers: Which ends of the run will have fillers.
-    :param material: The primary building material name.
-    :param matl_thickness: Building material thickness.
+    :param prim_material: The primary building material name.
+    :param prim_thickness: Primary building material thickness.
+    :param door_material: The door material name.
+    :param door_thickness: The door material thickness.
+    :param bottom_thickness: The bottom may be thicker and stacked.
     :return: :class:`Run <Run>` object
     :rtype: cabinet.Run
     """
-    return Run(fullwidth, height, depth, fillers, prim_material, prim_thickness,
+    return Run(fullwidth, height, depth, fillers,
+               prim_material, prim_thickness,
                door_material, door_thickness,
                bottom_thickness, has_legs,
                topnailer_depth, doortop_space, doorside_space_l,
@@ -166,13 +169,13 @@ def cabinet_run(fullwidth, height, depth, fillers=Ends.neither,
 
 # Should we expose the following functions for ad hoc use?
 #
-# def num_cabinets(full_width):
+# def num_cabinets(full_width, fillers):
 #     return result
 #
-# def cabinet_width(full_width, num_cabinets):
+# def cabinet_width(full_width, fillers):
 #     return result
 #
-# def extra_width(full_width, num_cabinets):
+# def extra_width(full_width, fillers):
 #     return result
 
 
@@ -193,7 +196,8 @@ class Run:
         btmpanel_thicknesses: List of bottom panel thicknesses, in order from
             top to bottom. Defaults to a singleton list containing the primary
             material thickness, if the cabinets will not have legs attached, or
-            if they will, to the list of stacked panels for the primary material.
+            if they will, to the list of stacked panels for the primary
+            material.
         has_legs: True if the cabinets will have legs.
 
     At the moment this class assumes that there are exactly two doors per
@@ -231,11 +235,12 @@ class Run:
             self.btmpanel_thicknesses = btmpanel_thicknesses
         else:
             if self.has_legs:
-                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
+                self.btmpanel_thicknesses = matl_thicknesses[
+                    self.prim_material][1]
             else:
                 self.btmpanel_thicknesses = [self.prim_thickness]
         self.topnailer_depth = topnailer_depth
-        # The amount the door is shorter than the cabinet, usually 1/2" or 3/8".
+        # How much the door is shorter than the cabinet, usually 1/2" or 3/8".
         self.doortop_space = doortop_space
         # The space to the left, in between, and to the right of the doors.
         # These three spaces are usually all 1/8".
@@ -315,7 +320,8 @@ class Run:
         elif self.fillers is Ends.both:
             result = 2
         else:
-            raise TypeError('fillers is not Ends.neither, .left, .right, or .both')
+            raise TypeError('fillers is not one of Ends.neither, Ends.left,'
+                            'Ends.right, or Ends.both')
         return result
 
     @property
@@ -383,7 +389,8 @@ class Run:
             if self._has_legs:
                 # Just added legs; this requires a thicker bottom, which may be
                 # stacked panels depending on the material, so use a list.
-                self.btmpanel_thicknesses = matl_thicknesses[self.prim_material][1]
+                self.btmpanel_thicknesses = matl_thicknesses[
+                    self.prim_material][1]
             else:
                 # Just removed legs; bottom thickness can be same as primary
                 # material thickness (still a list).
@@ -408,7 +415,7 @@ class Run:
 
     @property
     def bottom_thickness(self):
-        """The total thickness of all bottom panels used in a single cabinet."""
+        """The total thickness of all bottom panels in a single cabinet."""
         return sum(self.btmpanel_thicknesses)
 
     @bottom_thickness.setter
@@ -488,7 +495,8 @@ class Run:
     @property
     def doorside_space(self):
         """The total space to the left, in between and right of the doors."""
-        space = self.doorside_space_l + self.doorside_space_m + self.doorside_space_r
+        space = (self.doorside_space_l + self.doorside_space_m
+                 + self.doorside_space_r)
         return space
 
     @property

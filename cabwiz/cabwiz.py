@@ -32,11 +32,14 @@
 
 """Cabinet Wiz: The Custom Euro-Style Cabinet Configurator.
 
-Quickly and easily, by entering a few dimensions, configure a bank of Euro-style
-cabinets. Generate a parts list with dimensions, as well as cutlist.
+Quickly and easily, by entering a few dimensions, configure a bank of Euro-
+style cabinets. Generate a parts list with dimensions, as well as a high-
+quality cutlist in PDF format, suitable for printing, to be used on the shop
+floor.
 
-Cabinet Wiz has both a GUI interface for ease of use, and a command line interface
-for power users and scripting capability.
+Cabinet Wiz has both a GUI interface for ease of use, and a command line
+interface for power users and scripting capability.
+
 """
 
 
@@ -46,7 +49,7 @@ import textwrap
 
 import gui
 from cabinet import (
-    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
+    materials, prim_mat_default, door_mat_default, Ends, Run
     )
 import job
 import cutlist
@@ -147,7 +150,7 @@ def get_parser():
     parser.add_argument("-l", "--legs",
                         help="add cabinet legs",
                         action="store_true")
-    parser.add_argument("-bt","--btm_thicks",
+    parser.add_argument("-bt", "--btm_thicks",
                         help="bottom panel thicknesses",
                         metavar='TH',
                         nargs='+',

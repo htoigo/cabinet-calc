@@ -34,22 +34,22 @@
 import math
 import re
 
-from reportlab.pdfgen import canvas as canv
+# from reportlab.pdfgen import canvas as canv
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.platypus import (
     BaseDocTemplate, PageTemplate, Frame, Paragraph, Spacer, FrameBreak,
-    Table, TableStyle, XPreformatted
+    Table, XPreformatted
     )
 from reportlab.graphics.shapes import (
     Drawing, Line, Rect, String, Group
     )
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
-from cabinet import Ends, door_hinge_gap, materials, matl_abbrevs
-import job
-from dimension_strs import dimstr, dimstr_col, thickness_str
+from cabinet import Ends, door_hinge_gap, matl_abbrevs
+# import job
+from dimension_strs import dimstr, thickness_str
 from text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
     fixed_style
@@ -86,18 +86,16 @@ def save_cutlist(fname, job):
                           topMargin=0.5 * inch,
                           bottomMargin=0.5 * inch,
                           title='Cutlist for ' + job.name,
-                          #TODO: author='',
+                          # author='',
                           subject='Cabinet Wiz Cutlist Report',
-                          #TODO: Get version below from program source
+                          # TODO: Get version below from program source
                           creator='Cabinet Wiz version 0.1',
                           showBoundary=0
                           )
     frameHdr, frameL, frameR = makeframes(doc)
     doc.addPageTemplates(
         [PageTemplate(id='twoCol', frames=[frameHdr, frameL, frameR],
-                      onPage=all_pages
-                      )
-        ]
+                      onPage=all_pages)]
     )
     # Construct the cutlist content--i.e., the `elements' list of Flowables
     elements = content(job)
@@ -130,8 +128,8 @@ def makeframes(doc):
     frameL = Frame(doc.leftMargin, doc.bottomMargin, ltcol_width, col_ht,
                    id='col1'
                    )
-    frameR = Frame(doc.leftMargin + ltcol_width + intercol_spc, doc.bottomMargin,
-                   rtcol_width, col_ht, id='col2'
+    frameR = Frame(doc.leftMargin + ltcol_width + intercol_spc,
+                   doc.bottomMargin, rtcol_width, col_ht, id='col2'
                    )
     return (frameHdr, frameL, frameR)
 
@@ -190,25 +188,25 @@ def hdr_table(job):
     else:
         desc = ''
     data = (
-        ( Paragraph('Job Name: ' + job.name, title_style),
-          Paragraph(str(job.cabs.fullwidth) + '" Wide', wallwidth_style),
-          Paragraph(finished_ends(job.cabs.fillers), rt_style)
-          ),
-        ( Paragraph(desc, normal_style), '', '')
+        (Paragraph('Job Name: ' + job.name, title_style),
+         Paragraph(str(job.cabs.fullwidth) + '" Wide', wallwidth_style),
+         Paragraph(finished_ends(job.cabs.fillers), rt_style)
+         ),
+        (Paragraph(desc, normal_style), '', '')
     )
     styleHdr = [
-        ('VALIGN', (0,0), (0,0), 'MIDDLE'),
-        ('VALIGN', (1,0), (2,0), 'BOTTOM'),
-        ('ALIGN', (1,0), (1,0), 'CENTER'),
-        ('ALIGN', (2,0), (2,0), 'RIGHT'),
+        ('VALIGN', (0, 0), (0, 0), 'MIDDLE'),
+        ('VALIGN', (1, 0), (2, 0), 'BOTTOM'),
+        ('ALIGN', (1, 0), (1, 0), 'CENTER'),
+        ('ALIGN', (2, 0), (2, 0), 'RIGHT'),
         # Job description spans across entire 2nd row.
-        ('SPAN', (0,1), (2,1)),
-        ('TOPPADDING', (0,1), (2,1), 9),
+        ('SPAN', (0, 1), (2, 1)),
+        ('TOPPADDING', (0, 1), (2, 1), 9),
         # Nice colors:  cornsilk (0xfff8dc), linen (0xfaf0e6),
         #     lightslategrey (0x778899), 0xc8d8e6.
-        ('BACKGROUND', (0,0), (-1,-1), colors.HexColor(0xe0e4e2))
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor(0xe0e4e2))
     ]
-    return Table(data, style=styleHdr, colWidths = ['50%','20%','30%'])
+    return Table(data, style=styleHdr, colWidths=['50%', '20%', '30%'])
 
 
 def inches_to_pts(line):
@@ -246,10 +244,10 @@ def isometric_view(job):
     # angled cabinet depth lines -- in inches, unscaled.
     iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
 
-    d_width = ( (job.cabs.cabinet_width + iso45) * inch * default_iso_scale
-                + arrow_sep + boundsln_len/2 + long_vdimtxt_margin )
-    d_ht = ( (job.cabs.cabinet_height + iso45) * inch * default_iso_scale
-             + arrow_sep_vert + half_boundsln_vert + top_margin )
+    d_width = ((job.cabs.cabinet_width + iso45) * inch * default_iso_scale
+               + arrow_sep + boundsln_len/2 + long_vdimtxt_margin)
+    d_ht = ((job.cabs.cabinet_height + iso45) * inch * default_iso_scale
+            + arrow_sep_vert + half_boundsln_vert + top_margin)
 
     result = Drawing(d_width, d_ht)
     result.hAlign = 'CENTER'
@@ -264,7 +262,7 @@ def isometric_view(job):
     # then scaled, below.
 
     isoLines = [
-        # horizontal lines------------------------------------------------------
+        # horizontal lines-----------------------------------------------------
 
         # horizontal bottom inner line
         (job.cabs.side_thickness, job.cabs.bottom_thickness,
@@ -284,45 +282,46 @@ def isometric_view(job):
         # Back panel top front edge
         (iso45 - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_width + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45))),
+         - job.cabs.back_thickness * math.sin(math.radians(45))),
 
         # horizontal inside at bottom back
         (iso45, iso45,
          job.cabs.cabinet_width - job.cabs.side_thickness, iso45),
 
         # Front nailer - top rear edge
-        (job.cabs.side_thickness + isoNlr45, job.cabs.cabinet_height + isoNlr45,
+        (job.cabs.side_thickness + isoNlr45,
+         job.cabs.cabinet_height + isoNlr45,
          job.cabs.cabinet_width - job.cabs.side_thickness + isoNlr45,
          job.cabs.cabinet_height + isoNlr45),
 
         # Back nailer - top front edge
         (job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_width - job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
 
         # Back nailer - bottom front edge
         (job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
-             - job.cabs.topnailer_thickness,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+         - job.cabs.topnailer_thickness,
          job.cabs.cabinet_width - job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
-             - job.cabs.topnailer_thickness,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+         - job.cabs.topnailer_thickness,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
-             - job.cabs.topnailer_thickness),
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+         - job.cabs.topnailer_thickness),
 
-        # Vertical lines--------------------------------------------------------
+        # Vertical lines-------------------------------------------------------
 
         # Vertical left inner line
         (job.cabs.side_thickness, 0,
@@ -330,7 +329,8 @@ def isometric_view(job):
 
         # Vertical right inner line
         (job.cabs.cabinet_width - job.cabs.side_thickness, 0,
-         job.cabs.cabinet_width - job.cabs.side_thickness, job.cabs.cabinet_height),
+         job.cabs.cabinet_width - job.cabs.side_thickness,
+         job.cabs.cabinet_height),
 
         # Vertical right back
         (job.cabs.cabinet_width + iso45, iso45,
@@ -338,35 +338,35 @@ def isometric_view(job):
 
         # Vertical right back inner
         (job.cabs.cabinet_width + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          iso45 - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_width + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45))),
+         - job.cabs.back_thickness * math.sin(math.radians(45))),
 
         # Back nailer - front left edge
         (job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
-             - job.cabs.topnailer_thickness,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+         - job.cabs.topnailer_thickness,
          job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45,
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45),
 
         # Vertical inside line between nailers
         (iso45, job.cabs.cabinet_height + isoNlr45,
          iso45, job.cabs.cabinet_height + iso45
-                - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
-                - job.cabs.topnailer_thickness),
+         - job.cabs.back_thickness * math.sin(math.radians(45)) - isoNlr45
+         - job.cabs.topnailer_thickness),
 
         # Vertical inside line at back of left side
         (iso45, iso45,
          iso45, job.cabs.cabinet_height - job.cabs.topnailer_thickness),
 
-        # Angled lines----------------------------------------------------------
+        # Angled lines---------------------------------------------------------
 
         # Iso bottom left inner angle
         (job.cabs.side_thickness, job.cabs.bottom_thickness,
@@ -379,9 +379,9 @@ def isometric_view(job):
         # Iso upper left angle inner
         (job.cabs.side_thickness, job.cabs.cabinet_height,
          job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45))),
+         - job.cabs.back_thickness * math.sin(math.radians(45))),
 
         # Iso upper right angle
         (job.cabs.cabinet_width, job.cabs.cabinet_height,
@@ -391,9 +391,9 @@ def isometric_view(job):
         (job.cabs.cabinet_width - job.cabs.side_thickness,
          job.cabs.cabinet_height,
          job.cabs.cabinet_width - job.cabs.side_thickness + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45)),
+         - job.cabs.back_thickness * math.sin(math.radians(45)),
          job.cabs.cabinet_height + iso45
-             - job.cabs.back_thickness * math.sin(math.radians(45))),
+         - job.cabs.back_thickness * math.sin(math.radians(45))),
 
         # Iso lower right angle
         (job.cabs.cabinet_width, 0,
@@ -482,7 +482,8 @@ def hdimarrow(dim, scale, x, y, strwid, boundsln_len):
         Line(x2 - 5.5, y2 - 2, x2, y2, strokeWidth=strwid),
         # Boundary lines
         Line(x, y - boundsln_len/2, x, y + boundsln_len/2, strokeWidth=strwid),
-        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2, strokeWidth=strwid)
+        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2,
+             strokeWidth=strwid)
         )
     return result
 
@@ -572,7 +573,8 @@ def vdimarrow(dim, scale, x, y, strwid, boundsln_len):
         Line(x2, y2, x2 + 2, y2 - 5.5, strokeWidth=strwid),
         # Boundary lines
         Line(x - boundsln_len/2, y, x + boundsln_len/2, y, strokeWidth=strwid),
-        Line(x2 - boundsln_len/2, y2, x2 + boundsln_len/2, y2, strokeWidth=strwid)
+        Line(x2 - boundsln_len/2, y2, x2 + boundsln_len/2, y2,
+             strokeWidth=strwid)
         )
     return result
 
@@ -682,11 +684,14 @@ def ddimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
         Line(x, y, x + (5.5 - 1.25) - 2.5, y + 5.5 - 1.25, strokeWidth=strwid),
         Line(x, y, x + (5.5 - 1.25) + 3, y + 5.5 - 1.25, strokeWidth=strwid),
         # Upper right arrowhead
-        Line(x2 - (5.5 - 1.25) - 2.5, y2 - 5.5 + 1.25, x2, y2, strokeWidth=strwid),
-        Line(x2 - (5.5 - 1.25) + 2.75, y2 - 5.5 + 1.25, x2, y2, strokeWidth=strwid),
+        Line(x2 - (5.5 - 1.25) - 2.5, y2 - 5.5 + 1.25, x2, y2,
+             strokeWidth=strwid),
+        Line(x2 - (5.5 - 1.25) + 2.75, y2 - 5.5 + 1.25, x2, y2,
+             strokeWidth=strwid),
         # Boundary lines
         Line(x - boundsln_len/2, y, x + boundsln_len/2, y, strokeWidth=strwid),
-        Line(x2 - boundsln_len/2, y2, x2 + boundsln_len/2, y2, strokeWidth=strwid)
+        Line(x2 - boundsln_len/2, y2, x2 + boundsln_len/2, y2,
+             strokeWidth=strwid)
         )
     return result
 
@@ -749,24 +754,22 @@ def panels_table(job):
         )
     # Create table for layout of the panel drawings
     colWidths = ('35%', '35%', '30%')
-    rowHeights = (130, 130)       # assumes col_ht of 411 pts
-                                  # 6.5 * 72 - 45 - 12
+    # The row heights below assume a col_ht of 411 pts (6.5 * 72 - 45 - 12).
+    rowHeights = (130, 130)
     if job.cabs.fillers is Ends.neither:
         # No fillers used; do not create a filler panel drawing.
-        data = ( (backpanel_dr, sidepanel_dr, topnailer_dr),
-                 (bottompanel_dr, door_dr)
-                 )
+        data = ((backpanel_dr, sidepanel_dr, topnailer_dr),
+                (bottompanel_dr, door_dr))
     else:
         # Fillers are used, we need a filler panel drawing.
         filler_dr = panel_drawing(
             'Filler', job.cabs.filler_width, job.cabs.filler_height
         )
-        data = ( (backpanel_dr, sidepanel_dr, topnailer_dr),
-                 (bottompanel_dr, door_dr, filler_dr)
-                 )
+        data = ((backpanel_dr, sidepanel_dr, topnailer_dr),
+                (bottompanel_dr, door_dr, filler_dr))
     top_center_style = [
-        ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('ALIGN', (0,0), (-1,-1), 'CENTER')
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER')
         ]
     return Table(data, colWidths, rowHeights, style=top_center_style)
 
@@ -842,7 +845,7 @@ def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
         matl,
         textAnchor='end',
         fontName=font_nm,
-        fontSize= matl_font_sz
+        fontSize=matl_font_sz
         )
     return (thick_str, matl_str)
 
