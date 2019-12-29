@@ -34,7 +34,6 @@
 import math
 import re
 
-# from reportlab.pdfgen import canvas as canv
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.lib import colors
@@ -48,7 +47,6 @@ from reportlab.graphics.shapes import (
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 from cabinet import Ends, door_hinge_gap, matl_abbrevs
-# import job
 from dimension_strs import dimstr, thickness_str
 from text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
@@ -459,35 +457,6 @@ def isometric_view(job):
     return result
 
 
-def hdimarrow(dim, scale, x, y, strwid, boundsln_len):
-    """Return a horizontal dimension arrow for a flat panel drawing.
-
-    The return value is a Group.
-
-    dim           is the dimension measurement.
-    scale         is the scale of the drawing.
-    x, y          are the coordinates of the left end of the arrow.
-    strwid        is the stroke width of the lines.
-    boundsln_len  is the length of the dimension bounds lines.
-    """
-    x2, y2 = x + dim * inch * scale, y
-    result = Group(
-        # Arrow
-        Line(x, y, x2, y2, strokeWidth=strwid),
-        # Left arrowhead
-        Line(x, y, x + 5.5, y + 2, strokeWidth=strwid),
-        Line(x, y, x + 5.5, y - 2, strokeWidth=strwid),
-        # Right arrowhead
-        Line(x2 - 5.5, y2 + 2, x2, y2, strokeWidth=strwid),
-        Line(x2 - 5.5, y2 - 2, x2, y2, strokeWidth=strwid),
-        # Boundary lines
-        Line(x, y - boundsln_len/2, x, y + boundsln_len/2, strokeWidth=strwid),
-        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2,
-             strokeWidth=strwid)
-        )
-    return result
-
-
 def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
     """Return a horizontal dimension arrow for the isometric drawing.
 
@@ -518,17 +487,104 @@ def hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len):
     return result
 
 
-def hdimarrow_str(dim, scale, x, y, strwid, boundsln_len):
-    """Return a horizontal dimension arrow with labeled measurement."""
-    result = hdimarrow(dim, scale, x, y, strwid, boundsln_len)
-    add_hdimstr(result, dim, scale, x, y)
-    return result
-
-
 def hdimarrow_iso_str(dim, scale, x, y, strwid, boundsln_len):
     """Return an isometric horiz dimension arrow with labeled measurement."""
     result = hdimarrow_iso(dim, scale, x, y, strwid, boundsln_len)
     add_hdimstr(result, dim, scale, x, y)
+    return result
+
+
+def hdimarrow(dim, scale, x, y, strwid, boundsln_len):
+    """Return a horizontal dimension arrow for a flat panel drawing.
+
+    The return value is a Group.
+
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the left end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
+    """
+    x2, y2 = x + dim * inch * scale, y
+    result = Group(
+        # Boundary lines
+        Line(x, y - boundsln_len/2, x, y + boundsln_len/2, strokeWidth=strwid),
+        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2,
+             strokeWidth=strwid),
+        # Arrow shaft
+        Line(x, y, x2, y2, strokeWidth=strwid),
+        # Left arrowhead
+        Line(x, y, x + 5.5, y + 2, strokeWidth=strwid),
+        Line(x, y, x + 5.5, y - 2, strokeWidth=strwid),
+        # Right arrowhead
+        Line(x2 - 5.5, y2 + 2, x2, y2, strokeWidth=strwid),
+        Line(x2 - 5.5, y2 - 2, x2, y2, strokeWidth=strwid)
+        )
+    return result
+
+
+def hdimarrow_outside(dim, scale, x, y, strwid, boundsln_len):
+    """Return a horizontal outer dimension arrow for a flat panel drawing.
+
+    The return value is a Group.
+
+    dim           is the dimension measurement.
+    scale         is the scale of the drawing.
+    x, y          are the coordinates of the left end of the arrow.
+    strwid        is the stroke width of the lines.
+    boundsln_len  is the length of the dimension bounds lines.
+    """
+    x2, y2 = x + dim * inch * scale, y
+    result = Group(
+        # Boundary lines
+        Line(x, y - boundsln_len/2, x, y + boundsln_len/2, strokeWidth=strwid),
+        Line(x2, y2 - boundsln_len/2, x2, y2 + boundsln_len/2,
+             strokeWidth=strwid),
+        # Left outside arrow
+        Line(x - 11, y, x, y, strokeWidth=strwid),
+        Line(x - 5.5, y + 2, x, y, strokeWidth=strwid),
+        Line(x - 5.5, y - 2, x, y, strokeWidth=strwid),
+        # Right outside arrow
+        Line(x2, y2, x2 + 11, y2, strokeWidth=strwid),
+        Line(x2, y2, x2 + 5.5, y2 + 2, strokeWidth=strwid),
+        Line(x2, y2, x2 + 5.5, y2 - 2, strokeWidth=strwid)
+        )
+    return result
+
+
+def hdimarrow_str(dim, scale, x, y, strwid, boundsln_len):
+    """Return a horizontal dimension arrow with labeled measurement."""
+    dimstr_width = get_dimstr_width(dim, scale, x, y)
+    dim_scaled = dim * inch * scale
+    min_arrow_space = 5.5 * 2
+    if dimstr_width <= dim_scaled - min_arrow_space:
+        result = hdimarrow(dim, scale, x, y, strwid, boundsln_len)
+        add_hdimstr(result, dim, scale, x, y)
+    elif dimstr_width <= dim_scaled - 1 - 1:
+        result = hdimarrow_outside(dim, scale, x, y, strwid, boundsln_len)
+        add_hdimstr(result, dim, scale, x, y)
+    else:
+        result = hdimarrow_outside(dim, scale, x, y, strwid, boundsln_len)
+        add_hdimstr_beside(result, dim, x, y)
+    return result
+
+
+def get_dimstr_width(dim, scale, x, y):
+    """Return the width of the rendered string for the given dimension."""
+    bounds_rect = get_dimstr_bounds(dim, scale, x, y)
+    result = bounds_rect[2] - bounds_rect[0]
+    return result
+
+
+def get_dimstr_bounds(dim, scale, x, y):
+    """Return the bounds rect of the string for the given dimension."""
+    dim_scaled = dim * inch * scale
+    dim_str = String(x + dim_scaled / 2, y - 3,
+                     dimstr(dim) + '"',
+                     textAnchor='middle',
+                     fontSize=9
+                     )
+    result = dim_str.getBounds()
     return result
 
 
@@ -540,12 +596,24 @@ def add_hdimstr(arrow, dim, scale, x, y):
                      textAnchor='middle',
                      fontSize=9
                      )
-    bnds = dim_str.getBounds()
-    whiteout_r = Rect(
-        bnds[0], bnds[1], bnds[2] - bnds[0], dim_str.fontSize,
+    bounds_rect = dim_str.getBounds()
+    whiteout_rect = Rect(
+        bounds_rect[0], bounds_rect[1],
+        bounds_rect[2] - bounds_rect[0], bounds_rect[3] - bounds_rect[1],
         fillColor=colors.white, strokeColor=colors.white
         )
-    arrow.add(whiteout_r)
+    arrow.add(whiteout_rect)
+    arrow.add(dim_str)
+    return arrow
+
+
+def add_hdimstr_beside(arrow, dim, x, y):
+    """Add a dim label to the given horiz dim arrow, outside the bounds."""
+    dim_str = String(x - 11 - 2, y - 3,
+                     dimstr(dim) + '"',
+                     textAnchor='end',
+                     fontSize=9
+                     )
     arrow.add(dim_str)
     return arrow
 
@@ -808,7 +876,6 @@ def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
     boundsln_len = 10
     result.add(hdimarrow_str(hdim, scale, rx, ry - 9, 0.67, boundsln_len))
     result.add(vdimarrow_str(vdim, scale, rx - 9, ry, 0.67, boundsln_len))
-
     if material is not None and thickness is not None:
         thick_str, matl_str = matl_thick_strs(
             material, thickness, rx, ry, hdim_scaled, vdim_scaled
