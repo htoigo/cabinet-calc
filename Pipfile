@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 reportlab = "*"
 flake8 = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
