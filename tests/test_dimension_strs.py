@@ -1,62 +1,57 @@
 # test_dimension_strs.py    -*- coding: utf-8 -*-
 
+import sys
+import os
 
-# import unittest
-import pytest
-from .context import dimension_strs as DS
-#      import dimstr, dimstr_col, sdalign
-# from dimension_strs import dimstr, dimstr_col, sdalign
+# Add the root directory of the project to sys.path so that we can find modules
+# in other subtrees (outside of tests dir) for importing.
+sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
+
+import app.dimension_strs as DS
 
 
-class DimstrTest(unittest.TestCase):
-
+class TestDimstr:
     def test_zero(self):
-        self.assertEqual(DS.dimstr(0), '0')
+        assert DS.dimstr(0) == '0'
 
     def test_one_fourth(self):
-        self.assertEqual(DS.dimstr(0.25), '1/4')
+        assert DS.dimstr(0.25) == '1/4'
 
     def test_one_eighth(self):
-        self.assertEqual(DS.dimstr(0.125), '1/8')
+        assert DS.dimstr(0.125) == '1/8'
 
     def test_eleven_and_two_sevenths(self):
-        self.assertEqual(DS.dimstr(11 + 2/7), '11 5/16-')
+        assert DS.dimstr(11 + 2/7) == '11 5/16-'
 
 
-class Dimstr_colTest(unittest.TestCase):
-
+class TestDimstrCol:
     def test_zero(self):
-        self.assertEqual(DS.dimstr_col(0), ' 0')
+        assert DS.dimstr_col(0) == ' 0'
 
     def test_one(self):
-        self.assertEqual(DS.dimstr_col(1), ' 1')
+        assert DS.dimstr_col(1) == ' 1'
 
     def test_nine(self):
-        self.assertEqual(DS.dimstr_col(9), ' 9')
+        assert DS.dimstr_col(9) == ' 9'
 
     def test_one_fourth(self):
-        self.assertEqual(DS.dimstr_col(0.25), '1/4')
+        assert DS.dimstr_col(0.25) == '1/4'
 
     def test_point_two_seven(self):
-        self.assertEqual(DS.dimstr_col(0.27), '1/4+')
+        assert DS.dimstr_col(0.27) == '1/4+'
 
 
-class SDAlignTest(unittest.TestCase):
-
+class TestSDAlign:
     def test_four(self):
-        self.assertEqual(DS.sdalign('4'), ' 4')
+        assert DS.sdalign('4') == ' 4'
 
     def test_eight_and_three_fourths(self):
-        self.assertEqual(DS.sdalign('8 3/4'), ' 8 3/4')
+        assert DS.sdalign('8 3/4') == ' 8 3/4'
 
     def test_double_digit_mixed(self):
-        self.assertEqual(DS.sdalign('22 3/8'), '22 3/8')
+        assert DS.sdalign('22 3/8') == '22 3/8'
 
     def test_double_digit_whole(self):
-        self.assertEqual(DS.sdalign('17'), '17')
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert DS.sdalign('17') == '17'
 
 # test_dimension_strs.py ends here
