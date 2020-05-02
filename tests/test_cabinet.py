@@ -13,5 +13,12 @@ def test_num_cabinets():
     cr = C.Run(157.25, 28.5, 24.0)
     assert cr.num_cabinets == 5
 
+def test_cabinet_height():
+    cr = C.Run(157.25, 28.5, 24.0)
+    assert cr.cabinet_height == 28.5
+
+def test_cabinet_depth():
+    cr = C.Run(157.25, 28.5, 24.0)
+    assert cr.cabinet_depth == 24.0
 
 # test_cabinet.py ends here
