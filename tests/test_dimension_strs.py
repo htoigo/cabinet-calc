@@ -21,7 +21,9 @@ class TestDimstr:
         assert DS.dimstr(0.125) == '1/8'
 
     def test_eleven_and_two_sevenths(self):
-        assert DS.dimstr(11 + 2/7) == '11 5/16-'
+        # We need the `.' in `2./7' for this not to fail on Python 2.7.
+        # Do we care about supporting Python 2.7, since it's EOL?
+        assert DS.dimstr(11 + 2./7) == '11 5/16-'
 
 
 class TestDimstrCol:
