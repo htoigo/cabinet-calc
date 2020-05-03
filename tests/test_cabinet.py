@@ -19,6 +19,9 @@ def cabrun():
 def test_num_cabinets(cabrun):
     assert cabrun.num_cabinets == 5
 
+def test_fullwidth(cabrun):
+    assert cabrun.fullwidth == 157.25
+
 def test_cabinet_height(cabrun):
     assert cabrun.cabinet_height == 28.5
 
@@ -33,5 +36,11 @@ def test_extra_width(cabrun):
 
 def test_num_fillers(cabrun):
     assert cabrun.num_fillers == 0
+
+
+def test_setting_fullwidth(cabrun):
+    assert cabrun.fullwidth == 157.25
+    cabrun.fullwidth = 142.375
+    assert cabrun.fullwidth == 142.375
 
 # test_cabinet.py ends here
