@@ -7,18 +7,22 @@ import os
 # in other subtrees (outside of tests dir) for importing.
 sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
+import pytest
 import app.cabinet as C
 
-def test_num_cabinets():
-    cr = C.Run(157.25, 28.5, 24.0)
-    assert cr.num_cabinets == 5
 
-def test_cabinet_height():
-    cr = C.Run(157.25, 28.5, 24.0)
-    assert cr.cabinet_height == 28.5
+@pytest.fixture
+def cabrun():
+    return C.Run(157.25, 28.5, 24.0)
 
-def test_cabinet_depth():
-    cr = C.Run(157.25, 28.5, 24.0)
-    assert cr.cabinet_depth == 24.0
+
+def test_num_cabinets(cabrun):
+    assert cabrun.num_cabinets == 5
+
+def test_cabinet_height(cabrun):
+    assert cabrun.cabinet_height == 28.5
+
+def test_cabinet_depth(cabrun):
+    assert cabrun.cabinet_depth == 24.0
 
 # test_cabinet.py ends here
