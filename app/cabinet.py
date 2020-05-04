@@ -179,7 +179,7 @@ def cabinet_run(
 #     return result
 
 
-class Run:
+class Run(object):
     """A class representing a single run of cabinets.
 
     Args:
