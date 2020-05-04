@@ -47,7 +47,7 @@ def all_equal(lst):
     return lst[1:] == lst[:-1]
 
 
-class Job:
+class Job(object):
     """A job with name, an optional description, and a run of cabinets."""
 
     def __init__(self, name, cab_run, desc=''):
