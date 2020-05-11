@@ -150,7 +150,8 @@ def content(job):
     result.append(FrameBreak())
 
     result.append(Paragraph('Overview:', heading_style))
-    result.append(Paragraph(job.summaryln, normal_style))
+    for line in job.summaryln:
+        result.append(Paragraph(line, normal_style))
     result.append(Spacer(1, 10))
     for line in job.cabinfo:
         result.append(Paragraph(line, normal_style))
