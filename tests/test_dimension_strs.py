@@ -50,4 +50,5 @@ class TestSDAlign:
     def test_double_digit_whole(self):
         assert DS.sdalign('17') == '17'
 
-# test_dimension_strs.py ends here
+
+# test_dimension_strs.py  ends here

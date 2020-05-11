@@ -31,6 +31,7 @@
 """Cabinet Wiz cutlist generation module.
 """
 
+
 import math
 import re
 
@@ -917,4 +918,4 @@ def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
     return (thick_str, matl_str)
 
 
-# cutlist.py ends here
+# cutlist.py  ends here

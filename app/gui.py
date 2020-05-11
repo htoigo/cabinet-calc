@@ -582,4 +582,4 @@ class Application(ttk.Frame):
         pass
 
 
-# gui.py ends here
+# gui.py  ends here

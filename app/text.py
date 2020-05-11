@@ -126,4 +126,4 @@ heading_style = ParagraphStyle(
     spaceAfter=6)
 
 
-# text.py ends here
+# text.py  ends here
