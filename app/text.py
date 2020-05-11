@@ -40,29 +40,10 @@ __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
-import textwrap
-
 from reportlab.rl_config import canvas_basefontname as _baseFontName
 from reportlab.lib.fonts import tt2ps
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
-
-
-def wrap(lines, width=70):
-    """Wrap lines longer than `width', returning a new list of lines."""
-    result = []
-    for line in lines:
-        if len(line) <= width:
-            result.append(line)
-        else:
-            # If line ends in a newline, preserve it (textwrap returns a list
-            # of lines without final newlines).
-            ls = textwrap.wrap(line, width)
-            if line[-1] == '\n':
-                # Remember, ls[-1] is a line (a string)
-                ls[-1] = ls[-1] + '\n'
-            result.extend(ls)
-    return result
 
 
 # Fonts
