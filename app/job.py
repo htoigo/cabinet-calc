@@ -41,8 +41,8 @@ __author__ = 'Harry H. Toigo II'
 
 from contracts import contract
 
-from .cabinet import Ends
-from .dimension_strs import dimstr, dimstr_col, thickness_str
+from app.cabinet import Ends
+from app.dimension_strs import dimstr, dimstr_col, thickness_str
 
 
 def all_equal(lst):

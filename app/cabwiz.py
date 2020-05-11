@@ -47,12 +47,12 @@ import sys
 import argparse
 import textwrap
 
-from .cabinet import (
+from app.cabinet import (
     materials, prim_mat_default, door_mat_default, Ends, Run
     )
-from . import gui
-from . import job
-from . import cutlist
+import app.gui as gui
+import app.job as job
+import app.cutlist as cutlist
 
 
 def start_gui():

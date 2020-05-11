@@ -2,8 +2,8 @@
 
 
 import pytest
-from ..app import cabinet as C
-from ..app import job as J
+import app.cabinet as C
+import app.job as J
 
 
 @pytest.fixture

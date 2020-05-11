@@ -46,11 +46,11 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-from .cabinet import (
+from app.cabinet import (
     materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
     )
-from . import job
-from . import cutlist
+import app.job as job
+import app.cutlist as cutlist
 
 
 def yn_to_bool(str):

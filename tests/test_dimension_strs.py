@@ -1,7 +1,7 @@
 # test_dimension_strs.py    -*- coding: utf-8 -*-
 
 
-from ..app import dimension_strs as DS
+import app.dimension_strs as DS
 
 
 class TestDimstr:
