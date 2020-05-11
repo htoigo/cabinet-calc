@@ -39,17 +39,18 @@ This module implements the Cabinet Wiz GUI.
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
+
+from functools import reduce
+import textwrap
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from functools import reduce
 
-from cabinet import (
+from .cabinet import (
     materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
     )
-import job
-import cutlist
-from text import wrap
+from . import job
+from . import cutlist
 
 
 def yn_to_bool(str):
@@ -557,7 +558,9 @@ class Application(ttk.Frame):
             self.job = job.Job(self.jobname.get(), cab_run)
         # Display the computed job specification, ensuring output lines are no
         # longer than 65 chars.
-        self.output = '\n'.join(wrap(self.job.specification, 65))
+        self.output = ''
+        for line in self.job.specification:
+            self.output += textwrap.fill(line, width=65) + '\n'
         lines = self.output.count('\n') + 1
         self.output_txt.configure(state='normal')
         self.output_txt.delete('1.0', 'end')

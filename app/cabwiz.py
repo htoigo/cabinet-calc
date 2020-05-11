@@ -47,13 +47,12 @@ import sys
 import argparse
 import textwrap
 
-import gui
-from cabinet import (
+from .cabinet import (
     materials, prim_mat_default, door_mat_default, Ends, Run
     )
-import job
-import cutlist
-from text import wrap
+from . import gui
+from . import job
+from . import cutlist
 
 
 def start_gui():
@@ -83,8 +82,8 @@ def start_cli(args):
 
     # Output the job specification to the terminal, ensuring lines are no
     # longer than 65 chars.
-    for line in wrap(j.specification, 65):
-        print(line)
+    for line in j.specification:
+        print(textwrap.fill(line, width=65))
 
     # If requested, produce and save a cutlist pdf file.
     if args.cutlist is not None:

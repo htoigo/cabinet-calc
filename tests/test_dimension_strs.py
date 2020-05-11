@@ -1,13 +1,7 @@
 # test_dimension_strs.py    -*- coding: utf-8 -*-
 
-import sys
-import os
 
-# Add the root directory of the project to sys.path so that we can find modules
-# in other subtrees (outside of tests dir) for importing.
-sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
-
-import app.dimension_strs as DS
+from ..app import dimension_strs as DS
 
 
 class TestDimstr:
