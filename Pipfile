@@ -10,6 +10,7 @@ reportlab = "*"
 flake8 = "*"
 pytest = "*"
 coverage = "*"
+pycontracts = "*"
 
 [requires]
 python_version = "3.8"

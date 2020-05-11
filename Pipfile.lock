@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ba2f3adaf360f70c328248bf340cf664ab691c538e739511a4d9d3dd6fd58b72"
+            "sha256": "7c3ab52805d65c74552a37b23208770f8bafbe3d2a02d05af2755dba7ca3c4fb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -60,6 +60,13 @@
             "index": "pypi",
             "version": "==5.1"
         },
+        "decorator": {
+            "hashes": [
+                "sha256:41fa54c2a0cc4ba648be4fd43cff00aedf5b9465c9bf18d64325bc225f08f760",
+                "sha256:e3a62f0520172440ca0dcc823749319382e377f37f140a0b99ef45fecb84bfe7"
+            ],
+            "version": "==4.4.2"
+        },
         "entrypoints": {
             "hashes": [
                 "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19",
@@ -74,6 +81,12 @@
             ],
             "index": "pypi",
             "version": "==3.7.9"
+        },
+        "future": {
+            "hashes": [
+                "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"
+            ],
+            "version": "==0.18.2"
         },
         "mccabe": {
             "hashes": [
@@ -144,6 +157,13 @@
             ],
             "version": "==2.5.0"
         },
+        "pycontracts": {
+            "hashes": [
+                "sha256:89c0f5e5b9c13468fbb732b6fdb327342da358cef7d4536062596a5f52a9050f"
+            ],
+            "index": "pypi",
+            "version": "==1.8.14"
+        },
         "pyflakes": {
             "hashes": [
                 "sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0",
@@ -160,11 +180,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:0e5b30f5cb04e887b91b1ee519fa3d89049595f428c1db76e73bd7f17b09b172",
-                "sha256:84dde37075b8805f3d1f392cc47e38a0e59518fb46a431cfdaf7cf1ce805f970"
+                "sha256:95c710d0a72d91c13fae35dce195633c929c3792f54125919847fdcdf7caa0d3",
+                "sha256:eb2b5e935f6a019317e455b6da83dd8650ac9ffd2ee73a7b657a30873d67a698"
             ],
             "index": "pypi",
-            "version": "==5.4.1"
+            "version": "==5.4.2"
         },
         "reportlab": {
             "hashes": [
