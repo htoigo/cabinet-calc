@@ -56,5 +56,7 @@ def test_job_partslist(job):
 
 
 def test_job_specification(job):
-    assert 
+    pass
+
+
 # test_job.py  ends here
