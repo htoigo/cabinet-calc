@@ -10,7 +10,13 @@ import app.job as J
 def job():
     # No fillers, no legs
     return J.Job('Job 1', C.Run(157.125, 27.875, 24),
-                 desc='A job to test various parts of the job module.')
+                 desc='Test various parts of the job module.')
+
+
+def test_job_header(job):
+    assert job.header == ['Job Name: Job 1'
+                          , 'Description: Test various parts of the job module.'
+                          , 'Total Wall Space: 157.125"']
 
 
 def test_job_summaryln(job):
