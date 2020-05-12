@@ -47,6 +47,7 @@ def test_job_overview(job):
                             , 'Door Material:  3/4" Melamine']
 
 
+@pytest.mark.skip
 def test_job_partslist(job):
     assert job.partslist == [  'Back Panels:      5  @  31 7/16"    x  27 7/8"     x  3/4"'
                              , 'Bottom Panels:    5  @  29 15/16"   x  24          x  3/4"'
@@ -55,8 +56,10 @@ def test_job_partslist(job):
                              , 'Doors:           10  @  ']
 
 
+@pytest.mark.skip
 def test_job_specification(job):
-    pass
+    assert job.specification == ['-' * 65
+                                 , '']
 
 
 # test_job.py  ends here
