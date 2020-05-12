@@ -20,7 +20,9 @@ def test_job_header(job):
 
 
 def test_job_summaryln(job):
-    pass    # assert job.summaryln == ['']
+    assert job.summaryln == ['5 cabinets measuring 31 7/16" totalling 157 1/8"'
+                             ', with finished end panels on left and right.'
+                             ' No filler panels required.']
 
 
 def test_job_cabinfo(job):
@@ -28,4 +30,31 @@ def test_job_cabinfo(job):
                            , 'Single cabinet width:  31 7/16"']
 
 
+def test_job_materialinfo(job):
+    assert job.materialinfo == ['Primary Material:  3/4" Standard Plywood'
+                                , 'Door Material:  3/4" Melamine']
+
+
+def test_job_overview(job):
+    assert job.overview == ['5 cabinets measuring 31 7/16" totalling 157 1/8"'
+                            ', with finished end panels on left and right.'
+                            ' No filler panels required.'
+                            , ''
+                            , 'Number of cabinets needed:  5'
+                            , 'Single cabinet width:  31 7/16"'
+                            , ''
+                            , 'Primary Material:  3/4" Standard Plywood'
+                            , 'Door Material:  3/4" Melamine']
+
+
+def test_job_partslist(job):
+    assert job.partslist == [  'Back Panels:      5  @  31 7/16"    x  27 7/8"     x  3/4"'
+                             , 'Bottom Panels:    5  @  29 15/16"   x  24          x  3/4"'
+                             , 'Side Panels:     10  @              x  27 7/8"     x  3/4"'
+                             , 'Top Nailers:     10  @  '
+                             , 'Doors:           10  @  ']
+
+
+def test_job_specification(job):
+    assert 
 # test_job.py  ends here
