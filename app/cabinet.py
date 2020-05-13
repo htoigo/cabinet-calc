@@ -268,8 +268,7 @@ class Run(object):
         Return the smallest number of cabinets needed, while not exceeding the
         maximum cabinet width.
         """
-        return math.ceil(self.fullwidth / max_cabinet_width)
-
+        return int(math.ceil(self.fullwidth / max_cabinet_width))
     @property
     def cabinet_height(self):
         """The overall cabinet height."""

@@ -31,8 +31,10 @@
 """Cabinet Wiz fractional dimension string module.
 """
 
+
 from fractions import Fraction
 import math
+
 
 debug = False
 
@@ -220,4 +222,4 @@ def upperval_shy_str(i, frac):
     return upperval_str(i, frac) + '-'
 
 
-# dimension_strs.py ends here
+# dimension_strs.py  ends here

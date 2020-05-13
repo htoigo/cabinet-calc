@@ -31,6 +31,7 @@
 """Cabinet Wiz cutlist generation module.
 """
 
+
 import math
 import re
 
@@ -46,9 +47,9 @@ from reportlab.graphics.shapes import (
     )
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
-from cabinet import Ends, door_hinge_gap, matl_abbrevs
-from dimension_strs import dimstr, thickness_str
-from text import (
+from app.cabinet import Ends, door_hinge_gap, matl_abbrevs
+from app.dimension_strs import dimstr, thickness_str
+from app.text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
     fixed_style
     )
@@ -149,7 +150,8 @@ def content(job):
     result.append(FrameBreak())
 
     result.append(Paragraph('Overview:', heading_style))
-    result.append(Paragraph(job.summaryln, normal_style))
+    for line in job.summaryln:
+        result.append(Paragraph(line, normal_style))
     result.append(Spacer(1, 10))
     for line in job.cabinfo:
         result.append(Paragraph(line, normal_style))
@@ -917,4 +919,4 @@ def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
     return (thick_str, matl_str)
 
 
-# cutlist.py ends here
+# cutlist.py  ends here

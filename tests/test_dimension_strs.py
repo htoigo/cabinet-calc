@@ -1,11 +1,5 @@
 # test_dimension_strs.py    -*- coding: utf-8 -*-
 
-import sys
-import os
-
-# Add the root directory of the project to sys.path so that we can find modules
-# in other subtrees (outside of tests dir) for importing.
-sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 import app.dimension_strs as DS
 
@@ -56,4 +50,5 @@ class TestSDAlign:
     def test_double_digit_whole(self):
         assert DS.sdalign('17') == '17'
 
-# test_dimension_strs.py ends here
+
+# test_dimension_strs.py  ends here

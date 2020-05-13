@@ -39,8 +39,10 @@ __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
-from cabinet import Ends
-from dimension_strs import dimstr, dimstr_col, thickness_str
+from contracts import contract
+
+from app.cabinet import Ends
+from app.dimension_strs import dimstr, dimstr_col, thickness_str
 
 
 def all_equal(lst):
@@ -59,7 +61,14 @@ class Job(object):
         self.cabs = cab_run
 
     @property
+    @contract
     def header(self):
+        """Header of the job specification.
+
+        Includes job name, job description (if provided), and total wall space.
+
+           :rtype: list[>0](str)
+        """
         result = []
         result.append('Job Name: ' + self.name)
         if self.description != '':
@@ -68,47 +77,58 @@ class Job(object):
         return result
 
     @property
+    @contract
     def summaryln(self):
-        """Return a single string summary of the job."""
-        result = (str(self.cabs.num_cabinets) + ' cabinets measuring '
-                  + dimstr(self.cabs.cabinet_width) + '" '
-                  + 'totalling '
-                  + dimstr(self.cabs.cabinet_width
-                           * self.cabs.num_cabinets) + '"')
+        """A very brief summary of the job.
+
+           :rtype: list[>0](str)
+        """
+        summary = ''
+        summary += (str(self.cabs.num_cabinets) + ' cabinets measuring '
+                    + dimstr(self.cabs.cabinet_width) + '" '
+                    + 'totalling '
+                    + dimstr(self.cabs.cabinet_width
+                             * self.cabs.num_cabinets) + '"')
         if self.cabs.fillers is Ends.neither:
-            result += (', with finished end panels on left and right.'
-                       ' No filler panels required.')
+            summary += (', with finished end panels on left and right.'
+                          ' No filler panels required.')
         elif self.cabs.fillers is Ends.left:
-            result += (', with a ' + dimstr(self.cabs.filler_width)
-                       + '" filler on the left.')
+            summary += (', with a ' + dimstr(self.cabs.filler_width)
+                          + '" filler on the left.')
         elif self.cabs.fillers is Ends.right:
-            result += (', with a ' + dimstr(self.cabs.filler_width)
-                       + '" filler on the right.')
+            summary += (', with a ' + dimstr(self.cabs.filler_width)
+                          + '" filler on the right.')
         elif self.cabs.fillers is Ends.both:
-            result += (', with two (2) ' + dimstr(self.cabs.filler_width)
-                       + '" fillers.')
+            summary += (', with two (2) ' + dimstr(self.cabs.filler_width)
+                          + '" fillers.')
         else:
             raise TypeError('fillers is not Ends.neither, .left, .right,'
                             ' or .both')
         if self.cabs.has_legs:
-            result += (' To be mounted on legs.')
-        result += '\n'
-        return result
+            summary += (' To be mounted on legs.')
+        return [summary]
 
     @property
+    @contract
     def cabinfo(self):
-        """A list of strings."""
+        """Description of the number of cabinets needed and cabinet width.
+
+           :rtype: list[>0](str)
+        """
         result = []
         result.append('Number of cabinets needed:  '
                       + str(self.cabs.num_cabinets))
         result.append('Single cabinet width:  '
                       + dimstr(self.cabs.cabinet_width) + '"')
-        result.append('')
         return result
 
     @property
+    @contract
     def materialinfo(self):
-        """A list of strings."""
+        """Description of the materials needed for the job.
+
+           :rtype: list[>0](str)
+        """
         result = []
         result.append('Primary Material:  '
                       + thickness_str(self.cabs.prim_thickness)
@@ -137,18 +157,28 @@ class Job(object):
         return result
 
     @property
+    @contract
     def overview(self):
+        """Overview of the job specification.
+
+           :rtype: list[>0](str)
+        """
         result = []
-        # result.append('Overview:\n')
-        result.append(self.summaryln)
+        result.extend(self.summaryln)
+        result.append('')
         result.extend(self.cabinfo)
+        result.append('')
         result.extend(self.materialinfo)
         return result
 
     @property
+    @contract
     def partslist(self):
+        """Detailed list of parts needed for the job.
+
+           :rtype: list[>0](str)
+        """
         result = []
-        # result.append('Parts List:\n')
         result.append(
             'Back Panels:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
                 self.cabs.num_backpanels,
@@ -191,8 +221,12 @@ class Job(object):
         return result
 
     @property
+    @contract
     def specification(self):
-        """Return a complete specification of the job as a list of strings."""
+        """Return a complete specification of the job as a list of strings.
+
+           :rtype: list[>0](str)
+        """
         sep = '-' * 65
         result = ([sep] + self.header + [sep]
                   + ['Overview:', ''] + self.overview + [sep]
@@ -200,4 +234,4 @@ class Job(object):
         return result
 
 
-# job.py ends here
+# job.py  ends here

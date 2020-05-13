@@ -1,11 +1,5 @@
 # test_cabinet.py    -*- coding: utf-8 -*-
 
-import sys
-import os
-
-# Add the root directory of the project to sys.path so that we can find modules
-# in other subtrees (outside of tests dir) for importing.
-sys.path.append(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 import pytest
 import app.cabinet as C
@@ -129,4 +123,4 @@ def test_door_height(cabrun):
     assert cabrun.door_height == 28.0
 
 
-# test_cabinet.py ends here
+# test_cabinet.py  ends here
