@@ -83,12 +83,11 @@ class Job(object):
 
            :rtype: list[>0](str)
         """
-        summary = ''
-        summary += (str(self.cabs.num_cabinets) + ' cabinets measuring '
-                    + dimstr(self.cabs.cabinet_width) + '" '
-                    + 'totalling '
-                    + dimstr(self.cabs.cabinet_width
-                             * self.cabs.num_cabinets) + '"')
+        numcabs = self.cabs.num_cabinets
+        cabwidth = self.cabs.cabinet_width
+        summary = (str(numcabs) + (' cabinet' if numcabs == 1 else ' cabinets')
+                   + ' measuring ' + dimstr(cabwidth) + '" ' + 'totalling '
+                   + dimstr(cabwidth * numcabs) + '"')
         if self.cabs.fillers is Ends.neither:
             summary += (', with finished end panels on left and right.'
                           ' No filler panels required.')
