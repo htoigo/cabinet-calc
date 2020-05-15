@@ -59,8 +59,8 @@ from enum import Enum
 
 
 # Module constants
-
 # All measurements are in inches, unless otherwise specified.
+
 
 max_cabinet_width = 36.0
 min_filler_width = 1.0
@@ -69,6 +69,14 @@ max_filler_width = 4.0
 # The gap between the back of the door and the front of the cabinet,
 # due to the hinges.
 door_hinge_gap = 0.125
+
+# Typical countertop overhang dimensions.
+ctop_ovrhang_l_default = 1.5
+ctop_ovrhang_r_default = 1.5
+ctop_ovrhang_f_default = 2.0
+
+# Do we need countertop thickness?
+
 
 # List of materials
 
@@ -142,6 +150,9 @@ def cabinet_run(
         door_thickness=matl_thicknesses[materials[door_mat_default]][0],
         bottom_thickness=None,
         has_legs=False,
+        ctop_ovr_l=ctop_ovrhang_l_default,
+        ctop_ovr_r=ctop_ovrhang_r_default,
+        ctop_ovr_f=ctop_ovrhang_f_default,
         topnailer_depth=4,
         doortop_space=0.5, doorside_space_l=0.125,
         doorside_space_m=0.125, doorside_space_r=0.125):
@@ -156,6 +167,14 @@ def cabinet_run(
     :param door_material: The door material name.
     :param door_thickness: The door material thickness.
     :param bottom_thickness: The bottom may be thicker and stacked.
+    :param has_legs: True if the cabinet run will have legs.
+    :type has_legs: bool
+    :param ctop_ovr_l: Length of countertop overhang on left.
+    :type ctop_ovr_l: float
+    :param ctop_ovr_r: Length of countertop overhang on right.
+    :type ctop_ovr_r: float
+    :param ctop_ovr_f: Length of countertop overhang in front.
+    :type ctop_ovr_f: float
     :return: :class:`Run <Run>` object
     :rtype: cabinet.Run
     """
@@ -163,6 +182,7 @@ def cabinet_run(
                prim_material, prim_thickness,
                door_material, door_thickness,
                bottom_thickness, has_legs,
+               ctop_ovr_l, ctop_ovr_r, ctop_ovr_f,
                topnailer_depth, doortop_space, doorside_space_l,
                doorside_space_m, doorside_space_r)
 
@@ -182,10 +202,14 @@ def cabinet_run(
 class Run(object):
     """A class representing a single run of cabinets.
 
-    Args:
-        fullwidth: Full bank width available for all cabinets combined.
-        height: The height from toe kick to top of cabinets.
-        depth: Depth from front to back, including the door.
+    :param fullwidth: Full bank width available for all cabinets combined,
+        including countertop.
+    :type fullwidth: float
+    :param height: The height from toe kick to top of cabinets.
+    :type height: float
+    :param depth: Depth from front to back of the countertop, which extends
+        past the front of the door by the overhang amount.
+    :type depth: float
         fillers: Which ends will have filler panels.
         prim_material: Primary material name.
         prim_thickness: Primary material thickness (float).
@@ -198,7 +222,14 @@ class Run(object):
             material thickness, if the cabinets will not have legs attached, or
             if they will, to the list of stacked panels for the primary
             material.
-        has_legs: True if the cabinets will have legs.
+    :param has_legs: True if the cabinets will have legs.
+    :type has_legs: bool
+    :param ctop_ovr_l: Length of countertop overhang on left.
+    :type ctop_ovr_l: float
+    :param ctop_ovr_r: Length of countertop overhang on right.
+    :type ctop_ovr_r: float
+    :param ctop_ovr_f: Length of countertop overhang in front.
+    :type ctop_ovr_f: float
 
     At the moment this class assumes that there are exactly two doors per
     cabinet, as does all code in this module. We may change this later to
@@ -211,12 +242,18 @@ class Run(object):
                  door_thickness=None,
                  btmpanel_thicknesses=None,
                  has_legs=False,
+                 ctop_ovr_l=ctop_ovrhang_l_default,
+                 ctop_ovr_r=ctop_ovrhang_r_default,
+                 ctop_ovr_f=ctop_ovrhang_f_default,
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
+        self._ctop_ovr_l = ctop_ovr_l
+        self._ctop_ovr_r = ctop_ovr_r
+        self._ctop_ovr_f = ctop_ovr_f
         # fillers must be one of: Ends.neither, Ends.left, Ends.right, or
         # Ends.both.
         self.fillers = fillers
@@ -262,13 +299,38 @@ class Run(object):
         del self._fullwidth
 
     @property
+    def height(self):
+        return self._height
+
+    @property
+    def depth(self):
+        """The overall depth, usually the depth of the countertop."""
+        return self._depth
+
+    @property
+    def ctop_ovr_l(self):
+        return self._ctop_ovr_l
+
+    @property
+    def ctop_ovr_r(self):
+        return self._ctop_ovr_r
+
+    @property
+    def ctop_ovr_f(self):
+        return self._ctop_ovr_f
+
+    @property
     def num_cabinets(self):
         """Compute the number of cabinets needed for the given wall width.
 
+        The countertop overhang on left and right reduces the available width
+        for cabinet boxes.
         Return the smallest number of cabinets needed, while not exceeding the
         maximum cabinet width.
         """
-        return int(math.ceil(self.fullwidth / max_cabinet_width))
+        overhang = self._ctop_ovr_l + self._ctop_ovr_r
+        return int(math.ceil((self._fullwidth - overhang) / max_cabinet_width))
+
     @property
     def cabinet_height(self):
         """The overall cabinet height."""
@@ -276,39 +338,39 @@ class Run(object):
 
     @property
     def cabinet_depth(self):
-        """The overall cabinet depth."""
-        return self._depth
+        """The depth of the cabinets, including doors."""
+        return self._depth - self._ctop_ovr_f
 
     @property
     def cabinet_width(self):
         """The width of each individual cabinet in this run."""
+        all_cabs_width = self._fullwidth - self._ctop_ovr_l - self._ctop_ovr_r
         if self.num_fillers == 0:
             # With no fillers, we have no choice about the cabinet width.
-            width = self._fullwidth / self.num_cabinets
+            width = (all_cabs_width) / self.num_cabinets
         else:
             # Restrict cabinet width to an easy-to-cut value, if possible,
             # while keeping filler widths within allowable range. We start with
             # integral values for the cabinet width.
-            width = self._fullwidth // self.num_cabinets
-            filler_w = ((self._fullwidth - width * self.num_cabinets)
+            width = all_cabs_width // self.num_cabinets
+            filler_w = ((all_cabs_width - width * self.num_cabinets)
                         / self.num_fillers)
             delta = 1.0
             while filler_w < min_filler_width:
                 width -= delta
-                filler_w = ((self._fullwidth - width * self.num_cabinets)
+                filler_w = ((all_cabs_width - width * self.num_cabinets)
                             / self.num_fillers)
             while filler_w > max_filler_width:
                 delta /= 2
                 width += delta
-                filler_w = ((self._fullwidth - width * self.num_cabinets)
+                filler_w = ((all_cabs_width - width * self.num_cabinets)
                             / self.num_fillers)
         return width
 
     @property
     def extra_width(self):
         """The extra space beside the cabinets, to be filled by fillers."""
-        # return self._fullwidth % self.num_cabinets
-        return self._fullwidth - self.num_cabinets * self.cabinet_width
+        return self._fullwidth - self.cabinet_width * self.num_cabinets
 
     @property
     def num_fillers(self):
