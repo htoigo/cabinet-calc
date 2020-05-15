@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3       -*- coding: utf-8 -*-
 
-# cabwiz.py        -*- coding: utf-8 -*-
-
-# The main executable for Cabinet Wiz.
+# cabwiz.py, the main executable for Cabinet Wiz.
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
