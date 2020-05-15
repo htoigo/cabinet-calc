@@ -70,7 +70,10 @@ def start_cli(args):
                   door_material=args.door_matl,
                   door_thickness=args.door_thick,
                   btmpanel_thicknesses=args.btm_thicks,
-                  has_legs=args.legs)
+                  has_legs=args.legs,
+                  ctop_left=args.ctopleft,
+                  ctop_right=args.ctopright,
+                  ctop_front=args.ctopfront)
     # Create a job object that holds the name, a single cabinet run object,
     # and an optional description for the job.
     if args.desc is not None:
@@ -156,15 +159,15 @@ def get_parser():
                         help="generate cutlist & save in FN.pdf",
                         metavar='FN',
                         type=str)
-    # parser.add_argument("-ctl", "--ctopleft",
-    #                     help="countertop overhang left side",
-    #                     type=float)
-    # parser.add_argument("-ctr", "--ctopright",
-    #                     help="countertop overhang right side",
-    #                     type=float)
-    # parser.add_argument("-ctf", "--ctopfront",
-    #                     help="countertop overhang front side",
-    #                     type=float)
+    parser.add_argument("-ctl", "--ctopleft",
+                        help="countertop overhang on left",
+                        type=float)
+    parser.add_argument("-ctr", "--ctopright",
+                        help="countertop overhang on right",
+                        type=float)
+    parser.add_argument("-ctf", "--ctopfront",
+                        help="countertop overhang in front",
+                        type=float)
     return parser
 
 

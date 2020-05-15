@@ -111,4 +111,52 @@ def test_parse_shortopts_sepvals_primmatl():
     assert args.prim_thick == 0.77
 
 
+def test_parse_shortopts_sepvals_ctop_l():
+    p = CW.get_parser()
+    args = p.parse_args([
+        '-w', '127.125', '-ht', '27.0625', '-d', '25.875',
+        '-n', 'Countertop Overhang Left Job',
+        '-s', 'A job to test parsing ctop overhang left option.',
+        '-ctl', '1.5'])
+    assert args.fullwidth == 127.125
+    assert args.height == 27.0625
+    assert args.depth == 25.875
+    assert args.name == 'Countertop Overhang Left Job'
+    assert args.desc == 'A job to test parsing ctop overhang left option.'
+    assert args.fillers == C.Ends.neither
+    assert args.ctopleft == 1.5
+
+
+def test_parse_shortopts_sepvals_ctop_r():
+    p = CW.get_parser()
+    args = p.parse_args([
+        '-w', '127.125', '-ht', '27.0625', '-d', '25.875',
+        '-n', 'Countertop Overhang Right Job',
+        '-s', 'A job to test parsing ctop overhang right option.',
+        '-ctr', '1.5'])
+    assert args.fullwidth == 127.125
+    assert args.height == 27.0625
+    assert args.depth == 25.875
+    assert args.name == 'Countertop Overhang Right Job'
+    assert args.desc == 'A job to test parsing ctop overhang right option.'
+    assert args.fillers == C.Ends.neither
+    assert args.ctopright == 1.5
+
+
+def test_parse_shortopts_sepvals_ctop_fr():
+    p = CW.get_parser()
+    args = p.parse_args([
+        '-w', '127.125', '-ht', '27.0625', '-d', '25.875',
+        '-n', 'Countertop Overhang Front Job',
+        '-s', 'A job to test parsing ctop overhang front option.',
+        '-ctf', '2.0'])
+    assert args.fullwidth == 127.125
+    assert args.height == 27.0625
+    assert args.depth == 25.875
+    assert args.name == 'Countertop Overhang Front Job'
+    assert args.desc == 'A job to test parsing ctop overhang front option.'
+    assert args.fillers == C.Ends.neither
+    assert args.ctopfront == 2.0
+
+
 # test_cabwiz.py  ends here
