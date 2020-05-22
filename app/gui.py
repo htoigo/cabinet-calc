@@ -116,25 +116,32 @@ class Application(ttk.Frame):
         self.job = None
         self.initialize_vars()
         self.make_widgets()
+        self.reset_widgets()
 
     def initialize_vars(self):
         self.jobname.set('')
         self.description.set('')
+        self.dimension_base.set('countertop')
         self.fullwidth.set('')
         self.height.set('')
         self.depth.set('')
+        self.ctop_ovrhang_l.set(str(ctop_ovrhang_l_default))
+        self.ctop_ovrhang_f.set(str(ctop_ovrhang_f_default))
+        self.ctop_ovrhang_r.set(str(ctop_ovrhang_r_default))
+        self.ctop_thickness.set(str(ctop_thickness_default))
         self.fillers.set('neither')
         self.prim_material.set(materials[prim_mat_default])
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.door_material.set(materials[door_mat_default])
         self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
-        self.legs.set('no')
+        self.toekick_style.set('box_frame')
+        self.toekick_ht.set(str(toekick_ht_default))
+        self.stacked_btm.set('no')
         self.bottom_thickness.set('')
         self.btmpanel1_thickness.set('')
         self.btmpanel1_thickness.trace('w', self.btmpnl_thickness_changed)
         self.btmpanel2_thickness.set('')
         self.btmpanel2_thickness.trace('w', self.btmpnl_thickness_changed)
-        self.stacked_btm.set('no')
         self.btm_material.set('')
         self.doors_per_cab.set(2)
         self.output = _no_job_message
@@ -167,228 +174,362 @@ class Application(ttk.Frame):
         self.fill_outputframe(outputframe)
         self.fill_outp_btnsframe(outp_btnsframe)
 
+    def reset_widgets(self):
+        """Reset all UI elements to their proper states for input of a new job.
+
+        This is where we enable/disable widgets and set their initial values,
+        so that we can use this function in multiple places, in particular,
+        at initial program start AND when the `Clear' button is pressed.
+        """
+        self.dimbase_changed()
+        self.toekick_changed()
+        self.calc_button.state(['disabled'])
+        self.update_output_txt()
+        self.cutlist_button.state(['disabled'])
+        self.panel_layout_btn.state(['disabled'])
+
+    def update_output_txt(self):
+        """Update output area to display current value of self.output.
+
+        At program start, and after the Clear button is pressed, the output
+        will be _no_job_message, since no job output has been computed. In this
+        case we set the output text area to be 3 lines high. Otherwise, set the
+        height to match the output contents.
+        """
+        if self.output == _no_job_message:
+            lines = 3
+        else:
+            lines = self.output.count('\n') + 2
+        self.output_txt.configure(state='normal')
+        self.output_txt.delete('1.0', 'end')
+        self.output_txt.insert('end', self.output)
+        self.output_txt.configure(state='disabled', height=lines)
+
+    def make_jobframe(self, inpframe, vcmd):
+        jobframe = ttk.Frame(inpframe, padding=(0, 5, 0, 10))
+        jobframe.grid(column=0, row=0, sticky=(N, S, W, E))
+        jobframe.columnconfigure(0, weight=0)
+        jobframe.columnconfigure(1, weight=1)
+        ttk.Label(jobframe, text='Job Name:').grid(
+            column=0, row=0, pady=2, sticky=W)
+        self.jobname_ent = ttk.Entry(
+            jobframe, textvariable=self.jobname,
+            validate='all', validatecommand=(vcmd, '%P'))
+        ttk.Label(jobframe, text='Description:').grid(
+            column=0, row=1, pady=2, sticky=W)
+        self.descrip_ent = ttk.Entry(
+            jobframe, textvariable=self.description, validate='all',
+            validatecommand=(vcmd, '%P'))
+        self.jobname_ent.grid(column=1, row=0, pady=2, sticky=(W, E),
+                              padx=(5, 0))
+        self.descrip_ent.grid(column=1, row=1, pady=2, sticky=(W, E),
+                              padx=(5, 0))
+        self.jobname_ent.focus_set()
+
+    def make_dimbase_frame(self, inpframe):
+        dimbase_frame = ttk.Frame(inpframe, padding=(0, 10))
+        dimbase_frame.grid(column=0, row=1, sticky=(N, S, W, E))
+        dimbase_frame.columnconfigure(0, weight=0)
+        dimbase_frame.columnconfigure(1, weight=0)
+        dimbase_frame.columnconfigure(2, weight=1)
+        ttk.Label(dimbase_frame, text='Base measurement calculations on:'
+                  ).grid(column=0, row=0, sticky=W, padx=(0, 15), pady=2)
+        ttk.Radiobutton(
+            dimbase_frame, value='countertop', text='Countertop',
+            variable=self.dimension_base, command=self.dimbase_changed
+            ).grid(column=1, row=0, sticky=W, padx=(5, 20), pady=2)
+        ttk.Radiobutton(
+            dimbase_frame, value='cab_bank', text='Cabinet bank',
+            variable=self.dimension_base, command=self.dimbase_changed
+            ).grid(column=2, row=0, sticky=W, padx=5, pady=2)
+
+    def make_dimframe(self, inpframe, vcmd):
+        dimframe = ttk.Frame(inpframe, padding=(0, 10))
+        dimframe.grid(column=0, row=2, sticky=(N, S, W, E))
+        dimframe.columnconfigure(0, weight=0)
+        dimframe.columnconfigure(1, weight=1)
+        dimframe.columnconfigure(2, weight=0)
+        dimframe.columnconfigure(3, weight=1)
+        dimframe.columnconfigure(4, weight=0)
+        dimframe.columnconfigure(5, weight=1)
+        ttk.Label(dimframe, text='Width:').grid(
+            column=0, row=0, sticky=W, padx=(0, 3))
+        self.fullwidth_ent = ttk.Entry(
+            dimframe, textvariable=self.fullwidth, width=12, validate='all',
+            validatecommand=(vcmd, '%P'))
+        ttk.Label(dimframe, text='Height:').grid(
+            column=2, row=0, sticky=E, padx=(6, 3))
+        self.height_ent = ttk.Entry(
+            dimframe, textvariable=self.height, width=12, validate='all',
+            validatecommand=(vcmd, '%P'))
+        ttk.Label(dimframe, text='Depth:').grid(
+            column=4, row=0, sticky=E, padx=(6, 3))
+        self.depth_ent = ttk.Entry(
+            dimframe, textvariable=self.depth, width=12, validate='all',
+            validatecommand=(vcmd, '%P'))
+        self.fullwidth_ent.grid(column=1, row=0, sticky=(W), padx=(3, 40))
+        self.height_ent.grid(column=3, row=0, sticky=(W), padx=(3, 40))
+        self.depth_ent.grid(column=5, row=0, sticky=(W), padx=(3, 10))
+
+    def make_countertop_frame(self, inpframe, vcmd):
+        countertop_frame = ttk.Frame(inpframe, padding=(0, 10))
+        countertop_frame.grid(column=0, row=3, sticky=(N, S, W, E))
+        countertop_frame.columnconfigure(0, weight=1)
+        # Countertop overhang frame
+        ctop_ovrhang_frame = ttk.Frame(countertop_frame, padding=(0, 5))
+        ctop_ovrhang_frame.grid(column=0, row=0, sticky=(N, S, W, E))
+        ctop_ovrhang_frame.columnconfigure(0, weight=0)
+        ctop_ovrhang_frame.columnconfigure(1, weight=0)
+        ctop_ovrhang_frame.columnconfigure(2, weight=1)
+        ctop_ovrhang_frame.columnconfigure(3, weight=0)
+        ctop_ovrhang_frame.columnconfigure(4, weight=1)
+        ctop_ovrhang_frame.columnconfigure(5, weight=0)
+        ctop_ovrhang_frame.columnconfigure(6, weight=1)
+        self.ctop_ovrhang_lbl = ttk.Label(
+            ctop_ovrhang_frame, text='Countertop Overhang:')
+        self.ctop_ovrhang_lbl.grid(
+            column=0, row=0, sticky=W, padx=(0, 15))
+        self.ctop_ovrhang_left_lbl = ttk.Label(
+            ctop_ovrhang_frame, text='Left:')
+        self.ctop_ovrhang_left_lbl.grid(
+            column=1, row=0, sticky=E, padx=(6, 3))
+        self.ctop_ovrhang_left_ent = ttk.Entry(
+            ctop_ovrhang_frame, width=8, textvariable=self.ctop_ovrhang_l,
+            validate='all', validatecommand=(vcmd, '%P'))
+        self.ctop_ovrhang_left_ent.grid(
+            column=2, row=0, sticky=(W), padx=(3, 20))
+        self.ctop_ovrhang_front_lbl = ttk.Label(
+            ctop_ovrhang_frame, text='Front:')
+        self.ctop_ovrhang_front_lbl.grid(
+            column=3, row=0, sticky=E, padx=(6, 3))
+        self.ctop_ovrhang_front_ent = ttk.Entry(
+            ctop_ovrhang_frame, width=8, textvariable=self.ctop_ovrhang_f,
+            validate='all', validatecommand=(vcmd, '%P'))
+        self.ctop_ovrhang_front_ent.grid(
+            column=4, row=0, sticky=(W), padx=(3, 20))
+        self.ctop_ovrhang_right_lbl = ttk.Label(
+            ctop_ovrhang_frame, text='Right:')
+        self.ctop_ovrhang_right_lbl.grid(
+            column=5, row=0, sticky=E, padx=(6, 3))
+        self.ctop_ovrhang_right_ent = ttk.Entry(
+            ctop_ovrhang_frame, width=8, textvariable=self.ctop_ovrhang_r,
+            validate='all', validatecommand=(vcmd, '%P'))
+        self.ctop_ovrhang_right_ent.grid(
+            column=6, row=0, sticky=(W), padx=(3, 10))
+        # Countertop thickness frame
+        ctop_thickness_frame = ttk.Frame(countertop_frame, padding=(0, 5))
+        ctop_thickness_frame.grid(column=0, row=1, sticky=(N, S, W, E))
+        ctop_thickness_frame.columnconfigure(0, weight=0)
+        ctop_thickness_frame.columnconfigure(1, weight=1)
+        self.ctop_thickness_lbl = ttk.Label(
+            ctop_thickness_frame, text='Countertop Thickness:')
+        self.ctop_thickness_lbl.grid(
+            column=0, row=0, sticky=W, padx=(0, 15))
+        self.ctop_thickness_ent = ttk.Entry(
+            ctop_thickness_frame, width=7, textvariable=self.ctop_thickness,
+            validate='all', validatecommand=(vcmd, '%P'))
+        self.ctop_thickness_ent.grid(column=1, row=0, sticky=W, padx=3)
+
+    def make_filler_frame(self, inpframe):
+        filler_frame = ttk.Frame(inpframe, padding=(0, 5))
+        filler_frame.grid(column=0, row=4, sticky=(N, S, W, E))
+        filler_frame.columnconfigure(0, weight=0)
+        filler_frame.columnconfigure(1, weight=0)
+        filler_frame.columnconfigure(2, weight=0)
+        filler_frame.columnconfigure(3, weight=0)
+        filler_frame.columnconfigure(4, weight=1)
+        ttk.Label(filler_frame, text='Fillers for which ends?').grid(
+            column=0, row=0, sticky=W, padx=(0, 15), pady=2)
+        ttk.Radiobutton(filler_frame, value='neither', text='Neither',
+                        variable=self.fillers).grid(
+                        column=1, row=0, sticky=W, padx=(5, 20), pady=2)
+        ttk.Radiobutton(filler_frame, value='left', text='Left',
+                        variable=self.fillers).grid(
+                        column=2, row=0, sticky=W, padx=(5, 20), pady=2)
+        ttk.Radiobutton(filler_frame, value='right', text='Right',
+                        variable=self.fillers).grid(
+                        column=3, row=0, sticky=W, padx=(5, 20), pady=2)
+        ttk.Radiobutton(filler_frame, value='both', text='Both',
+                        variable=self.fillers).grid(
+                        column=4, row=0, sticky=W, padx=5, pady=2)
+
+    def make_materials_frame(self, inpframe):
+        matls_frame = ttk.Frame(inpframe, padding=(0, 5))
+        matls_frame.grid(column=0, row=5, sticky=(N, S, W, E))
+        matls_frame.columnconfigure(0, weight=0)
+        matls_frame.columnconfigure(1, weight=0)
+        matls_frame.columnconfigure(2, weight=0)
+        matls_frame.columnconfigure(3, weight=0)
+        ttk.Label(matls_frame, text='Material:').grid(
+            column=1, row=0, sticky=(N, W), padx=4, pady=(15, 2))
+        ttk.Label(matls_frame, text='Thickness:').grid(
+            column=2, row=0, sticky=W, padx=4, pady=(15, 2))
+        ttk.Label(matls_frame,
+                  text=('Measure actual material thickness to the\n'
+                        'nearest 0.01" and adjust values accordingly.')).grid(
+            column=3, row=1, rowspan=2, sticky=(N, W), padx=(8, 4), pady=2)
+        ttk.Label(matls_frame, text='Primary:').grid(
+            column=0, row=1, sticky=W, padx=(0, 2), pady=2)
+        self.prim_material_cbx = ttk.Combobox(
+            matls_frame, textvariable=self.prim_material,
+            width=max(map(len, materials)) - 2)
+        self.prim_material_cbx['values'] = materials
+        # Prevent direct editing of the value in the combobox:
+        self.prim_material_cbx.state(['readonly'])
+        # Call the `selection clear' method when the value changes. It looks
+        # a bit odd visually without doing that.
+        self.prim_material_cbx.bind(
+            '<<ComboboxSelected>>', self.prim_material_changed)
+        self.prim_material_cbx.grid(
+            column=1, row=1, sticky=W, padx=(6, 3), pady=2)
+        ttk.Entry(matls_frame, textvariable=self.prim_thickness,
+                  width=6).grid(column=2, row=1, padx=6, pady=2)
+
+        ttk.Label(matls_frame, text='Doors:').grid(
+            column=0, row=2, sticky=W, padx=(0, 2), pady=2)
+        self.door_material_cbx = ttk.Combobox(
+            matls_frame, textvariable=self.door_material,
+            width=max(map(len, materials)) - 2)
+        self.door_material_cbx['values'] = materials
+        # Prevent direct editing of the value in the combobox:
+        self.door_material_cbx.state(['readonly'])
+        # Call the `selection clear' method when the value changes. It looks
+        # a bit odd visually without doing that.
+        self.door_material_cbx.bind(
+            '<<ComboboxSelected>>', self.door_material_changed)
+        self.door_material_cbx.grid(
+            column=1, row=2, sticky=W, padx=(6, 3), pady=2)
+        ttk.Entry(matls_frame, textvariable=self.door_thickness,
+                  width=6).grid(column=2, row=2, padx=6, pady=2)
+
+    def make_toekick_frame(self, inpframe, vcmd):
+        toekick_frame = ttk.Frame(inpframe, padding=(0, 10))
+        toekick_frame.grid(column=0, row=6, sticky=(N, S, W, E))
+        # Toekick style frame
+        toekick_style_frame = ttk.Frame(toekick_frame, padding=(0, 5))
+        toekick_style_frame.grid(column=0, row=0, sticky=(N, S, W, E))
+        toekick_style_frame.columnconfigure(0, weight=0)
+        toekick_style_frame.columnconfigure(1, weight=0)
+        toekick_style_frame.columnconfigure(2, weight=1)
+        ttk.Label(toekick_style_frame, text='Toekick style:').grid(
+            column=0, row=0, sticky=W, padx=(0, 15), pady=2)
+        ttk.Radiobutton(
+            toekick_style_frame, value='box_frame', text='Plywood box frame',
+            variable=self.toekick_style, command=self.toekick_changed).grid(
+            column=1, row=0, sticky=W, padx=(5, 20), pady=2)
+        ttk.Radiobutton(
+            toekick_style_frame, value='steel_legs',
+            text='Stainless steel legs with clip-on toe kicks',
+            variable=self.toekick_style, command=self.toekick_changed).grid(
+            column=2, row=0, sticky=W, padx=5, pady=2)
+        # Toekick height frame
+        toekick_height_frame = ttk.Frame(toekick_frame, padding=(0, 5))
+        toekick_height_frame.grid(column=0, row=1, sticky=(N, S, W, E))
+        toekick_height_frame.columnconfigure(0, weight=0)
+        toekick_height_frame.columnconfigure(1, weight=1)
+        ttk.Label(toekick_height_frame, text='Toekick height:').grid(
+            column=0, row=0, sticky=W, padx=(0, 15))
+        self.toekick_ht_ent = ttk.Entry(
+            toekick_height_frame, width=6, textvariable=self.toekick_ht,
+            validate='all', validatecommand=(vcmd, '%P'))
+        self.toekick_ht_ent.grid(column=1, row=0, sticky=W, padx=3)
+
+    def make_btmpanels_frame(self, inpframe):
+        btmpanels_frame = ttk.Frame(inpframe, padding=(0, 10))
+        btmpanels_frame.grid(column=0, row=7, sticky=(N, S, W, E))
+        btmpanels_frame.columnconfigure(0, weight=1)
+        btmpanels_frame.columnconfigure(1, weight=1)
+        btmpanels_frame.columnconfigure(2, weight=1)
+        btmpanels_frame.columnconfigure(3, weight=1)
+        self.stacked_btm_chk = ttk.Checkbutton(
+            btmpanels_frame, text='Stacked bottom panels:',
+            variable=self.stacked_btm, command=self.stacked_btm_changed,
+            onvalue='yes', offvalue='no')
+        self.stacked_btm_chk.state(['disabled'])
+        self.stacked_btm_chk.grid(column=0, columnspan=2, row=0,
+                                  sticky=W, padx=(2, 2), pady=2)
+
+        self.btmpanel1_thickness_ent = ttk.Entry(
+            btmpanels_frame, textvariable=self.btmpanel1_thickness, width=6)
+        self.btmpanel1_thickness_ent.state(['disabled'])
+        self.btmpanel1_thickness_ent.grid(column=2, row=0, padx=6, pady=2)
+        self.btmpanel2_thickness_ent = ttk.Entry(
+            btmpanels_frame, textvariable=self.btmpanel2_thickness, width=6)
+        self.btmpanel2_thickness_ent.state(['disabled'])
+        self.btmpanel2_thickness_ent.grid(column=2, row=1, padx=6, pady=2)
+        self.legs_thicker_btm_lbl = ttk.Label(
+            btmpanels_frame, text='Mounting legs requires bottoms thicker '
+            'than\n3/4" so that leg mounting screws will grab.')
+        self.legs_thicker_btm_lbl.state(['disabled'])
+        self.legs_thicker_btm_lbl.grid(
+            column=3, row=0, rowspan=2, sticky=(N, W), padx=(8, 4), pady=2)
+        self.bottoms_lbl = ttk.Label(btmpanels_frame, text='Bottoms:')
+        self.bottoms_lbl.state(['disabled'])
+        self.bottoms_lbl.grid(column=0, row=2, sticky=W, padx=2, pady=(6, 2))
+        self.btm_material_lbl = ttk.Label(
+            btmpanels_frame, textvariable=self.btm_material,
+            width=max(map(len, materials)) - 2)
+        self.btm_material_lbl.grid(
+            column=1, row=2, sticky=W, padx=2, pady=(6, 2))
+        self.bottom_thickness_ent = ttk.Entry(
+            btmpanels_frame, textvariable=self.bottom_thickness, width=6)
+        self.bottom_thickness_ent.state(['disabled'])
+        self.bottom_thickness_ent.grid(column=2, row=2, padx=6, pady=(6, 2))
+
+    # At this point, we only support cabinets with two doors each. Changing
+    # things to allow for cabinets with one door will entail major refactoring
+    # throughout the codebase, including upper cabinet banks, varying cabinet
+    # heights and widths in the same bank, etc.
+
+    def make_doors_per_cab_frame(self, inpframe):
+        doors_per_cab_frame = ttk.Frame(inpframe, padding=(0, 10))
+        doors_per_cab_frame.grid(column=0, row=8, sticky=(N, S, W, E))
+        doors_per_cab_frame.columnconfigure(0, weight=0)
+        doors_per_cab_frame.columnconfigure(1, weight=1)
+        ttk.Label(doors_per_cab_frame, text='Doors per Cabinet:').grid(
+            column=0, row=0, sticky=W, padx=(0, 15), pady=(15, 2))
+        ttk.Label(doors_per_cab_frame, text='2').grid(
+            column=1, row=0, sticky=W, padx=0, pady=(15, 2))
+        # ttk.Radiobutton(doors_per_cab_frame, value=1, text='1',
+        #     variable=self.doors_per_cab).grid(
+        #     column=1, row=0, sticky=W, padx=3, pady=(15, 2))
+        # ttk.Radiobutton(doors_per_cab_frame, value=2, text='2',
+        #     variable=self.doors_per_cab).grid(
+        #     column=2, row=0, sticky=W, padx=3, pady=(15, 2))
+
+    def make_buttonframe(self, inpframe):
+        buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
+        buttonframe.grid(column=0, row=9, sticky=(N, S, W, E))
+        buttonframe.columnconfigure(0, weight=1)
+        buttonframe.columnconfigure(1, weight=1)
+        buttonframe.columnconfigure(2, weight=1)
+        buttonframe.rowconfigure(0, weight=1)
+        self.calc_button = ttk.Button(
+            buttonframe, text='Calculate', command=self.calculate_job)
+        self.calc_button.state(['disabled'])
+        clear_button = ttk.Button(
+            buttonframe, text='Clear', command=self.clear_input)
+        quit_button = ttk.Button(
+            buttonframe, text='Quit', command=self.quit)
+        self.calc_button.grid(column=0, row=0, sticky=E, padx=2)
+        clear_button.grid(column=1, row=0, sticky=W, padx=2)
+        quit_button.grid(column=2, row=0, padx=2)
+
     def fill_inputframe(self, inpframe):
-
-        def make_jobframe():
-            jobframe = ttk.Frame(inpframe, padding=(0, 5, 0, 10))
-            jobframe.grid(column=0, row=0, sticky=(N, S, W, E))
-            jobframe.columnconfigure(0, weight=0)
-            jobframe.columnconfigure(1, weight=1)
-            ttk.Label(jobframe, text='Job Name:').grid(
-                column=0, row=0, pady=2, sticky=W)
-            self.jobname_ent = ttk.Entry(jobframe, textvariable=self.jobname,
-                validate='key', validatecommand=(vcmd, '%P'))
-            ttk.Label(jobframe, text='Description:').grid(
-                column=0, row=1, pady=2, sticky=W)
-            self.descrip_ent = ttk.Entry(
-                jobframe, textvariable=self.description, validate='key',
-                validatecommand=(vcmd, '%P'))
-            self.jobname_ent.grid(column=1, row=0, pady=2, sticky=(W, E),
-                                  padx=(5, 0))
-            self.descrip_ent.grid(column=1, row=1, pady=2, sticky=(W, E),
-                                  padx=(5, 0))
-            self.jobname_ent.focus_set()
-
-        def make_dimframe():
-            dimframe = ttk.Frame(inpframe, padding=(0, 10))
-            dimframe.grid(column=0, row=1, sticky=(N, S, W, E))
-            dimframe.columnconfigure(0, weight=0)
-            dimframe.columnconfigure(1, weight=1)
-            dimframe.columnconfigure(2, weight=0)
-            dimframe.columnconfigure(3, weight=1)
-            dimframe.columnconfigure(4, weight=0)
-            dimframe.columnconfigure(5, weight=1)
-            ttk.Label(dimframe, text='Width:').grid(
-                column=0, row=0, sticky=W, padx=(0, 3))
-            self.fullwidth_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.fullwidth, validate='key',
-                validatecommand=(vcmd, '%P'))
-            ttk.Label(dimframe, text='Height:').grid(
-                column=2, row=0, sticky=E, padx=(6, 3))
-            self.height_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.height, validate='key',
-                validatecommand=(vcmd, '%P'))
-            ttk.Label(dimframe, text='Depth:').grid(
-                column=4, row=0, sticky=E, padx=(6, 3))
-            self.depth_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.depth, validate='key',
-                validatecommand=(vcmd, '%P'))
-            self.fullwidth_ent.grid(column=1, row=0, sticky=(W, E), padx=3)
-            self.height_ent.grid(column=3, row=0, sticky=(W, E), padx=3)
-            self.depth_ent.grid(column=5, row=0, sticky=(W, E), padx=3)
-
-        def make_miscframe():
-            miscframe = ttk.Frame(inpframe, padding=(0, 5))
-            miscframe.grid(column=0, row=2, sticky=(N, S, W, E))
-            miscframe.columnconfigure(0, weight=0)
-            miscframe.columnconfigure(1, weight=0)
-            miscframe.columnconfigure(2, weight=0)
-            miscframe.columnconfigure(3, weight=0)
-            miscframe.columnconfigure(4, weight=1)
-            miscframe.columnconfigure(5, weight=1)
-            miscframe.columnconfigure(6, weight=1)
-            ttk.Label(miscframe, text='Fillers for which ends?').grid(
-                column=0, columnspan=2, row=0, sticky=W, padx=(0, 2), pady=2)
-            ttk.Radiobutton(miscframe, value='neither', text='Neither',
-                            variable=self.fillers).grid(
-                                column=2, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='left', text='Left',
-                            variable=self.fillers).grid(
-                                column=3, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='right', text='Right',
-                            variable=self.fillers).grid(
-                                column=4, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='both', text='Both',
-                            variable=self.fillers).grid(
-                                column=5, row=0, sticky=W, padx=3, pady=2)
-
-            ttk.Label(miscframe, text='Material:').grid(
-                column=1, row=1, sticky=(N, W), padx=4, pady=(15, 2))
-            ttk.Label(miscframe, text='Thickness:').grid(
-                column=2, row=1, sticky=W, padx=4, pady=(15, 2))
-
-            ttk.Label(
-                miscframe, text='Measure actual material thickness to the\n'
-                                'nearest 0.01" and adjust values accordingly.'
-            ).grid(column=3, columnspan=3, row=2, rowspan=2, sticky=(N,W),
-                   padx=(8,4), pady=2)
-
-            ttk.Label(miscframe, text='Primary:').grid(
-                column=0, row=2, sticky=W, padx=(0, 2), pady=2)
-            self.prim_material_cbx = ttk.Combobox(
-                miscframe, textvariable=self.prim_material,
-                width=max(map(len, materials)) - 2
-            )
-            self.prim_material_cbx['values'] = materials
-            # Prevent direct editing of the value in the combobox:
-            self.prim_material_cbx.state(['readonly'])
-            # Call the `selection clear' method when the value changes. It looks
-            # a bit odd visually without doing that.
-            self.prim_material_cbx.bind('<<ComboboxSelected>>',
-                                        self.prim_material_changed)
-            self.prim_material_cbx.grid(column=1, row=2,
-                                        sticky=W, padx=(6, 3), pady=2)
-            ttk.Entry(miscframe, textvariable=self.prim_thickness,
-                      width=6).grid(column=2, row=2, padx=6, pady=2)
-
-            ttk.Label(miscframe, text='Doors:').grid(
-                column=0, row=3, sticky=W, padx=(0, 2), pady=2)
-            self.door_material_cbx = ttk.Combobox(
-                miscframe, textvariable=self.door_material,
-                width=max(map(len, materials)) - 2
-            )
-            self.door_material_cbx['values'] = materials
-            # Prevent direct editing of the value in the combobox:
-            self.door_material_cbx.state(['readonly'])
-            # Call the `selection clear' method when the value changes. It looks
-            # a bit odd visually without doing that.
-            self.door_material_cbx.bind('<<ComboboxSelected>>',
-                                        self.door_material_changed)
-            self.door_material_cbx.grid(column=1, row=3,
-                                        sticky=W, padx=(6, 3), pady=2)
-
-            # ttk.Label(miscframe, text='Thickness:').grid(
-            #     column=4, row=3, sticky=E, padx=4, pady=2)
-            ttk.Entry(miscframe, textvariable=self.door_thickness,
-                      width=6).grid(column=2, row=3, padx=6, pady=2)
-
-            self.legs_thicker_btm_lbl = ttk.Label(
-                miscframe, text='Mounting legs requires bottoms thicker than\n'
-                                '3/4" so that leg mounting screws will grab.'
-            )
-            self.legs_thicker_btm_lbl.state(['disabled'])
-            self.legs_thicker_btm_lbl.grid(
-                column=3, columnspan=3, row=7, rowspan=2, sticky=(N,W),
-                padx=(8, 4), pady=2
-            )
-
-            legs_chk = ttk.Checkbutton(
-                miscframe, text='Mount legs on cabinets.',
-                variable=self.legs, command=self.legs_changed,
-                onvalue='yes', offvalue='no'
-            ).grid(column=0, columnspan=3, row=6, sticky=W,
-                   padx=2, pady=(15, 2))
-
-            self.bottoms_lbl = ttk.Label(miscframe, text='Bottoms:')
-            self.bottoms_lbl.state(['disabled'])
-            self.bottoms_lbl.grid(
-                column=0, row=9, sticky=W, padx=2, pady=(6, 2)
-            )
-            self.btm_material_lbl = ttk.Label(
-                miscframe, textvariable=self.btm_material,
-                width=max(map(len, materials)) - 2
-            )
-            self.btm_material_lbl.grid(column=1, row=9, sticky=W, padx=2, pady=(6, 2))
-            self.bottom_thickness_ent = ttk.Entry(
-                miscframe, textvariable=self.bottom_thickness, width=6
-            )
-            self.bottom_thickness_ent.state(['disabled'])
-            self.bottom_thickness_ent.grid(column=2, row=9, padx=6, pady=(6, 2))
-
-            self.stacked_btm_chk = ttk.Checkbutton(
-                miscframe, text='Stack bottom panels:', variable=self.stacked_btm,
-                command=self.stacked_btm_changed,
-                onvalue='yes', offvalue='no')
-            self.stacked_btm_chk.state(['disabled'])
-            self.stacked_btm_chk.grid(column=0, columnspan=2, row=7, sticky=W,
-                                      padx=(25, 2), pady=2)
-
-#            ttk.Label(miscframe, text='Upper panel:').grid(
-#                column=1, row=7, sticky=W, padx=(10, 2), pady=2)
-            self.btmpanel1_thickness_ent = ttk.Entry(
-                miscframe, textvariable=self.btmpanel1_thickness, width=6
-            )
-            self.btmpanel1_thickness_ent.state(['disabled'])
-            self.btmpanel1_thickness_ent.grid(column=2, row=7, padx=6, pady=2)
-
-#            ttk.Label(miscframe, text='Lower panel:').grid(
-#                column=1, row=8, sticky=W, padx=(10, 2), pady=2)
-            self.btmpanel2_thickness_ent = ttk.Entry(
-                miscframe, textvariable=self.btmpanel2_thickness, width=6
-            )
-            self.btmpanel2_thickness_ent.state(['disabled'])
-            self.btmpanel2_thickness_ent.grid(column=2, row=8, padx=6, pady=2)
-
-            ttk.Label(miscframe, text='Doors per Cabinet:').grid(
-                column=0, columnspan=2, row=10, sticky=W, padx=(0, 6), pady=(15, 2))
-            drs_per_cab_rb1 = ttk.Radiobutton(
-                miscframe, value=1, text='1', variable=self.doors_per_cab
-            )
-            # Do not allow selection of one door per cabinet. This can only be
-            # enabled after major code changes throughout, to allow for upper
-            # cabinet banks, variable height/width cabinets, etc.
-            drs_per_cab_rb1.state(['disabled'])
-            drs_per_cab_rb1.grid(column=2, row=10, sticky=W, padx=3, pady=(15, 2))
-            ttk.Radiobutton(miscframe, value=2, text='2',
-                variable=self.doors_per_cab).grid(
-                    column=3, row=10, sticky=W, padx=3, pady=(15, 2))
-
-        def make_buttonframe():
-            buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
-            buttonframe.grid(column=0, row=3, sticky=(N, S, W, E))
-            buttonframe.columnconfigure(0, weight=1)
-            buttonframe.columnconfigure(1, weight=1)
-            buttonframe.columnconfigure(2, weight=1)
-            buttonframe.rowconfigure(0, weight=1)
-            self.calc_button = ttk.Button(buttonframe, text='Calculate',
-                                          command=self.calculate_job)
-            self.calc_button.state(['disabled'])
-            clear_button = ttk.Button(buttonframe, text='Clear',
-                                      command=self.clear_input)
-            quit_button = ttk.Button(buttonframe, text='Quit',
-                                     command=self.quit)
-            self.calc_button.grid(column=0, row=0, sticky=E, padx=2)
-            clear_button.grid(column=1, row=0, sticky=W, padx=2)
-            quit_button.grid(column=2, row=0, padx=2)
-
         # Register our validate function to get its function ID. This is used
         # to disable the `Calculate' button if the fields necessary for
         # calculation are not filled in.
         vcmd = self.root.register(self.validate_entry)
-        make_jobframe()
-        make_dimframe()
-        make_miscframe()
-        make_buttonframe()
+        self.make_jobframe(inpframe, vcmd)
+        self.make_dimbase_frame(inpframe)
+        self.make_dimframe(inpframe, vcmd)
+        self.make_countertop_frame(inpframe, vcmd)
+        self.make_filler_frame(inpframe)
+        self.make_materials_frame(inpframe)
+        self.make_toekick_frame(inpframe, vcmd)
+        self.make_btmpanels_frame(inpframe)
+        self.make_doors_per_cab_frame(inpframe)
+        self.make_buttonframe(inpframe)
         inpframe.columnconfigure(0, weight=1)
 
     def fill_outputframe(self, outpframe):
@@ -403,8 +544,6 @@ class Application(ttk.Frame):
         self.output_txt.configure(yscrollcommand=self.output_sb.set)
         self.output_txt.grid(column=0, row=0, sticky=(N, S, W, E))
         self.output_sb.grid(column=1, row=0, sticky=(N, S, E))
-        self.output_txt.insert('end', self.output)
-        self.output_txt.configure(state='disabled')
 
     def fill_outp_btnsframe(self, outp_btnsframe):
         outp_btnsframe.columnconfigure(0, weight=1)
@@ -431,13 +570,20 @@ class Application(ttk.Frame):
         result = (self.jobname_ent.get() != ''
                   and self.fullwidth_ent.get() != ''
                   and self.height_ent.get() != ''
-                  and self.depth_ent.get() != '')
+                  and self.depth_ent.get() != ''
+                  and self.toekick_ht.get() != '')
+        if self.dimension_base.get() == 'countertop':
+            result = result and (
+                self.ctop_ovrhang_left_ent.get() != ''
+                and self.ctop_ovrhang_front_ent.get() != ''
+                and self.ctop_ovrhang_right_ent.get() != ''
+                and self.ctop_thickness_ent.get() != '')
         return result
 
     def prim_material_changed(self, e):
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
-        if self.legs.get() == 'yes':
+        if self.toekick_style.get() == 'steel_legs':
             self.btm_material.set(self.prim_material.get())
             btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
@@ -460,8 +606,38 @@ class Application(ttk.Frame):
         self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
         self.door_material_cbx.selection_clear()
 
-    def legs_changed(self):
-        if self.legs.get() == 'yes':
+    def dimbase_changed(self):
+        if self.dimension_base.get() == 'countertop':
+            self.ctop_ovrhang_lbl.state(['!disabled'])
+            self.ctop_ovrhang_left_lbl.state(['!disabled'])
+            self.ctop_ovrhang_l.set(str(ctop_ovrhang_l_default))
+            self.ctop_ovrhang_left_ent.state(['!disabled'])
+            self.ctop_ovrhang_front_lbl.state(['!disabled'])
+            self.ctop_ovrhang_f.set(str(ctop_ovrhang_f_default))
+            self.ctop_ovrhang_front_ent.state(['!disabled'])
+            self.ctop_ovrhang_right_lbl.state(['!disabled'])
+            self.ctop_ovrhang_r.set(str(ctop_ovrhang_r_default))
+            self.ctop_ovrhang_right_ent.state(['!disabled'])
+            self.ctop_thickness_lbl.state(['!disabled'])
+            self.ctop_thickness.set(str(ctop_thickness_default))
+            self.ctop_thickness_ent.state(['!disabled'])
+        else:
+            self.ctop_ovrhang_lbl.state(['disabled'])
+            self.ctop_ovrhang_left_lbl.state(['disabled'])
+            self.ctop_ovrhang_l.set('')
+            self.ctop_ovrhang_left_ent.state(['disabled'])
+            self.ctop_ovrhang_front_lbl.state(['disabled'])
+            self.ctop_ovrhang_f.set('')
+            self.ctop_ovrhang_front_ent.state(['disabled'])
+            self.ctop_ovrhang_right_lbl.state(['disabled'])
+            self.ctop_ovrhang_r.set('')
+            self.ctop_ovrhang_right_ent.state(['disabled'])
+            self.ctop_thickness_lbl.state(['disabled'])
+            self.ctop_thickness.set('')
+            self.ctop_thickness_ent.state(['disabled'])
+
+    def toekick_changed(self):
+        if self.toekick_style.get() == 'steel_legs':
             self.legs_thicker_btm_lbl.state(['!disabled'])
             self.bottoms_lbl.state(['!disabled'])
             self.btm_material.set(self.prim_material.get())
@@ -528,24 +704,13 @@ class Application(ttk.Frame):
 
     def clear_input(self):
         self.initialize_vars()
-        self.legs_thicker_btm_lbl.state(['disabled'])
-        self.bottoms_lbl.state(['disabled'])
-        self.bottom_thickness_ent.state(['disabled'])
-        self.btmpanel1_thickness_ent.state(['disabled'])
-        self.btmpanel2_thickness_ent.state(['disabled'])
-        self.stacked_btm_chk.state(['disabled'])
-        self.calc_button.state(['disabled'])
-        self.cutlist_button.state(['disabled'])
-        self.panel_layout_btn.state(['disabled'])
-        self.output_txt.configure(state='normal', height=3)
-        self.output_txt.delete('1.0', 'end')
-        self.output_txt.insert('end', self.output)
-        self.output_txt.configure(state='disabled')
+        self.reset_widgets()
 
     def calculate_job(self):
-        if self.legs.get() == 'no':
+        if self.toekick_style.get() == 'box_frame':
             bp_list = [float(self.prim_thickness.get())]
         else:
+            # Steel legs will be mounted.
             if self.stacked_btm.get() == 'yes':
                 bp1 = float(self.btmpanel1_thickness.get())
                 bp2 = float(self.btmpanel2_thickness.get())
@@ -562,7 +727,8 @@ class Application(ttk.Frame):
                       door_material=self.door_material.get(),
                       door_thickness=float(self.door_thickness.get()),
                       btmpanel_thicknesses=bp_list,
-                      has_legs=yn_to_bool(self.legs.get()))
+                      toekick_style=self.toekick_style.get()
+                      )
         if self.description.get() != '':
             self.job = job.Job(self.jobname.get(), cab_run,
                                self.description.get())
@@ -573,12 +739,7 @@ class Application(ttk.Frame):
         self.output = ''
         for line in self.job.specification:
             self.output += textwrap.fill(line, width=65) + '\n'
-        lines = self.output.count('\n') + 1
-        self.output_txt.configure(state='normal')
-        self.output_txt.delete('1.0', 'end')
-        self.output_txt.insert('end', self.output)
-        self.output_txt.configure(state='disabled', height=lines + 1)
-        # self.output_txt.grid_configure(pady=0)
+        self.update_output_txt()
         self.cutlist_button.state(['!disabled'])
 
     def save_cutlist(self):

@@ -70,12 +70,15 @@ max_filler_width = 4.0
 # due to the hinges.
 door_hinge_gap = 0.125
 
-# Typical countertop overhang dimensions.
-ctop_ovrhang_l_default = 1.5
-ctop_ovrhang_r_default = 1.5
+# Most common countertop overhang dimensions and thickness.
+ctop_ovrhang_l_default = 2.0
+ctop_ovrhang_r_default = 2.0
 ctop_ovrhang_f_default = 2.0
+ctop_thickness_default = 1.5
 
-# Do we need countertop thickness?
+# Most common toe kick height and style.
+toekick_ht_default = 6.0
+toekick_style_default = 'box_frame'
 
 
 # List of materials
@@ -199,8 +202,12 @@ def cabinet_run(
 #     return result
 
 
+# At the moment the Run class assumes that there are exactly two doors per
+# cabinet, as does all code in this module. We may change this later to
+# allow single-door cabinets, but that will require a lot of changes.
+
 class Run(object):
-    """A class representing a single run of cabinets.
+    """A class representing a single run (bank) of cabinets.
 
     :param fullwidth: Full bank width available for all cabinets combined,
         including countertop.
@@ -210,30 +217,33 @@ class Run(object):
     :param depth: Depth from front to back of the countertop, which extends
         past the front of the door by the overhang amount.
     :type depth: float
-        fillers: Which ends will have filler panels.
-        prim_material: Primary material name.
-        prim_thickness: Primary material thickness (float).
-            Defaults to the standard thickness of the primary material.
-        door_material: Door material name.
-        door_thickness: Door material thickness (float).
-            Defaults to standard thickness of the chosen door material.
-        btmpanel_thicknesses: List of bottom panel thicknesses, in order from
-            top to bottom. Defaults to a singleton list containing the primary
-            material thickness, if the cabinets will not have legs attached, or
-            if they will, to the list of stacked panels for the primary
-            material.
-    :param has_legs: True if the cabinets will have legs.
-    :type has_legs: bool
+    :param fillers: Which ends will have filler panels.
+    :type fillers: Ends
+    :param prim_material: Primary material name.
+    :type prim_material: str
+    :param prim_thickness: Primary material thickness.
+    :type prim_thickness: float
+    :param door_material: Door material name.
+    :type door_material: str
+    :param door_thickness: Door material thickness.
+    :type door_thickness: float
+    :param btmpanel_thicknesses: List of bottom panel thicknesses, in order from
+        top to bottom. Defaults to a singleton list containing the primary
+        material thickness, if the cabinets will not have legs attached, or if
+        they will, to the list of stacked panels for the primary material.
+    :type btmpanel_thicknesses: list[>0](float)
+    :param toekick_style: The style of toe kick, either plywood 'box_frame' or
+        stainless 'steel_legs'.
+    :type toekick_style: str
     :param ctop_ovr_l: Length of countertop overhang on left.
     :type ctop_ovr_l: float
     :param ctop_ovr_r: Length of countertop overhang on right.
     :type ctop_ovr_r: float
     :param ctop_ovr_f: Length of countertop overhang in front.
     :type ctop_ovr_f: float
+    :param ctop_thickness: The countertop thickness.
+    :type ctop_thickness: float
 
-    At the moment this class assumes that there are exactly two doors per
-    cabinet, as does all code in this module. We may change this later to
-    allow single-door cabinets, but that will require a lot of changes.
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
                  prim_material=materials[prim_mat_default],
@@ -241,10 +251,11 @@ class Run(object):
                  door_material=materials[door_mat_default],
                  door_thickness=None,
                  btmpanel_thicknesses=None,
-                 has_legs=False,
+                 toekick_style=toekick_style_default,
                  ctop_ovr_l=ctop_ovrhang_l_default,
                  ctop_ovr_r=ctop_ovrhang_r_default,
                  ctop_ovr_f=ctop_ovrhang_f_default,
+                 ctop_thickness=ctop_thickness_default,
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
