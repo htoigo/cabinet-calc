@@ -28,29 +28,36 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Wiz GUI module.
+"""First Cabinet Wiz GUI module.
 
-This module implements the Cabinet Wiz GUI.
+This module implements the proof-of-concept GUI for Cabinet Wiz, implemented
+in Tk using the Python Tkinter module.
 """
 
 
-#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
-#           Run, Job]
+# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+#            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
-from functools import reduce
 import textwrap
-from tkinter import *
+import tkinter as tk
+from tkinter import N, S, W, E
 from tkinter import ttk
 from tkinter import filedialog
 
 from app.cabinet import (
-    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
-    )
+    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run,
+    ctop_ovrhang_l_default, ctop_ovrhang_r_default, ctop_ovrhang_f_default,
+    ctop_thickness_default, toekick_ht_default)
 import app.job as job
 import app.cutlist as cutlist
+
+
+# Global module constants
+
+_no_job_message = 'No job yet.'
 
 
 def yn_to_bool(str):
@@ -75,30 +82,36 @@ class Application(ttk.Frame):
     def __init__(self, root=None, title='Cabinet Wiz'):
         if root is None:
             # Create a new root window to be our master
-            self.root = Tk()
+            self.root = tk.Tk()
         else:
             # Our master will be what was passed in as `root'
             self.root = root
         super().__init__(self.root, padding=5)
         # Instance variables
         self.root.title(title)
-        self.jobname = StringVar()
-        self.description = StringVar()
-        self.fullwidth = StringVar()
-        self.height = StringVar()
-        self.depth = StringVar()
-        self.fillers = StringVar()
-        self.prim_material = StringVar()
-        self.prim_thickness = StringVar()
-        self.door_material = StringVar()
-        self.door_thickness = StringVar()
-        self.legs = StringVar()
-        self.bottom_thickness = StringVar()
-        self.btmpanel1_thickness = StringVar()
-        self.btmpanel2_thickness = StringVar()
-        self.stacked_btm = StringVar()
-        self.btm_material = StringVar()
-        self.doors_per_cab = IntVar()
+        self.jobname = tk.StringVar()
+        self.description = tk.StringVar()
+        self.dimension_base = tk.StringVar()
+        self.fullwidth = tk.StringVar()
+        self.height = tk.StringVar()
+        self.depth = tk.StringVar()
+        self.ctop_ovrhang_l = tk.StringVar()
+        self.ctop_ovrhang_f = tk.StringVar()
+        self.ctop_ovrhang_r = tk.StringVar()
+        self.ctop_thickness = tk.StringVar()
+        self.fillers = tk.StringVar()
+        self.prim_material = tk.StringVar()
+        self.prim_thickness = tk.StringVar()
+        self.door_material = tk.StringVar()
+        self.door_thickness = tk.StringVar()
+        self.toekick_style = tk.StringVar()
+        self.toekick_ht = tk.StringVar()
+        self.stacked_btm = tk.StringVar()
+        self.bottom_thickness = tk.StringVar()
+        self.btmpanel1_thickness = tk.StringVar()
+        self.btmpanel2_thickness = tk.StringVar()
+        self.btm_material = tk.StringVar()
+        self.doors_per_cab = tk.IntVar()
         self.output = ''
         self.job = None
         self.initialize_vars()
@@ -124,7 +137,7 @@ class Application(ttk.Frame):
         self.stacked_btm.set('no')
         self.btm_material.set('')
         self.doors_per_cab.set(2)
-        self.output = 'No job yet.'
+        self.output = _no_job_message
         self.job = None
 
     def make_widgets(self):
@@ -133,18 +146,19 @@ class Application(ttk.Frame):
         Only the widgets that need to be refered to in other parts of the code
         are made as instance variables (with `self.').
         """
-        ttk.Label(self, text='The Custom Euro-Style Cabinet Configurator').grid(
-            column=0, row=0, sticky=W)
-        inputframe = ttk.Labelframe(self, text='Parameters: ', borderwidth=2,
-            relief='groove', padding=5)
+        ttk.Label(self, text='The Custom Euro-Style Cabinet Configurator'
+                  ).grid(column=0, row=0, sticky=W)
+        inputframe = ttk.Labelframe(
+            self, text='Parameters: ', borderwidth=2, relief='groove',
+            padding=5)
+        inputframe.grid(column=0, row=1, sticky=(N, S, W, E), pady=10)
         ttk.Label(self, text='Job Specification:').grid(
             column=0, row=2, sticky=W, pady=2)
         outputframe = ttk.Frame(self, borderwidth=1, relief='sunken')
-        outp_btnsframe = ttk.Frame(self, padding=(0, 10))
-        self.grid(column=0, row=0, sticky=(N, S, W, E))
-        inputframe.grid(column=0, row=1, sticky=(N, S, W, E), pady=10)
         outputframe.grid(column=0, row=3, sticky=(N, S, W, E))
+        outp_btnsframe = ttk.Frame(self, padding=(0, 10))
         outp_btnsframe.grid(column=0, row=4, sticky=(N, S, W, E))
+        self.grid(column=0, row=0, sticky=(N, S, W, E))
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -378,16 +392,14 @@ class Application(ttk.Frame):
         inpframe.columnconfigure(0, weight=1)
 
     def fill_outputframe(self, outpframe):
-        # self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
-        #                             font='TkFixedFont')
-        # self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
         outpframe.columnconfigure(0, weight=1)
         outpframe.columnconfigure(1, weight=0)
         outpframe.rowconfigure(0, weight=1)
-        self.output_txt = Text(outpframe, height=3, relief='flat',
-                               background='gray85', font='TkFixedFont')
-        self.output_sb = ttk.Scrollbar(outpframe, orient='vertical',
-                                       command=self.output_txt.yview)
+        self.output_txt = tk.Text(
+            outpframe, height=3, relief='flat', background='gray85',
+            font='TkFixedFont')
+        self.output_sb = ttk.Scrollbar(
+            outpframe, orient='vertical', command=self.output_txt.yview)
         self.output_txt.configure(yscrollcommand=self.output_sb.set)
         self.output_txt.grid(column=0, row=0, sticky=(N, S, W, E))
         self.output_sb.grid(column=1, row=0, sticky=(N, S, E))
