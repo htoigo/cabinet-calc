@@ -90,16 +90,16 @@ class Job(object):
                    + dimstr(cabwidth * numcabs) + '"')
         if self.cabs.fillers is Ends.neither:
             summary += (', with finished end panels on left and right.'
-                          ' No filler panels required.')
+                        ' No filler panels required.')
         elif self.cabs.fillers is Ends.left:
             summary += (', with a ' + dimstr(self.cabs.filler_width)
-                          + '" filler on the left.')
+                        + '" filler on the left.')
         elif self.cabs.fillers is Ends.right:
             summary += (', with a ' + dimstr(self.cabs.filler_width)
-                          + '" filler on the right.')
+                        + '" filler on the right.')
         elif self.cabs.fillers is Ends.both:
             summary += (', with two (2) ' + dimstr(self.cabs.filler_width)
-                          + '" fillers.')
+                        + '" fillers.')
         else:
             raise TypeError('fillers is not Ends.neither, .left, .right,'
                             ' or .both')
