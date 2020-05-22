@@ -70,6 +70,12 @@ max_filler_width = 4.0
 # due to the hinges.
 door_hinge_gap = 0.125
 
+# The default space to the left, to the right, and between the cabinet doors.
+doortop_space_default = 0.5
+doorside_space_l_default = 0.125
+doorside_space_m_default = 0.125
+doorside_space_r_default = 0.125
+
 # Most common countertop overhang dimensions and thickness.
 ctop_ovrhang_l_default = 2.0
 ctop_ovrhang_r_default = 2.0
@@ -79,6 +85,9 @@ ctop_thickness_default = 1.5
 # Most common toe kick height and style.
 toekick_ht_default = 6.0
 toekick_style_default = 'box_frame'
+
+# Top nailer default depth.
+topnailer_depth_default = 4.0
 
 
 # List of materials
@@ -209,6 +218,9 @@ def cabinet_run(
 class Run(object):
     """A class representing a single run (bank) of cabinets.
 
+    :param dimension_base: What the given dimensions are based on.
+        Either 'countertop' or 'cab_bank'.
+    :type dimension_base: str
     :param fullwidth: Full bank width available for all cabinets combined,
         including countertop.
     :type fullwidth: float
@@ -217,6 +229,14 @@ class Run(object):
     :param depth: Depth from front to back of the countertop, which extends
         past the front of the door by the overhang amount.
     :type depth: float
+    :param ctop_ovr_l: Length of countertop overhang on left.
+    :type ctop_ovr_l: float
+    :param ctop_ovr_r: Length of countertop overhang on right.
+    :type ctop_ovr_r: float
+    :param ctop_ovr_f: Length of countertop overhang in front.
+    :type ctop_ovr_f: float
+    :param ctop_thickness: The countertop thickness.
+    :type ctop_thickness: float
     :param fillers: Which ends will have filler panels.
     :type fillers: Ends
     :param prim_material: Primary material name.
@@ -227,38 +247,46 @@ class Run(object):
     :type door_material: str
     :param door_thickness: Door material thickness.
     :type door_thickness: float
-    :param btmpanel_thicknesses: List of bottom panel thicknesses, in order from
-        top to bottom. Defaults to a singleton list containing the primary
-        material thickness, if the cabinets will not have legs attached, or if
-        they will, to the list of stacked panels for the primary material.
-    :type btmpanel_thicknesses: list[>0](float)
     :param toekick_style: The style of toe kick, either plywood 'box_frame' or
         stainless 'steel_legs'.
     :type toekick_style: str
-    :param ctop_ovr_l: Length of countertop overhang on left.
-    :type ctop_ovr_l: float
-    :param ctop_ovr_r: Length of countertop overhang on right.
-    :type ctop_ovr_r: float
-    :param ctop_ovr_f: Length of countertop overhang in front.
-    :type ctop_ovr_f: float
-    :param ctop_thickness: The countertop thickness.
-    :type ctop_thickness: float
-
+    :param toekick_ht: The height of the toe kick.
+    :type toekick_ht: float
+    :param btmpanel_thicknesses: List of bottom panel thicknesses, in order
+        from top to bottom. Defaults to a singleton list containing the primary
+        material thickness, if the cabinets will not have legs attached, or if
+        they will, to the list of stacked panels for the primary material.
+    :type btmpanel_thicknesses: list[>0](float)
+    :param topnailer_depth: The depth of the top nailers.
+    :type topnailer_depth: float
+    :param doortop_space: The space between top of cabinet and top of door.
+    :type doortop_space: float
+    :param doorside_space_l: The space to the left of the doors.
+    :type doorside_space_l: float
+    :param doorside_space_m: The space in the middle between the doors.
+    :type doorside_space_m: float
+    :param doorside_space_r: The space to the right of the doors.
+    :type doorside_space_r: float
     """
-    def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
+    def __init__(self, dimension_base,
+                 fullwidth, height, depth,
+                 ctop_ovr_l=ctop_ovrhang_l_default,
+                 ctop_ovr_f=ctop_ovrhang_f_default,
+                 ctop_ovr_r=ctop_ovrhang_r_default,
+                 ctop_thickness=ctop_thickness_default,
+                 fillers=Ends.neither,
                  prim_material=materials[prim_mat_default],
                  prim_thickness=None,
                  door_material=materials[door_mat_default],
                  door_thickness=None,
-                 btmpanel_thicknesses=None,
                  toekick_style=toekick_style_default,
-                 ctop_ovr_l=ctop_ovrhang_l_default,
-                 ctop_ovr_r=ctop_ovrhang_r_default,
-                 ctop_ovr_f=ctop_ovrhang_f_default,
-                 ctop_thickness=ctop_thickness_default,
-                 topnailer_depth=4,
-                 doortop_space=0.5, doorside_space_l=0.125,
-                 doorside_space_m=0.125, doorside_space_r=0.125):
+                 toekick_ht=toekick_ht_default,
+                 btmpanel_thicknesses=None,
+                 topnailer_depth=topnailer_depth_default,
+                 doortop_space=doortop_space_default,
+                 doorside_space_l=doorside_space_l_default,
+                 doorside_space_m=doorside_space_m_default,
+                 doorside_space_r=doorside_space_r_default):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
