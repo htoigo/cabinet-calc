@@ -160,7 +160,7 @@ def test_door_height(cabrun):
 @pytest.fixture
 def cabrun_w_lr_ovrhang():
     return C.Run(193.3125, 27.125, 26.5,
-                 ctop_left=1.5, ctop_right=0.5, ctop_front=2.0)
+                 ctop_ovr_l=1.5, ctop_ovr_r=0.5, ctop_ovr_f=2.0)
 
 
 def test_lr_ovrhang_num_cabinets(cabrun_w_lr_ovrhang):
@@ -170,11 +170,11 @@ def test_lr_ovrhang_num_cabinets(cabrun_w_lr_ovrhang):
 @pytest.fixture
 def cabrun_w_lr_ovrhang_3():
     return C.Run(145.5, 27.125, 26.5,
-                 ctop_left=1.5, ctop_right=1.5, ctop_front=2.0)
+                 ctop_ovr_l=1.5, ctop_ovr_r=1.5, ctop_ovr_f=2.0)
 
 
 def test_lr_ovrhang_3_num_cabinets(cabrun_w_lr_ovrhang_3):
-    assert cabrun_w_lr_ovrhang.num_cabinets == 4
+    assert cabrun_w_lr_ovrhang_3.num_cabinets == 4
 
 
 # test_cabinet.py  ends here
