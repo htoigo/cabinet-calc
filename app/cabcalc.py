@@ -1,24 +1,24 @@
 #!/usr/bin/env python         -*- coding: utf-8 -*-
 
-# cabwiz.py, the main executable for Cabinet Wiz.
+# cabcalc.py, the main executable for Cabinet Calc.
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz.
-# Cabinet Wiz is the custom Euro-style cabinet configurator.
+# This file is part of Cabinet Calc.
+# Cabinet Calc is the custom Euro-style cabinet configurator.
 
-# Cabinet Wiz is free software: you can redistribute it and/or modify
+# Cabinet Calc is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# Cabinet Wiz is distributed in the hope that it will be useful,
+# Cabinet Calc is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Cabinet Wiz.  If not, see <https://www.gnu.org/licenses/>.
+# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
 # To contact us:
 #
@@ -28,14 +28,14 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Wiz: The Custom Euro-Style Cabinet Configurator.
+"""Cabinet Calc: The Custom Euro-Style Cabinet Configurator.
 
 Quickly and easily, by entering a few dimensions, configure a bank of Euro-
 style cabinets. Generate a parts list with dimensions, as well as a high-
 quality cutlist in PDF format, suitable for printing, to be used on the shop
 floor.
 
-Cabinet Wiz has both a GUI interface for ease of use, and a command line
+Cabinet Calc has both a GUI interface for ease of use, and a command line
 interface for power users and scripting capability.
 
 """
@@ -96,7 +96,7 @@ def get_parser():
         description=textwrap.dedent('''\
             Configure a one-off job consisting of a single bank of cabinets.
 
-            Passing no arguments starts the GUI version of Cabinet Wiz.
+            Passing no arguments starts the GUI version of Cabinet Calc.
             When running the command line version, the following arguments are
             REQUIRED:  -w WIDTH -ht HT -d DEPTH -n NAME
             Otherwise, there is not enough information to compute the job.
@@ -179,4 +179,4 @@ if __name__ == '__main__':
         start_cli(args)
 
 
-# cabwiz.py  ends here
+# cabcalc.py  ends here

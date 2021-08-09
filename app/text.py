@@ -1,24 +1,24 @@
 # text.py        -*- coding: utf-8 -*-
 
-# Module with text related functions for Cabinet Wiz.
+# Module with text related functions for Cabinet Calc.
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz.
-# Cabinet Wiz is the custom Euro-style cabinet configurator.
+# This file is part of Cabinet Calc.
+# Cabinet Calc is the custom Euro-style cabinet configurator.
 
-# Cabinet Wiz is free software: you can redistribute it and/or modify
+# Cabinet Calc is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# Cabinet Wiz is distributed in the hope that it will be useful,
+# Cabinet Calc is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Cabinet Wiz.  If not, see <https://www.gnu.org/licenses/>.
+# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
 # To contact us:
 #
@@ -28,7 +28,7 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Wiz text module.
+"""Cabinet Calc text module.
 
 This library module contains text-related functions and styles.
 """

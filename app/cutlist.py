@@ -1,24 +1,24 @@
 # cutlist.py        -*- coding: utf-8 -*-
 
-# Cutlist generation module for Cabinet Wiz.
+# Cutlist generation module for Cabinet Calc.
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Wiz.
-# Cabinet Wiz is the custom Euro-style cabinet configurator.
+# This file is part of Cabinet Calc.
+# Cabinet Calc is the custom Euro-style cabinet configurator.
 
-# Cabinet Wiz is free software: you can redistribute it and/or modify
+# Cabinet Calc is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# Cabinet Wiz is distributed in the hope that it will be useful,
+# Cabinet Calc is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with Cabinet Wiz.  If not, see <https://www.gnu.org/licenses/>.
+# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
 # To contact us:
 #
@@ -28,7 +28,7 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Wiz cutlist generation module.
+"""Cabinet Calc cutlist generation module.
 """
 
 
@@ -86,9 +86,9 @@ def save_cutlist(fname, job):
                           bottomMargin=0.5 * inch,
                           title='Cutlist for ' + job.name,
                           # author='',
-                          subject='Cabinet Wiz Cutlist Report',
+                          subject='Cabinet Calc Cutlist Report',
                           # TODO: Get version below from program source
-                          creator='Cabinet Wiz version 0.1',
+                          creator='Cabinet Calc version 0.1',
                           showBoundary=0
                           )
     frameHdr, frameL, frameR = makeframes(doc)
