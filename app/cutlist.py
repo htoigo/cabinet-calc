@@ -47,7 +47,7 @@ from reportlab.graphics.shapes import (
     )
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
-from app.cabinet import Ends, door_hinge_gap, matl_abbrevs
+from app.cabinet import Ends, DOOR_HINGE_GAP, matl_abbrevs
 from app.dimension_strs import dimstr, thickness_str
 from app.text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
@@ -170,13 +170,13 @@ def content(job):
 
 
 def finished_ends(fillers):
-    if fillers is Ends.neither:
+    if fillers is Ends.NEITHER:
         result = 'Both end panels finished.'
-    elif fillers is Ends.left:
+    elif fillers is Ends.LEFT:
         result = 'Left end unfinished.<br/>Right end panel finished.'
-    elif fillers is Ends.right:
+    elif fillers is Ends.RIGHT:
         result = 'Left end panel finished.<br/>Right end unfinished.'
-    elif fillers is Ends.both:
+    elif fillers is Ends.BOTH:
         result = 'Both ends unfinished.'
     return result
 
@@ -448,7 +448,7 @@ def isometric_view(job):
     result.add(arr)
 
     # Depth dimension arrow
-    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - door_hinge_gap
+    ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - DOOR_HINGE_GAP
     cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
     arr = ddimarrow_iso_str(
         ddim, default_iso_scale,
@@ -826,7 +826,7 @@ def panels_table(job):
     colWidths = ('35%', '35%', '30%')
     # The row heights below assume a col_ht of 411 pts (6.5 * 72 - 45 - 12).
     rowHeights = (130, 130)
-    if job.cabs.fillers is Ends.neither:
+    if job.cabs.fillers is Ends.NEITHER:
         # No fillers used; do not create a filler panel drawing.
         data = ((backpanel_dr, sidepanel_dr, topnailer_dr),
                 (bottompanel_dr, door_dr))

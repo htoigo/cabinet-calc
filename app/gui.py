@@ -34,39 +34,38 @@ This module implements the Cabinet Calc GUI.
 """
 
 
-#__all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
-#           Run, Job]
+# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+#            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
 
 
-from functools import reduce
 import textwrap
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
 from app.cabinet import (
-    materials, matl_thicknesses, prim_mat_default, door_mat_default, Ends, Run
+    materials, matl_thicknesses, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
     )
-import app.job as job
-import app.cutlist as cutlist
+from app import job
+from app import cutlist
 
 
-def yn_to_bool(str):
-    """True if str is 'y' or 'yes', False if str is 'n' or 'no', else error.
+def yn_to_bool(string):
+    """True if string is 'y' or 'yes', False if string is 'n' or 'no', else error.
 
     String matching is case-insensitive.
 
     We need the function yn_to_bool because the built-in function bool() does
     not do what we want. For example, bool('no') returns True.
     """
-    if str.lower() in ['y', 'yes']:
+    if string.lower() in ['y', 'yes']:
         result = True
-    elif str.lower() in ['n', 'no']:
+    elif string.lower() in ['n', 'no']:
         result = False
     else:
-        raise ValueError('str is not one of "y", "yes", "n" or "no"')
+        raise ValueError('string is not one of "y", "yes", "n" or "no"')
     return result
 
 
@@ -110,10 +109,10 @@ class Application(ttk.Frame):
         self.fullwidth.set('')
         self.height.set('')
         self.depth.set('')
-        self.fillers.set('neither')
-        self.prim_material.set(materials[prim_mat_default])
+        self.fillers.set('NEITHER')
+        self.prim_material.set(materials[PRIM_MAT_DEFAULT])
         self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
-        self.door_material.set(materials[door_mat_default])
+        self.door_material.set(materials[DOOR_MAT_DEFAULT])
         self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
         self.legs.set('no')
         self.bottom_thickness.set('')

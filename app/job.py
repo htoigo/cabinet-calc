@@ -88,21 +88,21 @@ class Job(object):
         summary = (str(numcabs) + (' cabinet' if numcabs == 1 else ' cabinets')
                    + ' measuring ' + dimstr(cabwidth) + '" ' + 'totalling '
                    + dimstr(cabwidth * numcabs) + '"')
-        if self.cabs.fillers is Ends.neither:
+        if self.cabs.fillers is Ends.NEITHER:
             summary += (', with finished end panels on left and right.'
                           ' No filler panels required.')
-        elif self.cabs.fillers is Ends.left:
+        elif self.cabs.fillers is Ends.LEFT:
             summary += (', with a ' + dimstr(self.cabs.filler_width)
                           + '" filler on the left.')
-        elif self.cabs.fillers is Ends.right:
+        elif self.cabs.fillers is Ends.RIGHT:
             summary += (', with a ' + dimstr(self.cabs.filler_width)
                           + '" filler on the right.')
-        elif self.cabs.fillers is Ends.both:
+        elif self.cabs.fillers is Ends.BOTH:
             summary += (', with two (2) ' + dimstr(self.cabs.filler_width)
                           + '" fillers.')
         else:
-            raise TypeError('fillers is not Ends.neither, .left, .right,'
-                            ' or .both')
+            raise TypeError('fillers is not Ends.NEITHER, .LEFT, .RIGHT,'
+                            ' or .BOTH')
         if self.cabs.has_legs:
             summary += (' To be mounted on legs.')
         return [summary]

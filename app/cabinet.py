@@ -48,7 +48,7 @@ to be cut, an isometric view of a single cabinet, with all diagrams to scale.
 """
 
 
-# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
+# __all__ = [MAX_CABINET_WIDTH, DOOR_HINGE_GAP, cabinet_run, num_cabinets,
 #            Run, Job]
 __version__ = '0.1'
 __author__ = 'Harry H. Toigo II'
@@ -62,13 +62,13 @@ from enum import Enum
 
 # All measurements are in inches, unless otherwise specified.
 
-max_cabinet_width = 36.0
-min_filler_width = 1.0
-max_filler_width = 4.0
+MAX_CABINET_WIDTH = 36.0
+MIN_FILLER_WIDTH = 1.0
+MAX_FILLER_WIDTH = 4.0
 
 # The gap between the back of the door and the front of the cabinet,
 # due to the hinges.
-door_hinge_gap = 0.125
+DOOR_HINGE_GAP = 0.125
 
 # List of materials
 
@@ -84,10 +84,10 @@ matl_abbrevs = {'Standard Plywood': 'PLY',
                 'Melamine': 'MEL'}
 
 # Primary material defaults to Standard Plywood.
-prim_mat_default = 0
+PRIM_MAT_DEFAULT = 0
 
 # Door material defaults to Melamine.
-door_mat_default = 2
+DOOR_MAT_DEFAULT = 2
 
 # Dictionary of materials with default thicknesses for each in inches.
 
@@ -109,37 +109,38 @@ class Ends(Enum):
     cabinet run have fillers.
 
     It must be one of:
-        neither - no fillers used
-        left - only the left end has a filler
-        right - only the right end has a filler
-        both - both ends have fillers
+        NEITHER - no fillers used
+        LEFT - only the left end has a filler
+        RIGHT - only the right end has a filler
+        BOTH - both ends have fillers
 
     This also determines whether or not the end panels must be finished. If an
     end will have a filler then that end can be left unfinished. On the other
     hand, an end without a filler must have a finished end panel.
     """
-    neither = 1
-    left = 2
-    right = 3
-    both = 4
+    NEITHER = 1
+    LEFT = 2
+    RIGHT = 3
+    BOTH = 4
 
     def __str__(self):
         return self.name
 
     @staticmethod
-    def from_string(str):
+    def from_string(string):
+        """Convert the given string to the appropriate Ends value."""
         try:
-            return Ends[str]
-        except KeyError:
-            raise ValueError()
+            return Ends[string]
+        except KeyError as exc:
+            raise ValueError('Failed to convert string to Ends value') from exc
 
 
 def cabinet_run(
-        fullwidth, height, depth, fillers=Ends.neither,
-        prim_material=materials[prim_mat_default],
-        prim_thickness=matl_thicknesses[materials[prim_mat_default]][0],
-        door_material=materials[door_mat_default],
-        door_thickness=matl_thicknesses[materials[door_mat_default]][0],
+        fullwidth, height, depth, fillers=Ends.NEITHER,
+        prim_material=materials[PRIM_MAT_DEFAULT],
+        prim_thickness=matl_thicknesses[materials[PRIM_MAT_DEFAULT]][0],
+        door_material=materials[DOOR_MAT_DEFAULT],
+        door_thickness=matl_thicknesses[materials[DOOR_MAT_DEFAULT]][0],
         bottom_thickness=None,
         has_legs=False,
         topnailer_depth=4,
@@ -179,7 +180,7 @@ def cabinet_run(
 #     return result
 
 
-class Run(object):
+class Run():
     """A class representing a single run of cabinets.
 
     Args:
@@ -204,10 +205,10 @@ class Run(object):
     cabinet, as does all code in this module. We may change this later to
     allow single-door cabinets, but that will require a lot of changes.
     """
-    def __init__(self, fullwidth, height, depth, fillers=Ends.neither,
-                 prim_material=materials[prim_mat_default],
+    def __init__(self, fullwidth, height, depth, fillers=Ends.NEITHER,
+                 prim_material=materials[PRIM_MAT_DEFAULT],
                  prim_thickness=None,
-                 door_material=materials[door_mat_default],
+                 door_material=materials[DOOR_MAT_DEFAULT],
                  door_thickness=None,
                  btmpanel_thicknesses=None,
                  has_legs=False,
@@ -217,8 +218,8 @@ class Run(object):
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
-        # fillers must be one of: Ends.neither, Ends.left, Ends.right, or
-        # Ends.both.
+        # fillers must be one of: Ends.NEITHER, Ends.LEFT, Ends.RIGHT, or
+        # Ends.BOTH.
         self.fillers = fillers
         self.prim_material = prim_material
         if prim_thickness is not None:
@@ -268,7 +269,8 @@ class Run(object):
         Return the smallest number of cabinets needed, while not exceeding the
         maximum cabinet width.
         """
-        return int(math.ceil(self.fullwidth / max_cabinet_width))
+        return int(math.ceil(self.fullwidth / MAX_CABINET_WIDTH))
+
     @property
     def cabinet_height(self):
         """The overall cabinet height."""
@@ -293,11 +295,11 @@ class Run(object):
             filler_w = ((self._fullwidth - width * self.num_cabinets)
                         / self.num_fillers)
             delta = 1.0
-            while filler_w < min_filler_width:
+            while filler_w < MIN_FILLER_WIDTH:
                 width -= delta
                 filler_w = ((self._fullwidth - width * self.num_cabinets)
                             / self.num_fillers)
-            while filler_w > max_filler_width:
+            while filler_w > MAX_FILLER_WIDTH:
                 delta /= 2
                 width += delta
                 filler_w = ((self._fullwidth - width * self.num_cabinets)
@@ -312,11 +314,12 @@ class Run(object):
 
     @property
     def num_fillers(self):
-        if self.fillers is Ends.neither:
+        """The number of fillers to be used in this run of cabinets."""
+        if self.fillers is Ends.NEITHER:
             result = 0
-        elif self.fillers is Ends.left or self.fillers is Ends.right:
+        elif self.fillers is Ends.LEFT or self.fillers is Ends.RIGHT:
             result = 1
-        elif self.fillers is Ends.both:
+        elif self.fillers is Ends.BOTH:
             result = 2
         else:
             raise TypeError('fillers is not one of Ends.neither, Ends.left,'
@@ -326,7 +329,7 @@ class Run(object):
     @property
     def filler_width(self):
         """The width of the filler(s) to be used in the run."""
-        if self.fillers is Ends.neither:
+        if self.fillers is Ends.NEITHER:
             width = None
         else:
             width = self.extra_width / self.num_fillers
@@ -335,7 +338,7 @@ class Run(object):
     @property
     def filler_height(self):
         """The height of the filler(s) to be used in the run."""
-        if self.fillers is Ends.neither:
+        if self.fillers is Ends.NEITHER:
             height = None
         else:
             height = self.cabinet_height
@@ -344,7 +347,7 @@ class Run(object):
     @property
     def filler_thickness(self):
         """The thickness of a filler strip."""
-        if self.fillers is Ends.neither:
+        if self.fillers is Ends.NEITHER:
             thickness = None
         else:
             thickness = self.prim_thickness
@@ -401,16 +404,18 @@ class Run(object):
 
     @property
     def btmpanels_per_cab(self):
+        """Return the number of bottom panels per cabinet."""
         return len(self.btmpanel_thicknesses)
 
     @property
     def bottom_stacked(self):
-        return (self.btmpanels_per_cab > 1)
+        """Return True if the run will have stacked bottom panels."""
+        return self.btmpanels_per_cab > 1
 
     @property
     def num_bottompanels(self):
         """The number of bottom panels needed for the entire run."""
-        return (self.btmpanels_per_cab * self.num_cabinets)
+        return self.btmpanels_per_cab * self.num_cabinets
 
     @property
     def bottom_thickness(self):
@@ -419,7 +424,7 @@ class Run(object):
 
     @bottom_thickness.setter
     def bottom_thickness(self, value):
-        if value > 0.375 and value < 1.375:
+        if 0.375 < value < 1.375:
             self.btmpanel_thicknesses = [value]
         elif value < 1.625:
             self.btmpanel_thicknesses = [0.75, 0.75]
@@ -453,7 +458,7 @@ class Run(object):
         Side panel depth is cabinet depth, less thickness of door and gap, less
         thickness of back panel.
         """
-        depth = (self.cabinet_depth - (self.door_thickness + door_hinge_gap)
+        depth = (self.cabinet_depth - (self.door_thickness + DOOR_HINGE_GAP)
                  - self.back_thickness)
         return depth
 

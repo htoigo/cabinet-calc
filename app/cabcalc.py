@@ -126,7 +126,7 @@ def get_parser():
                         help="ends that will have filler panels",
                         type=Ends.from_string,
                         choices=list(Ends),
-                        default=Ends.from_string('neither'))
+                        default=Ends.from_string('NEITHER'))
     parser.add_argument("-pm", "--prim_matl",
                         help="primary material name",
                         metavar='MTL',
