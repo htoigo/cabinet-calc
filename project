@@ -1,6 +1,37 @@
   -*- mode: org;-*-
 
-# Project file for Cabinet Wiz program.
+# Project file for Cabinet Calc program.
+
+Program Name:    Cabinet Calc
+
+Distribution name:    cabinet-calc
+Python Package name:  cabinet-calc
+
+Module name(s):       cabinet_calc.py
+                      cabinetcalc.py
+                      cabcalc.py
+
+Github Repo name:     cabinet-calc.git
+
+Main executable:      cabcalc.py  ->  rename to cabcalc (cabcalc.exe on Windows)?
+
+cabinet-calc/
+    __init__.py  ???
+    app/
+        cabinet.py
+        cabcalc.py  OR cabinetcalc.py  OR  cabinet-calc.py
+        cutlist.py
+        dimension_strs.py
+        gui.py
+        __init__.py
+        job.py
+        panel_layout.py    (DXF) ???
+        text.py
+    docs/
+        
+    tests/
+        test_dimension_strs.py
+    util/
 
 * Currently used version
 
@@ -56,7 +87,7 @@ Should contain the most critical information for the job.
     1. Wall width, height, depth, material, material thickness, number of
     fillers, 
 * Implementation
-** Cabinet Wiz main program
+** Cabinet Calc main program
   Uses a collection of modules, which might be useful for other cabinet
   fabrication programs.
 ** Modules
@@ -100,24 +131,11 @@ Should contain the most critical information for the job.
   Given a list of parts, arrange the parts on pieces of the raw material in the
   most efficient way possible, and generate a dxf file.
 
-
-Program Name:    Cabinet Wiz
-
-Python Package:  cabwiz
-
-Main executable: cabwiz.py  ->  rename to cabwiz (cabwiz.exe on Windows)?
-
-cabwiz/
-    __init__.py
-    cabwiz.py
-    gui.py
-    cabinet.py
-    job.py
-    cutlist.py
-    dimension_strs.py
-    panel_layout.py  (DXF)
-    tests/
-        test_dimension_strs.py
-
 * Purpose
+**  Learning
+** Gaining experience with
+*** python mid-size project
+*** using git source control
+*** testing the code
+*** using contracts
 * Principles
