@@ -1,16 +1,17 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-
-[dev-packages]
+name = "pypi"
 
 [packages]
-reportlab = "*"
+reportlab = "~=3.6.1"
+
+[dev-packages]
 flake8 = "*"
-pytest = "*"
-coverage = "*"
-pycontracts = "*"
+autoflake = "*"
+python-language-server = "*"
+importmagic = "*"
+epc = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
