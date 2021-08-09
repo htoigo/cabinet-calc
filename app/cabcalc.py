@@ -1,4 +1,5 @@
-#!/usr/bin/env python         -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# -*- coding: utf-8; -*-
 
 # cabcalc.py, the main executable for Cabinet Calc.
 
@@ -48,9 +49,9 @@ import textwrap
 from app.cabinet import (
     materials, prim_mat_default, door_mat_default, Ends, Run
     )
-import app.gui as gui
-import app.job as job
-import app.cutlist as cutlist
+from app import gui
+from app import job
+from app import cutlist
 
 
 def start_gui():
@@ -168,7 +169,8 @@ def get_parser():
     return parser
 
 
-if __name__ == '__main__':
+def main():
+    """The main entry point when this script is run as a program."""
     parser = get_parser()
     args = parser.parse_args()
 
@@ -177,6 +179,10 @@ if __name__ == '__main__':
         start_gui()
     else:
         start_cli(args)
+
+
+if __name__ == '__main__':
+    main()
 
 
 # cabcalc.py  ends here
