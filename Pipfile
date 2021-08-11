@@ -9,11 +9,11 @@ reportlab = "~=3.6.1"
 [dev-packages]
 flake8 = "*"
 autoflake = "*"
-python-language-server = "*"
 importmagic = "*"
 epc = "*"
 pytest = "*"
 pycontracts3 = ">=3.0.2"
+python-lsp-server = "*"
 
 [requires]
 python_version = "3.9"
