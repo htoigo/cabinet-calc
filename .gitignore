@@ -10,7 +10,12 @@ __pycache__/
 *.so
 
 # Pipenv
-Pipfile
+
+# Per recommendation of pipenv's author (see 
+# https://pipenv-fork.readthedocs.io/en/latest/basics.html), we do not keep
+# 'Pipfile.lock' in version control since we are targeting multiple versions
+# of Python. In general, he suggests keeping both Pipfile and Pipfile.lock in
+# version control.
 Pipfile.lock
 
 # Distribution / packaging
