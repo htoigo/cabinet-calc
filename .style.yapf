@@ -1,0 +1,7 @@
+[style]
+based_on_style = pep8
+
+blank_line_before_module_docstring = True
+blank_lines_between_top_level_imports_and_variables = 2
+column_limit = 84
+spaces_before_comment = 4
