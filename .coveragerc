@@ -1,8 +1,0 @@
-# .coveragerc --- coverage.py configuration file
-
-[run]
-source =
-    /home/harry/code/proj/cabwiz
-omit =
-    # Omit virtual environment site packages
-    /home/harry/code/proj/cabwiz/.venv/*
