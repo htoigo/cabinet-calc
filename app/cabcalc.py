@@ -46,12 +46,12 @@ import sys
 import argparse
 import textwrap
 
-from app.cabinet import (
-    materials, prim_mat_default, door_mat_default, Ends, Run
+from cabinet import (
+    MATERIALS, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
     )
-from app import gui
-from app import job
-from app import cutlist
+import gui
+import job
+import cutlist
 
 
 def start_gui():
@@ -131,7 +131,7 @@ def get_parser():
                         help="primary material name",
                         metavar='MTL',
                         type=str,
-                        default=materials[prim_mat_default])
+                        default=MATERIALS[PRIM_MAT_DEFAULT])
     parser.add_argument("-pt", "--prim_thick",
                         help="primary thickness",
                         metavar='TH',
@@ -140,7 +140,7 @@ def get_parser():
                         help="door material name",
                         metavar='MTL',
                         type=str,
-                        default=materials[door_mat_default])
+                        default=MATERIALS[DOOR_MAT_DEFAULT])
     parser.add_argument("-dt", "--door_thick",
                         help="door thickness",
                         metavar='TH',

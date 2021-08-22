@@ -74,12 +74,12 @@ DOOR_HINGE_GAP = 0.125
 
 # The list order is the order they will appear in the selection list.
 # The default primary material is Standard Plywood, if none is specified.
-materials = ['Standard Plywood',
+MATERIALS = ['Standard Plywood',
              'Marine-Grade Plywood',
              'Melamine']
 
 # Material abbreviations to be used where full names will not fit.
-matl_abbrevs = {'Standard Plywood': 'PLY',
+MATL_ABBREVS = {'Standard Plywood': 'PLY',
                 'Marine-Grade Plywood': 'MarPLY',
                 'Melamine': 'MEL'}
 
@@ -99,7 +99,7 @@ DOOR_MAT_DEFAULT = 2
 # Note: these thicknesses must still be changeable to something else, as lots
 # do vary in thickness. For example, gray melamine lots are often 0.74" thick.
 
-matl_thicknesses = {'Standard Plywood': (0.74, [0.74, 0.74]),
+MATL_THICKNESSES = {'Standard Plywood': (0.74, [0.74, 0.74]),
                     'Marine-Grade Plywood': (0.75, [0.75, 0.75]),
                     'Melamine': (0.76, [1.0])}
 
@@ -137,10 +137,10 @@ class Ends(Enum):
 
 def cabinet_run(
         fullwidth, height, depth, fillers=Ends.NEITHER,
-        prim_material=materials[PRIM_MAT_DEFAULT],
-        prim_thickness=matl_thicknesses[materials[PRIM_MAT_DEFAULT]][0],
-        door_material=materials[DOOR_MAT_DEFAULT],
-        door_thickness=matl_thicknesses[materials[DOOR_MAT_DEFAULT]][0],
+        prim_material=MATERIALS[PRIM_MAT_DEFAULT],
+        prim_thickness=MATL_THICKNESSES[MATERIALS[PRIM_MAT_DEFAULT]][0],
+        door_material=MATERIALS[DOOR_MAT_DEFAULT],
+        door_thickness=MATL_THICKNESSES[MATERIALS[DOOR_MAT_DEFAULT]][0],
         bottom_thickness=None,
         has_legs=False,
         topnailer_depth=4,
@@ -206,9 +206,9 @@ class Run():
     allow single-door cabinets, but that will require a lot of changes.
     """
     def __init__(self, fullwidth, height, depth, fillers=Ends.NEITHER,
-                 prim_material=materials[PRIM_MAT_DEFAULT],
+                 prim_material=MATERIALS[PRIM_MAT_DEFAULT],
                  prim_thickness=None,
-                 door_material=materials[DOOR_MAT_DEFAULT],
+                 door_material=MATERIALS[DOOR_MAT_DEFAULT],
                  door_thickness=None,
                  btmpanel_thicknesses=None,
                  has_legs=False,
@@ -225,18 +225,18 @@ class Run():
         if prim_thickness is not None:
             self.prim_thickness = prim_thickness
         else:
-            self.prim_thickness = matl_thicknesses[self.prim_material][0]
+            self.prim_thickness = MATL_THICKNESSES[self.prim_material][0]
         self.door_material = door_material
         if door_thickness is not None:
             self.door_thickness = door_thickness
         else:
-            self.door_thickness = matl_thicknesses[self.door_material][0]
+            self.door_thickness = MATL_THICKNESSES[self.door_material][0]
         self._has_legs = has_legs
         if btmpanel_thicknesses is not None:
             self.btmpanel_thicknesses = btmpanel_thicknesses
         else:
             if self.has_legs:
-                self.btmpanel_thicknesses = matl_thicknesses[
+                self.btmpanel_thicknesses = MATL_THICKNESSES[
                     self.prim_material][1]
             else:
                 self.btmpanel_thicknesses = [self.prim_thickness]
@@ -391,8 +391,7 @@ class Run():
             if self._has_legs:
                 # Just added legs; this requires a thicker bottom, which may be
                 # stacked panels depending on the material, so use a list.
-                self.btmpanel_thicknesses = matl_thicknesses[
-                    self.prim_material][1]
+                self.btmpanel_thicknesses = MATL_THICKNESSES[self.prim_material][1]
             else:
                 # Just removed legs; bottom thickness can be same as primary
                 # material thickness (still a list).

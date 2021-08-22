@@ -45,11 +45,11 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-from app.cabinet import (
-    materials, matl_thicknesses, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
+from cabinet import (
+    MATERIALS, MATL_THICKNESSES, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
     )
-from app import job
-from app import cutlist
+import job
+import cutlist
 
 
 def yn_to_bool(string):
@@ -110,10 +110,10 @@ class Application(ttk.Frame):
         self.height.set('')
         self.depth.set('')
         self.fillers.set('NEITHER')
-        self.prim_material.set(materials[PRIM_MAT_DEFAULT])
-        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
-        self.door_material.set(materials[DOOR_MAT_DEFAULT])
-        self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
+        self.prim_material.set(MATERIALS[PRIM_MAT_DEFAULT])
+        self.prim_thickness.set(MATL_THICKNESSES[self.prim_material.get()][0])
+        self.door_material.set(MATERIALS[DOOR_MAT_DEFAULT])
+        self.door_thickness.set(MATL_THICKNESSES[self.door_material.get()][0])
         self.legs.set('no')
         self.bottom_thickness.set('')
         self.btmpanel1_thickness.set('')
@@ -242,9 +242,9 @@ class Application(ttk.Frame):
                 column=0, row=2, sticky=W, padx=(0, 2), pady=2)
             self.prim_material_cbx = ttk.Combobox(
                 miscframe, textvariable=self.prim_material,
-                width=max(map(len, materials)) - 2
+                width=max(map(len, MATERIALS)) - 2
             )
-            self.prim_material_cbx['values'] = materials
+            self.prim_material_cbx['values'] = MATERIALS
             # Prevent direct editing of the value in the combobox:
             self.prim_material_cbx.state(['readonly'])
             # Call the `selection clear' method when the value changes. It looks
@@ -260,9 +260,9 @@ class Application(ttk.Frame):
                 column=0, row=3, sticky=W, padx=(0, 2), pady=2)
             self.door_material_cbx = ttk.Combobox(
                 miscframe, textvariable=self.door_material,
-                width=max(map(len, materials)) - 2
+                width=max(map(len, MATERIALS)) - 2
             )
-            self.door_material_cbx['values'] = materials
+            self.door_material_cbx['values'] = MATERIALS
             # Prevent direct editing of the value in the combobox:
             self.door_material_cbx.state(['readonly'])
             # Call the `selection clear' method when the value changes. It looks
@@ -301,7 +301,7 @@ class Application(ttk.Frame):
             )
             self.btm_material_lbl = ttk.Label(
                 miscframe, textvariable=self.btm_material,
-                width=max(map(len, materials)) - 2
+                width=max(map(len, MATERIALS)) - 2
             )
             self.btm_material_lbl.grid(column=1, row=9, sticky=W, padx=2, pady=(6, 2))
             self.bottom_thickness_ent = ttk.Entry(
@@ -422,11 +422,11 @@ class Application(ttk.Frame):
         return result
 
     def prim_material_changed(self, e):
-        self.prim_thickness.set(matl_thicknesses[self.prim_material.get()][0])
+        self.prim_thickness.set(MATL_THICKNESSES[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
         if self.legs.get() == 'yes':
             self.btm_material.set(self.prim_material.get())
-            btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
+            btm_thicknesses = MATL_THICKNESSES[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
             if len(btm_thicknesses) > 1:
                 self.stacked_btm.set('yes')
@@ -444,7 +444,7 @@ class Application(ttk.Frame):
                 self.bottom_thickness_ent.state(['!disabled'])
 
     def door_material_changed(self, e):
-        self.door_thickness.set(matl_thicknesses[self.door_material.get()][0])
+        self.door_thickness.set(MATL_THICKNESSES[self.door_material.get()][0])
         self.door_material_cbx.selection_clear()
 
     def legs_changed(self):
@@ -452,7 +452,7 @@ class Application(ttk.Frame):
             self.legs_thicker_btm_lbl.state(['!disabled'])
             self.bottoms_lbl.state(['!disabled'])
             self.btm_material.set(self.prim_material.get())
-            btm_thicknesses = matl_thicknesses[self.prim_material.get()][1]
+            btm_thicknesses = MATL_THICKNESSES[self.prim_material.get()][1]
             self.bottom_thickness.set(sum(btm_thicknesses))
             self.bottom_thickness_ent.state(['!disabled'])
             self.stacked_btm.set('no')
