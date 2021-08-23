@@ -113,7 +113,7 @@ class Job(object):
     def cabinfo(self):
         """Return number of cabinets needed and cabinet width as a list of strings.
 
-        rtype: list[>0](str)
+        :rtype: list[>0](str)
         """
         result = []
         result.append('Number of cabinets needed:  ' + str(self.cabs.num_cabinets))
