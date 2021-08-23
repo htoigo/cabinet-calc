@@ -62,7 +62,6 @@ def start_gui():
 
 def start_cli(args):
     """Start the command-line version of the program."""
-
     # Create a cabinet Run object which does all the calculating.
     cab_run = Run(args.fullwidth, args.height, args.depth,
                   fillers=args.fillers,
@@ -170,7 +169,7 @@ def get_parser():
 
 
 def main():
-    """The main entry point when this script is run as a program."""
+    """Parse the command-line args and pass them to the CLI or start the GUI."""
     parser = get_parser()
     args = parser.parse_args()
 
