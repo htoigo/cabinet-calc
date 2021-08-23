@@ -214,16 +214,16 @@ class Application(ttk.Frame):
             miscframe.columnconfigure(6, weight=1)
             ttk.Label(miscframe, text='Fillers for which ends?').grid(
                 column=0, columnspan=2, row=0, sticky=W, padx=(0, 2), pady=2)
-            ttk.Radiobutton(miscframe, value='neither', text='Neither',
+            ttk.Radiobutton(miscframe, value='NEITHER', text='Neither',
                             variable=self.fillers).grid(
                                 column=2, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='left', text='Left',
+            ttk.Radiobutton(miscframe, value='LEFT', text='Left',
                             variable=self.fillers).grid(
                                 column=3, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='right', text='Right',
+            ttk.Radiobutton(miscframe, value='RIGHT', text='Right',
                             variable=self.fillers).grid(
                                 column=4, row=0, sticky=W, padx=3, pady=2)
-            ttk.Radiobutton(miscframe, value='both', text='Both',
+            ttk.Radiobutton(miscframe, value='BOTH', text='Both',
                             variable=self.fillers).grid(
                                 column=5, row=0, sticky=W, padx=3, pady=2)
 
