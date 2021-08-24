@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8; -*-
+
+# cabcalc executable file.
+
+
+from cabinet-calc import cabinet_calc
+
+
+if __name__ == '__main__':
+    cabinet_calc.main()
+
+
+# cabcalc  ends here

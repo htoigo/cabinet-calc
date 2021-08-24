@@ -2,7 +2,8 @@
 
 
 import pytest
-import app.cabinet as C
+
+from cabinet-calc import cabinet as C
 
 
 @pytest.fixture

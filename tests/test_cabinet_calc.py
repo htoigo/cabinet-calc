@@ -1,8 +1,8 @@
-# test_cabcalc.py    -*- coding: utf-8 -*-
+# test_cabinet_calc.py    -*- coding: utf-8 -*-
 
 
-import app.cabcalc as CC
-import app.cabinet as Cab
+from cabinet-calc import cabinet_calc as CC
+from cabinet-calc import cabinet as Cab
 
 
 def test_get_parser():
@@ -111,4 +111,4 @@ def test_parse_shortopts_sepvals_primmatl():
     assert args.prim_thick == 0.77
 
 
-# test_cabcalc.py  ends here
+# test_cabinet_calc.py  ends here

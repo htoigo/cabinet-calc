@@ -2,8 +2,9 @@
 
 
 import pytest
-import app.cabinet as C
-import app.job as J
+
+from cabinet-calc import cabinet as C
+from cabinet-calc import job as J
 
 
 @pytest.fixture

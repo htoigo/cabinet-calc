@@ -4,7 +4,7 @@
 from reportlab.rl_config import canvas_basefontname as _baseFontName
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 
-import app.text as T
+from cabinet-calc import text as T
 
 
 def test_normal_style():

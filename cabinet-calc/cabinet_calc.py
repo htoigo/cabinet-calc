@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; -*-
 
-# cabcalc.py, the main executable for Cabinet Calc.
+# cabinet_calc.py
 
 # Copyright © 2018  Harry H. Toigo II, L33b0
 
 # This file is part of Cabinet Calc.
-# Cabinet Calc is the custom Euro-style cabinet configurator.
 
 # Cabinet Calc is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +28,12 @@
 #              Alameda CA  94501
 
 
-"""Cabinet Calc: The Custom Euro-Style Cabinet Configurator.
+"""The Cabinet Calc main module.
+
+This module handles processing of command-line arguments, and starting either
+the CLI or the GUI as required.
+
+Cabinet Calc is the Custom Euro-Style Cabinet Configurator.
 
 Quickly and easily, by entering a few dimensions, configure a bank of Euro-
 style cabinets. Generate a parts list with dimensions, as well as a high-
@@ -38,7 +42,6 @@ floor.
 
 Cabinet Calc has both a GUI interface for ease of use, and a command line
 interface for power users and scripting capability.
-
 """
 
 
@@ -46,12 +49,12 @@ import sys
 import argparse
 import textwrap
 
-from cabinet import (
+from cabinet-calc.cabinet import (
     MATERIALS, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
     )
-import gui
-import job
-import cutlist
+from cabinet-calc import gui
+from cabinet-calc import job
+from cabinet-calc import cutlist
 
 
 def start_gui():
@@ -184,4 +187,4 @@ if __name__ == '__main__':
     main()
 
 
-# cabcalc.py  ends here
+# cabinet_calc.py  ends here
