@@ -1,8 +1,8 @@
 # test_cabinet_calc.py    -*- coding: utf-8 -*-
 
 
-from cabinet-calc import cabinet_calc as CC
-from cabinet-calc import cabinet as Cab
+from cabinet_calc import cabinet_calc as CC
+from cabinet_calc import cabinet as Cab
 
 
 def test_get_parser():

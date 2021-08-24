@@ -3,7 +3,7 @@
 
 import pytest
 
-from cabinet-calc import cabinet as C
+from cabinet_calc import cabinet as C
 
 
 @pytest.fixture

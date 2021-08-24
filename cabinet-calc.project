@@ -1,41 +1,25 @@
   -*- mode: org;-*-
 
-# Project file for Cabinet Calc program.
+# Project file for the Cabinet Calc program.
 
-Program Name:    Cabinet Calc
+* Names
 
-Distribution name:    cabinet-calc
-Python Package name:  cabinet-calc
+Application/Project Name:    Cabinet Calc
 
-Module name(s):       cabinet_calc.py
-                      cabinetcalc.py
-                      cabcalc.py
+Distribution name:       cabinet-calc
+PyPI Package name:       cabinet-calc
+Github Repo name:        cabinet-calc.git
 
-Github Repo name:     cabinet-calc.git
+Main module name:        cabinet_calc
+Main module filename:    cabinet_calc.py
 
-Main executable:      cabcalc.py  ->  rename to cabcalc (cabcalc.exe on Windows)?
-
-cabinet-calc/
-    __init__.py  ???
-    app/
-        cabinet.py
-        cabcalc.py  OR cabinetcalc.py  OR  cabinet-calc.py
-        cutlist.py
-        dimension_strs.py
-        gui.py
-        __init__.py
-        job.py
-        panel_layout.py    (DXF) ???
-        text.py
-    docs/
-        
-    tests/
-        test_dimension_strs.py
-    util/
+Executable name:         cabcalc
+  on Windows?:           cabcalc.exe
 
 * Currently used version
-
-** CabCalc-Spreadsheet
+  
+(08/24/21) At Axis Designs, are they still using the spreadsheet version of this?
+           Have they used this version at all?
 
 * Proof of Concept for new version
   See Google Keep card for drawings of interface and output.

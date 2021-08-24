@@ -3,8 +3,8 @@
 
 import pytest
 
-from cabinet-calc import cabinet as C
-from cabinet-calc import job as J
+from cabinet_calc import cabinet as C
+from cabinet_calc import job as J
 
 
 @pytest.fixture

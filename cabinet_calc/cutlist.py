@@ -47,9 +47,9 @@ from reportlab.graphics.shapes import (
     )
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
-from cabinet-calc.cabinet import Ends, DOOR_HINGE_GAP, MATL_ABBREVS
-from cabinet-calc.dimension_strs import dimstr, thickness_str
-from cabinet-calc.text import (
+from cabinet_calc.cabinet import Ends, DOOR_HINGE_GAP, MATL_ABBREVS
+from cabinet_calc.dimension_strs import dimstr, thickness_str
+from cabinet_calc.text import (
     normal_style, rt_style, title_style, wallwidth_style, heading_style,
     fixed_style
     )

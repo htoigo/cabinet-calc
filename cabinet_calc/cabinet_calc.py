@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8; -*-
 
 # cabinet_calc.py
@@ -46,15 +45,24 @@ interface for power users and scripting capability.
 
 
 import sys
+from os.path import dirname
 import argparse
 import textwrap
 
-from cabinet-calc.cabinet import (
+if __name__ == '__main__':
+    # Add the project root directory to sys.path, so the import machinery can
+    # find other project modules when this script is run (as opposed to being
+    # imported). The project root directory should be the parent of this file's
+    # directory.
+    project_root_dir = dirname(dirname(__file__))
+    sys.path.insert(0, project_root_dir)
+
+from cabinet_calc.cabinet import (
     MATERIALS, PRIM_MAT_DEFAULT, DOOR_MAT_DEFAULT, Ends, Run
     )
-from cabinet-calc import gui
-from cabinet-calc import job
-from cabinet-calc import cutlist
+from cabinet_calc import gui
+from cabinet_calc import job
+from cabinet_calc import cutlist
 
 
 def start_gui():

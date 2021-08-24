@@ -1,7 +1,7 @@
 # test_dimension_strs.py    -*- coding: utf-8 -*-
 
 
-from cabinet-calc import dimension_strs as DS
+from cabinet_calc import dimension_strs as DS
 
 
 class TestDimstr:

@@ -35,8 +35,8 @@ the Job class.
 
 from contracts import contract
 
-from cabinet-calc.cabinet import Ends
-from cabinet-calc.dimension_strs import dimstr, dimstr_col, thickness_str
+from cabinet_calc.cabinet import Ends
+from cabinet_calc.dimension_strs import dimstr, dimstr_col, thickness_str
 
 
 __all__ = ['Job']    # The public API of this module.
