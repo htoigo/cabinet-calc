@@ -58,13 +58,13 @@ def test_parse_shortopts_sep_values_fillers_both():
     args = p.parse_args(['-w', '177.75', '-ht', '26.25',
                          '-d', '27.0', '-n', 'Short Opts Job',
                          '-s', 'A job to test parsing short options.',
-                         '-f', 'both'])
+                         '-f', 'BOTH'])
     assert args.fullwidth == 177.75
     assert args.height == 26.25
     assert args.depth == 27.0
     assert args.name == 'Short Opts Job'
     assert args.desc == 'A job to test parsing short options.'
-    assert args.fillers == Cab.Ends.both
+    assert args.fillers == Cab.Ends.BOTH
 
 
 def test_parse_shortopts_sep_values_fillers_left():
@@ -72,13 +72,13 @@ def test_parse_shortopts_sep_values_fillers_left():
     args = p.parse_args(['-w', '177.75', '-ht', '26.25',
                          '-d', '27.0', '-n', 'Short Opts Job',
                          '-s', 'A job to test parsing short options.',
-                         '-f', 'left'])
+                         '-f', 'LEFT'])
     assert args.fullwidth == 177.75
     assert args.height == 26.25
     assert args.depth == 27.0
     assert args.name == 'Short Opts Job'
     assert args.desc == 'A job to test parsing short options.'
-    assert args.fillers == Cab.Ends.left
+    assert args.fillers == Cab.Ends.LEFT
 
 
 def test_parse_shortopts_sep_values_fillers_right():
@@ -86,13 +86,13 @@ def test_parse_shortopts_sep_values_fillers_right():
     args = p.parse_args(['-w', '177.75', '-ht', '26.25',
                          '-d', '27.0', '-n', 'Short Opts Job',
                          '-s', 'A job to test parsing short options.',
-                         '-f', 'right'])
+                         '-f', 'RIGHT'])
     assert args.fullwidth == 177.75
     assert args.height == 26.25
     assert args.depth == 27.0
     assert args.name == 'Short Opts Job'
     assert args.desc == 'A job to test parsing short options.'
-    assert args.fillers == Cab.Ends.right
+    assert args.fillers == Cab.Ends.RIGHT
 
 
 def test_parse_shortopts_sepvals_primmatl():
@@ -106,7 +106,7 @@ def test_parse_shortopts_sepvals_primmatl():
     assert args.depth == 27.0
     assert args.name == 'Short Opts Job'
     assert args.desc == 'A job to test parsing short options.'
-    assert args.fillers == Cab.Ends.neither
+    assert args.fillers == Cab.Ends.NEITHER
     assert args.prim_matl == 'Melamine'
     assert args.prim_thick == 0.77
 

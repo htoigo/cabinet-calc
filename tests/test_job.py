@@ -89,7 +89,7 @@ def test_job_specification(job):
 
 @pytest.fixture
 def job_filler_l():
-    return J.Job('Left Filler Job', C.Run(183, 28, 24, fillers=C.Ends.left),
+    return J.Job('Left Filler Job', C.Run(183, 28, 24, fillers=C.Ends.LEFT),
                  desc='Integer dimensions, filler on left, no legs.')
 
 
