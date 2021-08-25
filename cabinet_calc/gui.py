@@ -1,43 +1,27 @@
-# gui.py        -*- coding: utf-8 -*-
+# gui.py                              -*- coding: utf-8; -*-
 
-# Module implementing the Tkinter GUI for Cabinet Calc.
+"""The gui module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc.
-# Cabinet Calc is the custom Euro-style cabinet configurator.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
-
-
-"""Cabinet Calc GUI module.
-
-This module implements the Cabinet Calc GUI.
+This module implements a graphical user interface for Cabinet Calc based on
+Tkinter, which will run on Windows, Mac and Linux desktops.
 """
-
-
-# __all__ = [max_cabinet_width, door_hinge_gap, cabinet_run, num_cabinets,
-#            Run, Job]
-__version__ = '0.1'
-__author__ = 'Harry H. Toigo II'
 
 
 import textwrap
@@ -579,6 +563,5 @@ class Application(ttk.Frame):
 
     def optimize_panel_layout(self):
         pass
-
 
 # gui.py  ends here

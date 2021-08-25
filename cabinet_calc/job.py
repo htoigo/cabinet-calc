@@ -1,48 +1,39 @@
-# job.py        -*- coding: utf-8 -*-
+# job.py                              -*- coding: utf-8; -*-
 
-# the 'job' module for Cabinet Calc, implementing the Job class.
+"""The job module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc, the custom Euro-style cabinet configurator.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
-
-"""Cabinet Calc job module.
-
-This module implements the job-related facilities of Cabinet Calc, encapsulated in
-the Job class.
+This module implements all the job-related facilities of Cabinet Calc,
+encapsulated in the Job class. A Job object represents a one-off cabinet job
+and holds all of its specifications, i.e. its name (which is its unique
+identifier), its description and a cabinet Run object holding all the parameters
+of its cabinet run, such as dimensions, etc.
 """
+
+
+__all__ = ['Job']
 
 
 from contracts import contract
 
 from cabinet_calc.cabinet import Ends
 from cabinet_calc.dimension_strs import dimstr, dimstr_col, thickness_str
-
-
-__all__ = ['Job']    # The public API of this module.
-
-__version__ = '0.1'
-__author__ = 'Harry H. Toigo II'
 
 
 def all_equal(lst):
@@ -223,6 +214,5 @@ class Job(object):
         result = ([sep] + self.header + [sep] + ['Overview:', ''] + self.overview +
                   [sep] + ['Parts List:', ''] + self.partslist + [sep])
         return result
-
 
 # job.py  ends here

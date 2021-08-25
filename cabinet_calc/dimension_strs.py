@@ -1,34 +1,29 @@
-# dimension_strs.py        -*- coding: utf-8 -*-
+# dimension_strs.py                   -*- coding: utf-8; -*-
 
-# Cabinet Calc module for working with fractional dimension strings.
+"""The dimension_strs module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc.
-# Cabinet Calc is the custom Euro-style cabinet configurator.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
-
-
-"""Cabinet Calc fractional dimension string module.
+This module provides functions for converting floating point dimension
+measurements into strings expressed in fractional inches, as are commonly used
+by fabricators in a cabinet shop. The functions that produce fractional
+dimension strings will produce 'strong' and 'shy' measurements, using the
+suffixes '+' to mean strong and '-' to mean shy.
 """
 
 
@@ -45,8 +40,9 @@ debug = False
 def dimstr(x):
     """Convert a floating point dimension to a fractional string representation.
 
-    The value `x' is the measurement of a dimension. Its string representation
-    is intended to be convenient for cutting in the shop. Some examples:
+    The parameter `x' is a floating point value denoting the measurement of a
+    dimension. The string representation of it that is returned is intended to
+    be convenient for cutting in the shop. Some examples:
 
         `x'             Return Value
         11.375          '11 3/8'
@@ -220,6 +216,5 @@ def upperval_shy_str(i, frac):
     the logic is the same as for upperval_str.
     """
     return upperval_str(i, frac) + '-'
-
 
 # dimension_strs.py  ends here

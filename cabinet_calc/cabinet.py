@@ -1,57 +1,42 @@
-# cabinet.py        -*- coding: utf-8 -*-
+# cabinet.py                          -*- coding: utf-8; -*-
 
-# The `cabinet' module for Cabinet Calc, which computes all cabinet specs.
+"""The cabinet module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc, the custom Euro-style cabinet configurator.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
+This module implements all the main cabinet-related computational capabilities
+of the program. Given a full set of dimensions and other parameters, it
+calculates the cabinet width to use, the number of cabinets that will be needed
+to fill the bank, as well as a full parts list with all dimensions consisting
+of:
 
-
-"""Cabinet Calc cabinet module.
-
-This module implements the...
-
-Given the full width, height, depth, material, material thickness, and
-which ends will have fillers, (along with job name)...
-
-... calculate the number of cabinets needed, each cabinet's width (whether
-integral or not), the space left over to be filled by fillers,
-the number and dimensions of:
     - full back panels
     - bottom panels
     - side panels
     - top nailers
     - doors
+    - fillers
 
-... and create a cut sheet containing the parts list, diagrams of all parts
-to be cut, an isometric view of a single cabinet, with all diagrams to scale.
+It will calclulate the width of fillers, if you specify that fillers should be
+used on one or both ends. It can also generate a cutlist in PDF format,
+containing an isometric view of a single cabinet, the complete parts list,
+diagrams of all parts to be cut, with all diagrams being to scale.
 """
-
-
-# __all__ = [MAX_CABINET_WIDTH, DOOR_HINGE_GAP, cabinet_run, num_cabinets,
-#            Run, Job]
-__version__ = '0.1'
-__author__ = 'Harry H. Toigo II'
 
 
 import math
@@ -517,6 +502,5 @@ class Run():
         """The height of a single door."""
         height = self.cabinet_height - self.doortop_space
         return height
-
 
 # cabinet.py ends here

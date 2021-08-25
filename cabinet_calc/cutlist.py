@@ -1,34 +1,29 @@
-# cutlist.py        -*- coding: utf-8 -*-
+# cutlist.py                          -*- coding: utf-8; -*-
 
-# Cutlist generation module for Cabinet Calc.
+"""The cutlist module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc.
-# Cabinet Calc is the custom Euro-style cabinet configurator.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
+This module provides all cutlist capabilities for Cabinet Calc.
 
-
-"""Cabinet Calc cutlist generation module.
+Its main interface is the function save_cutlist(fname, job), which accepts a
+filename and a Job object describing the cabinet job, and generates a PDF file
+containing the cutlist and saves it in the file _fname_.pdf.
 """
 
 
@@ -917,6 +912,5 @@ def matl_thick_strs(material, thickness, rx, ry, rect_width, rect_ht):
         fontSize=matl_font_sz
         )
     return (thick_str, matl_str)
-
 
 # cutlist.py  ends here

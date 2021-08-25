@@ -1,46 +1,26 @@
-# -*- coding: utf-8; -*-
+# cabinet_calc.py                     -*- coding: utf-8; -*-
 
-# cabinet_calc.py
+"""The main module for Cabinet Calc.
 
-# Copyright © 2018  Harry H. Toigo II, L33b0
+Copyright © 2018-2021 Harry H. Toigo II, L33b0
 
-# This file is part of Cabinet Calc.
+This file is part of Cabinet Calc.
 
-# Cabinet Calc is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+Cabinet Calc is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-# Cabinet Calc is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+Cabinet Calc is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-# You should have received a copy of the GNU General Public License
-# along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
-
-# To contact us:
-#
-# Email:       hhtpub@gmail.com
-#
-# Snail mail:  433 Buena Vista Ave. #310
-#              Alameda CA  94501
-
-
-"""The Cabinet Calc main module.
+You should have received a copy of the GNU General Public License
+along with Cabinet Calc.  If not, see <https://www.gnu.org/licenses/>.
 
 This module handles processing of command-line arguments, and starting either
 the CLI or the GUI as required.
-
-Cabinet Calc is the Custom Euro-Style Cabinet Configurator.
-
-Quickly and easily, by entering a few dimensions, configure a bank of Euro-
-style cabinets. Generate a parts list with dimensions, as well as a high-
-quality cutlist in PDF format, suitable for printing, to be used on the shop
-floor.
-
-Cabinet Calc has both a GUI interface for ease of use, and a command line
-interface for power users and scripting capability.
 """
 
 
@@ -193,6 +173,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 # cabinet_calc.py  ends here
