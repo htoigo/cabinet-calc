@@ -24,6 +24,9 @@ Tkinter, which will run on Windows, Mac and Linux desktops.
 """
 
 
+__all__ = ['Application']
+
+
 import textwrap
 from tkinter import *
 from tkinter import ttk

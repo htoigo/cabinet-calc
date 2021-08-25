@@ -27,14 +27,14 @@ suffixes '+' to mean strong and '-' to mean shy.
 """
 
 
+__all__ = ['dimstr', 'dimstr_col', 'thickness_str']
+
+
 from fractions import Fraction
 import math
 
 
-debug = False
-
-
-# Interface
+DEBUG = False
 
 
 def dimstr(x):
@@ -68,7 +68,7 @@ def dimstr(x):
     i, nths_int = divmod(int(nths_int), n)
     lowernth_frac = Fraction(nths_int, n)
     uppernth_frac = Fraction(nths_int + 1, n)
-    if debug:
+    if DEBUG:
         print('i=' + str(i))
         print('nths_int=' + str(nths_int))
         print('n=' + str(n))
@@ -141,7 +141,7 @@ def thickness_str(x):
     return result
 
 
-# Implementation
+# Implementation.    (Definitions below are non-public)
 
 
 def sdalign(str):

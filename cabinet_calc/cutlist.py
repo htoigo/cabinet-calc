@@ -52,19 +52,15 @@ from cabinet_calc.text import (
 
 # Module Constants
 
-debug = False
-
-default_iso_scale = 1 / 16
-default_panel_scale = 1 / 32
-
+DEFAULT_ISO_SCALE = 1 / 16
+DEFAULT_PANEL_SCALE = 1 / 32
 
 def landscape(pagesize):
     """Return pagesize in landscape mode (with width and height reversed)."""
     w, h = pagesize
     return (h, w)
 
-
-page_width, page_ht = landscape(letter)
+PAGE_WIDTH, PAGE_HT = landscape(letter)
 
 
 def all_equal(lst):
@@ -72,7 +68,7 @@ def all_equal(lst):
 
 
 def save_cutlist(fname, job):
-    """Generate a cutlist for the job and save in fname.pdf."""
+    """Generate a cutlist for the job in PDF format and save it in fname.pdf."""
     doc = BaseDocTemplate(pdf_ify(fname),
                           pagesize=landscape(letter),
                           leftMargin=0.5 * inch,
@@ -111,7 +107,7 @@ def makeframes(doc):
     """Return (frameHdr, frameL, frameR), given the document template."""
     hdr_ht = 70           # pts
     hdr_spc_after = 12    # pts
-    frameHdr = Frame(doc.leftMargin, page_ht - doc.topMargin - hdr_ht,
+    frameHdr = Frame(doc.leftMargin, PAGE_HT - doc.topMargin - hdr_ht,
                      doc.width, hdr_ht, id='hdr'
                      )
     # The two side-by-side columns
@@ -133,7 +129,7 @@ def all_pages(canvas, doc):
     canvas.setFont('Times-Roman', 9)
     # canvas.drawString(inch, 0.5 * inch, '{}'.format(pageinfo))
     canvas.drawRightString(
-        page_width - inch, 0.5 * inch, 'Page {}'.format(doc.page)
+        PAGE_WIDTH - inch, 0.5 * inch, 'Page {}'.format(doc.page)
         )
     canvas.restoreState()
 
@@ -239,9 +235,9 @@ def isometric_view(job):
     # angled cabinet depth lines -- in inches, unscaled.
     iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
 
-    d_width = ((job.cabs.cabinet_width + iso45) * inch * default_iso_scale
+    d_width = ((job.cabs.cabinet_width + iso45) * inch * DEFAULT_ISO_SCALE
                + arrow_sep + boundsln_len/2 + long_vdimtxt_margin)
-    d_ht = ((job.cabs.cabinet_height + iso45) * inch * default_iso_scale
+    d_ht = ((job.cabs.cabinet_height + iso45) * inch * DEFAULT_ISO_SCALE
             + arrow_sep_vert + half_boundsln_vert + top_margin)
 
     result = Drawing(d_width, d_ht)
@@ -412,7 +408,7 @@ def isometric_view(job):
     ]
     isoLines_pts = [inches_to_pts(line) for line in isoLines]
     isoLines_scaled = [
-        (coord * default_iso_scale for coord in line) for line in isoLines_pts
+        (coord * DEFAULT_ISO_SCALE for coord in line) for line in isoLines_pts
         ]
 
     for line in isoLines_scaled:
@@ -421,10 +417,10 @@ def isometric_view(job):
     # Height dimension arrow
     vdim = job.cabs.cabinet_height
     # (x,y) of back right bottom of cabinet, scaled
-    brb_x_scaled = (job.cabs.cabinet_width + iso45) * inch * default_iso_scale
-    brb_y_scaled = iso45 * inch * default_iso_scale
+    brb_x_scaled = (job.cabs.cabinet_width + iso45) * inch * DEFAULT_ISO_SCALE
+    brb_y_scaled = iso45 * inch * DEFAULT_ISO_SCALE
     arr = vdimarrow_iso_str(
-        vdim, default_iso_scale,
+        vdim, DEFAULT_ISO_SCALE,
         brb_x_scaled + arrow_sep_horiz, brb_y_scaled + arrow_sep_vert,
         0.67, boundsln_len
         )
@@ -433,10 +429,10 @@ def isometric_view(job):
     # Width dimension arrow
     hdim = job.cabs.cabinet_width
     # (x,y) of back left top of cabinet, scaled
-    blt_x_scaled = iso45 * inch * default_iso_scale
-    blt_y_scaled = (job.cabs.cabinet_height + iso45) * inch * default_iso_scale
+    blt_x_scaled = iso45 * inch * DEFAULT_ISO_SCALE
+    blt_y_scaled = (job.cabs.cabinet_height + iso45) * inch * DEFAULT_ISO_SCALE
     arr = hdimarrow_iso_str(
-        hdim, default_iso_scale,
+        hdim, DEFAULT_ISO_SCALE,
         blt_x_scaled + arrow_sep_horiz, blt_y_scaled + arrow_sep_vert,
         0.67, boundsln_len
         )
@@ -444,9 +440,9 @@ def isometric_view(job):
 
     # Depth dimension arrow
     ddim = job.cabs.cabinet_depth - job.cabs.door_thickness - DOOR_HINGE_GAP
-    cabwidth_scaled = job.cabs.cabinet_width * inch * default_iso_scale
+    cabwidth_scaled = job.cabs.cabinet_width * inch * DEFAULT_ISO_SCALE
     arr = ddimarrow_iso_str(
-        ddim, default_iso_scale,
+        ddim, DEFAULT_ISO_SCALE,
         cabwidth_scaled + arrow_sep, 0,
         0.67, boundsln_len
         )
@@ -839,7 +835,7 @@ def panels_table(job):
     return Table(data, colWidths, rowHeights, style=top_center_style)
 
 
-def panel_drawing(name, hdim, vdim, scale=default_panel_scale, padding=6,
+def panel_drawing(name, hdim, vdim, scale=DEFAULT_PANEL_SCALE, padding=6,
                   material=None, thickness=None):
     """Create an individual panel Drawing of the named panel."""
 
