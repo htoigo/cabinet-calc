@@ -19,7 +19,7 @@ Executable name:         cabcalc
 * Currently used version
   
 (08/24/21) At Axis Designs, are they still using the spreadsheet version of this?
-           Have they used this version at all?
+           Have they used this Python version at all in production?
 
 * Proof of Concept for new version
   See Google Keep card for drawings of interface and output.
