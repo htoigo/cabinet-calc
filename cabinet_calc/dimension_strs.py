@@ -55,8 +55,9 @@ def dimstr(x):
     return the nearest nth in lowest terms (e.g. 1/4 instead of 4/16), with a
     `+' or `-' suffix indicating `strong' or `shy', respectively.
     """
-    n = 16          # 16 means an nth is one sixteenth;
-                    # 32 means an nth is one thirty-secondth, etc.
+    # Here, n = 16 means that one nth is one sixteenth; n = 32 means that one
+    # nth is one thirty-secondth, etc.
+    n = 16
 
     # x = nths / n    (In general, `nths' will NOT be an integral value.)
     nths = x * n
@@ -103,7 +104,7 @@ def dimstr(x):
 
 def dimstr_col(x):
     """Like dimstr(x), adjusted so whole number parts align in columns."""
-    return sdalign( dimstr(x) )
+    return sdalign(dimstr(x))
 
 
 def thickness_str(x):
@@ -114,8 +115,7 @@ def thickness_str(x):
     rounded to the nearest common thickness value, usually to the nearest 1/4,
     without the `strong' (+) or `shy' (-) indications.
     """
-
-    n = 4          # 4 means an nth is one fourth
+    n = 4          # n = 4 means an nth is one fourth
 
     # x = nths / n    (In general, `nths' will NOT be an integral value.)
     nths = x * n

@@ -27,6 +27,9 @@ containing the cutlist and saves it in the file _fname_.pdf.
 """
 
 
+__all__ = ['save_cutlist']
+
+
 import math
 import re
 
@@ -55,15 +58,18 @@ from cabinet_calc.text import (
 DEFAULT_ISO_SCALE = 1 / 16
 DEFAULT_PANEL_SCALE = 1 / 32
 
+
 def landscape(pagesize):
     """Return pagesize in landscape mode (with width and height reversed)."""
     w, h = pagesize
     return (h, w)
 
+
 PAGE_WIDTH, PAGE_HT = landscape(letter)
 
 
 def all_equal(lst):
+    """Return True if all elements in the list lst are equal, False otherwise."""
     return lst[1:] == lst[:-1]
 
 
@@ -210,13 +216,9 @@ def inches_to_pts(line):
 
 
 def isometric_view(job):
-    """Return a Drawing of the isometric view of a single cabinet."""
-
-    # Determine the width and height required for the drawing.
-
-    # The below distances are all in points, unless noted otherwise.
-
-    # Extra space at top of drawing, for separation from text above.
+    """Return a Drawing with an isometric view of a single cabinet."""
+    # Determine the width and height required for the drawing. The distances
+    # below are all in points, unless noted otherwise.
     top_margin = 10
     # Extra width added so long vdim text doesn't go past right edge.
     long_vdimtxt_margin = 30
@@ -230,11 +232,10 @@ def isometric_view(job):
     arrow_sep_vert = math.sqrt(arrow_sep ** 2 / 2)
     # The horizontal projection is the same, since the angle is 45 degrees.
     arrow_sep_horiz = arrow_sep_vert
-
     # The horizontal (or vertical, since they are equal) projection of the
     # angled cabinet depth lines -- in inches, unscaled.
     iso45 = math.sin(math.radians(45)) * job.cabs.cabinet_depth / 2
-
+    # Overall drawing width and height
     d_width = ((job.cabs.cabinet_width + iso45) * inch * DEFAULT_ISO_SCALE
                + arrow_sep + boundsln_len/2 + long_vdimtxt_margin)
     d_ht = ((job.cabs.cabinet_height + iso45) * inch * DEFAULT_ISO_SCALE
@@ -247,11 +248,9 @@ def isometric_view(job):
     # angled topnailer depth lines -- in inches, unscaled.
     isoNlr45 = job.cabs.topnailer_depth * math.sin(math.radians(45)) / 2
 
-    # Construct a list of the lines that make up the isometric view of a single
-    # cabinet. Each line is a tuple in (x1, y1, x2, y2) format, and all
-    # coordinates are in inches, unscaled. These are converted to points and
-    # then scaled, below.
-
+    # Construct a list of the lines that make up the isometric view. Each line
+    # is a tuple in (x1, y1, x2, y2) format, and all coordinates are in inches,
+    # unscaled. These are converted to points and then scaled, below.
     isoLines = [
         # horizontal lines-----------------------------------------------------
 
@@ -838,7 +837,6 @@ def panels_table(job):
 def panel_drawing(name, hdim, vdim, scale=DEFAULT_PANEL_SCALE, padding=6,
                   material=None, thickness=None):
     """Create an individual panel Drawing of the named panel."""
-
     # Calculate the width and height of the panel rectangle in points.
     hdim_scaled = hdim * inch * scale
     vdim_scaled = vdim * inch * scale

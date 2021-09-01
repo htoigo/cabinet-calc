@@ -24,10 +24,14 @@ in reportlab PDF reports.
 """
 
 
+__all__ = ['normal_style', 'rt_style', 'fixed_style', 'title_style',
+           'wallwidth_style', 'heading_style']
+
+
 from reportlab.rl_config import canvas_basefontname as _baseFontName
 from reportlab.lib.fonts import tt2ps
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
+from reportlab.lib.enums import TA_RIGHT
 
 
 # Fonts
@@ -64,7 +68,7 @@ fixed_style = ParagraphStyle(
 title_style = ParagraphStyle(
     name='Title',
     parent=normal_style,
-    fontName = _baseFontNameB,
+    fontName=_baseFontNameB,
     fontSize=14,
     leading=18,
     spaceBefore=12,

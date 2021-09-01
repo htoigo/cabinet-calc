@@ -24,6 +24,9 @@ the CLI or the GUI as required.
 """
 
 
+__all__ = ['main']
+
+
 import sys
 from os.path import dirname
 import argparse

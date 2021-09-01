@@ -39,6 +39,12 @@ diagrams of all parts to be cut, with all diagrams being to scale.
 """
 
 
+__all__ = ['MAX_CABINET_WIDTH', 'MIN_FILLER_WIDTH', 'MAX_FILLER_WIDTH',
+           'DOOR_HINGE_GAP', 'MATERIALS', 'MATL_ABBREVS',
+           'PRIM_MAT_DEFAULT', 'DOOR_MAT_DEFAULT', 'MATL_THICKNESSES',
+           'Ends', 'Run', 'cabinet_run']
+
+
 import math
 from enum import Enum
 
@@ -90,8 +96,7 @@ MATL_THICKNESSES = {'Standard Plywood': (0.74, [0.74, 0.74]),
 
 
 class Ends(Enum):
-    """An enumeration of the allowable choices for which end or ends of a
-    cabinet run have fillers.
+    """The choices for which ends of a cabinet run are to have fillers.
 
     It must be one of:
         NEITHER - no fillers used
@@ -103,12 +108,14 @@ class Ends(Enum):
     end will have a filler then that end can be left unfinished. On the other
     hand, an end without a filler must have a finished end panel.
     """
+
     NEITHER = 1
     LEFT = 2
     RIGHT = 3
     BOTH = 4
 
     def __str__(self):
+        """Return a member's name as a string for its string representation."""
         return self.name
 
     @staticmethod
@@ -153,43 +160,50 @@ def cabinet_run(
                doorside_space_m, doorside_space_r)
 
 
-# Should we expose the following functions for ad hoc use?
-#
-# def num_cabinets(full_width, fillers):
-#     return result
-#
-# def cabinet_width(full_width, fillers):
-#     return result
-#
-# def extra_width(full_width, fillers):
-#     return result
-
-
 class Run():
-    """A class representing a single run of cabinets.
+    """A Run maintains all specs for a single run, or bank, of cabinets.
 
-    Args:
-        fullwidth: Full bank width available for all cabinets combined.
-        height: The height from toe kick to top of cabinets.
-        depth: Depth from front to back, including the door.
-        fillers: Which ends will have filler panels.
-        prim_material: Primary material name.
-        prim_thickness: Primary material thickness (float).
-            Defaults to the standard thickness of the primary material.
-        door_material: Door material name.
-        door_thickness: Door material thickness (float).
-            Defaults to standard thickness of the chosen door material.
-        btmpanel_thicknesses: List of bottom panel thicknesses, in order from
-            top to bottom. Defaults to a singleton list containing the primary
-            material thickness, if the cabinets will not have legs attached, or
-            if they will, to the list of stacked panels for the primary
-            material.
-        has_legs: True if the cabinets will have legs.
+    :param fullwidth: The full wall width for the entire run of cabinets
+    :type fullwidth: float
+    :param height: The distance from the toe kick to the top of the cabinet
+    :type height: float
+    :param depth: The distance from the front of the cabinet doors to the wall
+    :type depth: float
+    :param fillers: The end(s) of the run that will have filler panels, if any
+    :type fillers: Ends.BOTH, optional
+    :param prim_material: The name of the primary build material of the run
+    :type prim_material: str, optional
+    :param prim_thickness: The thickness of most panels in the run, defaults to
+        the standard thickness of the primary material
+    :type prim_thickness: float, optional
+    :param door_material: The name of the door material
+    :type door_material: str, optional
+    :param door_thickness: The thickness of the door material
+    :type door_thickness: float, optional
+    :param btmpanel_thicknesses: List of bottom panel thicknesses, in order from
+        top to bottom, defaults to a singleton list containing the primary material
+        thickness if the cabinets will not have legs, or if they will, to a list
+        of thicknesses of the primary material.
+    :type btmpanel_thicknesses: [float], optional
+    :param has_legs: True if this cabinet run will have legs and False otherwise
+    :type has_legs: bool, optional
+    :param topnailer_depth: The depth, front to back, of the top nailers
+    :type topnailer_depth: float, optional
+    :param doortop_space: The distance from the top of door to the top of cabinet
+    :type doortop_space: float, optional
+    :param doorside_space_l: The distance from left edge of cabinet to the left door
+    :type doorside_space_l: foat, optional
+    :param doorside_space_m: The distance between the two doors
+    :type doorside_space_m: float, optional
+    :param doorside_space_r: The distance from the right edge of the cabinet to
+        the right door
+    :type doorside_space_r: float, optional
 
-    At the moment this class assumes that there are exactly two doors per
-    cabinet, as does all code in this module. We may change this later to
-    allow single-door cabinets, but that will require a lot of changes.
+    The Run class assumes that there are exactly two doors per cabinet, as do all
+    other functions in this module. This may change in the future, to allow
+    single-door cabinets, but that would require lots of other modifications.
     """
+
     def __init__(self, fullwidth, height, depth, fillers=Ends.NEITHER,
                  prim_material=MATERIALS[PRIM_MAT_DEFAULT],
                  prim_thickness=None,
@@ -200,6 +214,7 @@ class Run():
                  topnailer_depth=4,
                  doortop_space=0.5, doorside_space_l=0.125,
                  doorside_space_m=0.125, doorside_space_r=0.125):
+        """Construct a Run object."""
         self._fullwidth = fullwidth
         self._height = height
         self._depth = depth
@@ -236,7 +251,7 @@ class Run():
 
     @property
     def fullwidth(self):
-        """The total wall width for this run of cabinets."""
+        """Return the total wall width as a float for this run of cabinets."""
         return self._fullwidth
 
     @fullwidth.setter
@@ -258,17 +273,17 @@ class Run():
 
     @property
     def cabinet_height(self):
-        """The overall cabinet height."""
+        """Return the overall cabinet height as a float."""
         return self._height
 
     @property
     def cabinet_depth(self):
-        """The overall cabinet depth."""
+        """Return the overall cabinet depth as a float."""
         return self._depth
 
     @property
     def cabinet_width(self):
-        """The width of each individual cabinet in this run."""
+        """Retrun the width of each individual cabinet in this run as a float."""
         if self.num_fillers == 0:
             # With no fillers, we have no choice about the cabinet width.
             width = self._fullwidth / self.num_cabinets
@@ -293,13 +308,16 @@ class Run():
 
     @property
     def extra_width(self):
-        """The extra space beside the cabinets, to be filled by fillers."""
+        """Return the excess space in this run, beside the width of all cabinets.
+
+        This is precisely the amount of width to be taken up by fillers.
+        """
         # return self._fullwidth % self.num_cabinets
-        return self._fullwidth - self.num_cabinets * self.cabinet_width
+        return self._fullwidth - (self.num_cabinets * self.cabinet_width)
 
     @property
     def num_fillers(self):
-        """The number of fillers to be used in this run of cabinets."""
+        """Return the number of fillers needed by this run of cabinets."""
         if self.fillers is Ends.NEITHER:
             result = 0
         elif self.fillers is Ends.LEFT or self.fillers is Ends.RIGHT:
@@ -313,7 +331,7 @@ class Run():
 
     @property
     def filler_width(self):
-        """The width of the filler(s) to be used in the run."""
+        """Return the width of the filler(s) needed by this run of cabinets."""
         if self.fillers is Ends.NEITHER:
             width = None
         else:
@@ -322,7 +340,7 @@ class Run():
 
     @property
     def filler_height(self):
-        """The height of the filler(s) to be used in the run."""
+        """Return the height of the filler(s) to be used in this run."""
         if self.fillers is Ends.NEITHER:
             height = None
         else:
@@ -331,7 +349,7 @@ class Run():
 
     @property
     def filler_thickness(self):
-        """The thickness of a filler strip."""
+        """Return the thickness of the filler(s) for this run of cabinets."""
         if self.fillers is Ends.NEITHER:
             thickness = None
         else:
@@ -340,33 +358,33 @@ class Run():
 
     @property
     def num_backpanels(self):
-        """The number of back panels needed for this run."""
+        """Return the number of back panels needed for this run."""
         return self.num_cabinets
 
     @property
     def back_width(self):
-        """The width of a full back panel.
+        """Return the width of a full back panel.
 
-        Full back panels cover the full width of the cabinet.
+        Full back panels cover the full width of a cabinet, including sides.
         """
         return self.cabinet_width
 
     @property
     def back_height(self):
-        """The height of a full back panel.
+        """Return the height of a full back panel.
 
-        Full back panels cover the full height of the cabinet.
+        Full back panels cover the full height of a cabinet, including top.
         """
         return self.cabinet_height
 
     @property
     def back_thickness(self):
-        """The thickness of a full back panel."""
+        """Return the thickness of the back panels in this run."""
         return self.prim_thickness
 
     @property
     def has_legs(self):
-        """True if the cabinet run will have legs, False otherwise."""
+        """Return True if this cabinet run will have legs, False otherwise."""
         return self._has_legs
 
     @has_legs.setter
@@ -398,12 +416,16 @@ class Run():
 
     @property
     def num_bottompanels(self):
-        """The number of bottom panels needed for the entire run."""
+        """Return the number of bottom panels needed for this run of cabinets."""
         return self.btmpanels_per_cab * self.num_cabinets
 
     @property
     def bottom_thickness(self):
-        """The total thickness of all bottom panels in a single cabinet."""
+        """Return the total thickness of the bottom of the cabinets in this run.
+
+        The cabinet bottoms may consist of multiple panels stacked, so this value
+        may be more than the thickness of a single panel.
+        """
         return sum(self.btmpanel_thicknesses)
 
     @bottom_thickness.setter
@@ -421,26 +443,26 @@ class Run():
 
     @property
     def bottom_width(self):
-        """The width of a bottom panel."""
+        """Return the width of the bottom panels in this run."""
         width = self.cabinet_width - 2 * self.side_thickness
         return width
 
     @property
     def bottom_depth(self):
-        """The depth (front to back) of a bottom panel."""
+        """Return the depth (front to back) of the bottom panels in this run."""
         return self.side_depth
 
     @property
     def num_sidepanels(self):
-        """The number of side panels needed for this run."""
+        """Return the number of side panels needed for this run of cabinets."""
         return 2 * self.num_cabinets
 
     @property
     def side_depth(self):
-        """The depth (front to back) of a side panel.
+        """Return the depth (front to back) of the side panels in this run.
 
-        Side panel depth is cabinet depth, less thickness of door and gap, less
-        thickness of back panel.
+        The depth of a side panel is the cabinet depth, less the combined thickness
+        of the doors, the door-gap and the back panel.
         """
         depth = (self.cabinet_depth - (self.door_thickness + DOOR_HINGE_GAP)
                  - self.back_thickness)
@@ -448,58 +470,58 @@ class Run():
 
     @property
     def side_height(self):
-        """The height of a side panel."""
+        """Return the height of the side panels in this run of cabinets."""
         return self.cabinet_height
 
     @property
     def side_thickness(self):
-        """The thickness of a side panel."""
+        """Return the thickness of the side panels in this run of cabinets."""
         return self.prim_thickness
 
     @property
     def num_topnailers(self):
-        """The number of top nailers needed for this run."""
+        """Return the total number of top nailers needed for this run."""
         return 2 * self.num_cabinets
 
     @property
     def topnailer_width(self):
-        """The width of a top nailer."""
+        """Return the width of the top nailers in this run."""
         return self.bottom_width
 
     @property
     def topnailer_thickness(self):
-        """The thickness of a top nailer panel."""
+        """Return the thickness of the top nailers in this run."""
         return self.prim_thickness
 
     @property
     def num_doors(self):
-        """The number of doors needed for this run.
+        """Return the total number of doors needed for this run of cabinets.
 
         This function assumes there are exactly 2 doors per cabinet. This may
-        change later.
+        change in the future.
         """
         return 2 * self.num_cabinets
 
     @property
     def doorside_space(self):
-        """The total space to the left, in between and right of the doors."""
+        """Return the total space to the left, right and in between the doors."""
         space = (self.doorside_space_l + self.doorside_space_m
                  + self.doorside_space_r)
         return space
 
     @property
     def door_width(self):
-        """The width of a single door.
+        """Return the width of a single cabinet door.
 
         This function assumes there are exactly 2 doors per cabinet. This may
-        change later.
+        change in the future.
         """
         width = (self.cabinet_width - self.doorside_space) / 2
         return width
 
     @property
     def door_height(self):
-        """The height of a single door."""
+        """Return the height of the cabinet doors in this run."""
         height = self.cabinet_height - self.doortop_space
         return height
 

@@ -28,7 +28,7 @@ __all__ = ['Application']
 
 
 import textwrap
-from tkinter import *
+from tkinter import (Tk, StringVar, IntVar, N, S, W, E, Text)
 from tkinter import ttk
 from tkinter import filedialog
 
@@ -40,12 +40,12 @@ from cabinet_calc import cutlist
 
 
 def yn_to_bool(string):
-    """True if string is 'y' or 'yes', False if string is 'n' or 'no', else error.
+    """Convert a 'y' or 'yes' string to True, and 'n' or 'no' to False.
 
     String matching is case-insensitive.
 
-    We need the function yn_to_bool because the built-in function bool() does
-    not do what we want. For example, bool('no') returns True.
+    We need this function because the built-in function bool() does not do what
+    we want. For example, bool('no') returns True.
     """
     if string.lower() in ['y', 'yes']:
         result = True
@@ -58,7 +58,9 @@ def yn_to_bool(string):
 
 class Application(ttk.Frame):
     """The application, which is the main content frame in the root window."""
+
     def __init__(self, root=None, title='Cabinet Calc'):
+        """Construct an Application object."""
         if root is None:
             # Create a new root window to be our master
             self.root = Tk()
@@ -91,6 +93,7 @@ class Application(ttk.Frame):
         self.make_widgets()
 
     def initialize_vars(self):
+        """Initialize all attributes to default vaules."""
         self.jobname.set('')
         self.description.set('')
         self.fullwidth.set('')
@@ -122,7 +125,7 @@ class Application(ttk.Frame):
         ttk.Label(self, text='The Custom Euro-Style Cabinet Configurator').grid(
             column=0, row=0, sticky=W)
         inputframe = ttk.Labelframe(self, text='Parameters: ', borderwidth=2,
-            relief='groove', padding=5)
+                                    relief='groove', padding=5)
         ttk.Label(self, text='Job Specification:').grid(
             column=0, row=2, sticky=W, pady=2)
         outputframe = ttk.Frame(self, borderwidth=1, relief='sunken')
@@ -140,6 +143,7 @@ class Application(ttk.Frame):
         self.fill_outp_btnsframe(outp_btnsframe)
 
     def fill_inputframe(self, inpframe):
+        """Layout the widgets for gathering input in the input frame."""
 
         def make_jobframe():
             jobframe = ttk.Frame(inpframe, padding=(0, 5, 0, 10))
@@ -149,7 +153,8 @@ class Application(ttk.Frame):
             ttk.Label(jobframe, text='Job Name:').grid(
                 column=0, row=0, pady=2, sticky=W)
             self.jobname_ent = ttk.Entry(jobframe, textvariable=self.jobname,
-                validate='key', validatecommand=(vcmd, '%P'))
+                                         validate='key',
+                                         validatecommand=(vcmd, '%P'))
             ttk.Label(jobframe, text='Description:').grid(
                 column=0, row=1, pady=2, sticky=W)
             self.descrip_ent = ttk.Entry(
@@ -172,18 +177,18 @@ class Application(ttk.Frame):
             dimframe.columnconfigure(5, weight=1)
             ttk.Label(dimframe, text='Width:').grid(
                 column=0, row=0, sticky=W, padx=(0, 3))
-            self.fullwidth_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.fullwidth, validate='key',
+            self.fullwidth_ent = ttk.Entry(
+                dimframe, width=10, textvariable=self.fullwidth, validate='key',
                 validatecommand=(vcmd, '%P'))
             ttk.Label(dimframe, text='Height:').grid(
                 column=2, row=0, sticky=E, padx=(6, 3))
-            self.height_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.height, validate='key',
+            self.height_ent = ttk.Entry(
+                dimframe, width=10, textvariable=self.height, validate='key',
                 validatecommand=(vcmd, '%P'))
             ttk.Label(dimframe, text='Depth:').grid(
                 column=4, row=0, sticky=E, padx=(6, 3))
-            self.depth_ent = ttk.Entry(dimframe, width=10,
-                textvariable=self.depth, validate='key',
+            self.depth_ent = ttk.Entry(
+                dimframe, width=10, textvariable=self.depth, validate='key',
                 validatecommand=(vcmd, '%P'))
             self.fullwidth_ent.grid(column=1, row=0, sticky=(W, E), padx=3)
             self.height_ent.grid(column=3, row=0, sticky=(W, E), padx=3)
@@ -222,8 +227,8 @@ class Application(ttk.Frame):
             ttk.Label(
                 miscframe, text='Measure actual material thickness to the\n'
                                 'nearest 0.01" and adjust values accordingly.'
-            ).grid(column=3, columnspan=3, row=2, rowspan=2, sticky=(N,W),
-                   padx=(8,4), pady=2)
+            ).grid(column=3, columnspan=3, row=2, rowspan=2, sticky=(N, W),
+                   padx=(8, 4), pady=2)
 
             ttk.Label(miscframe, text='Primary:').grid(
                 column=0, row=2, sticky=W, padx=(0, 2), pady=2)
@@ -270,16 +275,15 @@ class Application(ttk.Frame):
             )
             self.legs_thicker_btm_lbl.state(['disabled'])
             self.legs_thicker_btm_lbl.grid(
-                column=3, columnspan=3, row=7, rowspan=2, sticky=(N,W),
+                column=3, columnspan=3, row=7, rowspan=2, sticky=(N, W),
                 padx=(8, 4), pady=2
             )
 
-            legs_chk = ttk.Checkbutton(
-                miscframe, text='Mount legs on cabinets.',
-                variable=self.legs, command=self.legs_changed,
-                onvalue='yes', offvalue='no'
-            ).grid(column=0, columnspan=3, row=6, sticky=W,
-                   padx=2, pady=(15, 2))
+            ttk.Checkbutton(miscframe, text='Mount legs on cabinets.',
+                            variable=self.legs, command=self.legs_changed,
+                            onvalue='yes', offvalue='no'
+                            ).grid(column=0, columnspan=3, row=6, sticky=W,
+                                   padx=2, pady=(15, 2))
 
             self.bottoms_lbl = ttk.Label(miscframe, text='Bottoms:')
             self.bottoms_lbl.state(['disabled'])
@@ -290,7 +294,8 @@ class Application(ttk.Frame):
                 miscframe, textvariable=self.btm_material,
                 width=max(map(len, MATERIALS)) - 2
             )
-            self.btm_material_lbl.grid(column=1, row=9, sticky=W, padx=2, pady=(6, 2))
+            self.btm_material_lbl.grid(column=1, row=9, sticky=W, padx=2,
+                                       pady=(6, 2))
             self.bottom_thickness_ent = ttk.Entry(
                 miscframe, textvariable=self.bottom_thickness, width=6
             )
@@ -332,8 +337,8 @@ class Application(ttk.Frame):
             drs_per_cab_rb1.state(['disabled'])
             drs_per_cab_rb1.grid(column=2, row=10, sticky=W, padx=3, pady=(15, 2))
             ttk.Radiobutton(miscframe, value=2, text='2',
-                variable=self.doors_per_cab).grid(
-                    column=3, row=10, sticky=W, padx=3, pady=(15, 2))
+                            variable=self.doors_per_cab).grid(
+                                column=3, row=10, sticky=W, padx=3, pady=(15, 2))
 
         def make_buttonframe():
             buttonframe = ttk.Frame(inpframe, padding=(0, 12, 0, 0))
@@ -364,6 +369,7 @@ class Application(ttk.Frame):
         inpframe.columnconfigure(0, weight=1)
 
     def fill_outputframe(self, outpframe):
+        """Layout the widgets for showing output in the output frame."""
         # self.output_lbl = ttk.Label(outpframe, textvariable=self.output,
         #                             font='TkFixedFont')
         # self.output_lbl.grid(column=0, row=0, sticky=(N, S, E, W), pady=(0, 50))
@@ -381,6 +387,7 @@ class Application(ttk.Frame):
         self.output_txt.configure(state='disabled')
 
     def fill_outp_btnsframe(self, outp_btnsframe):
+        """Layout the output-dependent buttons in the output buttons frame."""
         outp_btnsframe.columnconfigure(0, weight=1)
         outp_btnsframe.columnconfigure(1, weight=1)
         outp_btnsframe.rowconfigure(0, weight=1)
@@ -395,6 +402,7 @@ class Application(ttk.Frame):
         self.panel_layout_btn.grid(column=1, row=0, sticky=W, padx=2)
 
     def validate_entry(self, value):
+        """Enable the 'Calculate' button only when we have enough info."""
         if self.have_enough_info():
             self.calc_button.state(['!disabled'])
         else:
@@ -402,6 +410,7 @@ class Application(ttk.Frame):
         return True
 
     def have_enough_info(self):
+        """Return True if we have enough info to calculate a job, False otherwise."""
         result = (self.jobname_ent.get() != ''
                   and self.fullwidth_ent.get() != ''
                   and self.height_ent.get() != ''
@@ -409,6 +418,7 @@ class Application(ttk.Frame):
         return result
 
     def prim_material_changed(self, e):
+        """Handle the changing of the primary build material for the job."""
         self.prim_thickness.set(MATL_THICKNESSES[self.prim_material.get()][0])
         self.prim_material_cbx.selection_clear()
         if self.legs.get() == 'yes':
@@ -431,10 +441,12 @@ class Application(ttk.Frame):
                 self.bottom_thickness_ent.state(['!disabled'])
 
     def door_material_changed(self, e):
+        """Handle the changing of the door material for the job."""
         self.door_thickness.set(MATL_THICKNESSES[self.door_material.get()][0])
         self.door_material_cbx.selection_clear()
 
     def legs_changed(self):
+        """Handle the changing of whether the cabinets will have legs or not."""
         if self.legs.get() == 'yes':
             self.legs_thicker_btm_lbl.state(['!disabled'])
             self.bottoms_lbl.state(['!disabled'])
@@ -465,6 +477,7 @@ class Application(ttk.Frame):
             self.stacked_btm_chk.state(['disabled'])
 
     def stacked_btm_changed(self):
+        """Handle the changing of whether cabinet bottoms will be stacked or not."""
         if self.stacked_btm.get() == 'yes':
             half_btm = float(self.bottom_thickness.get()) / 2
             self.btmpanel1_thickness_ent.state(['!disabled'])
@@ -480,6 +493,7 @@ class Application(ttk.Frame):
             self.bottom_thickness_ent.state(['!disabled'])
 
     def btmpnl_thickness_changed(self, *args):
+        """Handle the changing of the thickness of cabinet bottom panels."""
         if self.stacked_btm.get() == 'yes':
             if self.btmpanel1_thickness.get() == '':
                 bp1 = 0.0
@@ -497,10 +511,11 @@ class Application(ttk.Frame):
             self.bottom_thickness.set(thickness_str)
 
     def quit(self):
-        # Destroying the app's top-level window quits the app.
+        """Quit the app; accomplished by destroying its top-level window."""
         self.root.destroy()
 
     def clear_input(self):
+        """Clear and reset all input widgets to default values."""
         self.initialize_vars()
         self.legs_thicker_btm_lbl.state(['disabled'])
         self.bottoms_lbl.state(['disabled'])
@@ -517,6 +532,7 @@ class Application(ttk.Frame):
         self.output_txt.configure(state='disabled')
 
     def calculate_job(self):
+        """Calculate a job, given all input parameters."""
         if self.legs.get() == 'no':
             bp_list = [float(self.prim_thickness.get())]
         else:
@@ -556,7 +572,7 @@ class Application(ttk.Frame):
         self.cutlist_button.state(['!disabled'])
 
     def save_cutlist(self):
-        """Generate a cutlist pdf and save in file chosen by user."""
+        """Generate a cutlist pdf for the job and save it in a file."""
         filename = filedialog.asksaveasfilename(
             title='Filename to Save Cutlist As',
             parent=self.root,
@@ -565,6 +581,7 @@ class Application(ttk.Frame):
             cutlist.save_cutlist(filename, self.job)
 
     def optimize_panel_layout(self):
+        """Optimize the panel layout."""
         pass
 
 # gui.py  ends here
