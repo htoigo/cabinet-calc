@@ -49,6 +49,8 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
+# My custom name for the htmlcov/ directory
+coverage_html_report/
 .tox/
 .coverage
 .coverage.*
