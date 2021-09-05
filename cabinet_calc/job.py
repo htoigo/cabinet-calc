@@ -30,8 +30,6 @@ of its cabinet run, such as dimensions, etc.
 __all__ = ['Job']
 
 
-from contracts import contract
-
 from cabinet_calc.cabinet import Ends
 from cabinet_calc.dimension_strs import dimstr, dimstr_col, thickness_str
 
@@ -54,13 +52,10 @@ class Job(object):
         self.cabs = cab_run
 
     @property
-    @contract
     def header(self):
         """Return the header of the job specification as a list of strings.
 
         Includes job name, job description (if provided), and total wall space.
-
-        :rtype: list[>0](str)
         """
         result = []
         result.append('Job Name: ' + self.name)
@@ -70,12 +65,8 @@ class Job(object):
         return result
 
     @property
-    @contract
     def summaryln(self):
-        """Return a very brief summary of the job as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return a very brief summary of the job as a list of strings."""
         numcabs = self.cabs.num_cabinets
         cabwidth = self.cabs.cabinet_width
         summary = (str(numcabs) + (' cabinet' if numcabs == 1 else ' cabinets') +
@@ -101,12 +92,8 @@ class Job(object):
         return [summary]
 
     @property
-    @contract
     def cabinfo(self):
-        """Return number of cabinets needed and cabinet width as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return number of cabinets needed and cabinet width as list of strings."""
         result = []
         result.append('Number of cabinets needed:  ' + str(self.cabs.num_cabinets))
         result.append('Single cabinet width:  ' + dimstr(self.cabs.cabinet_width) +
@@ -114,12 +101,8 @@ class Job(object):
         return result
 
     @property
-    @contract
     def materialinfo(self):
-        """Return the materials needed for the job as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return the materials needed for the job as a list of strings."""
         result = []
         result.append('Primary Material:  ' +
                       thickness_str(self.cabs.prim_thickness) + '" ' +
@@ -145,12 +128,8 @@ class Job(object):
         return result
 
     @property
-    @contract
     def overview(self):
-        """Return an overview of the job specification as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return an overview of the job specification as a list of strings."""
         result = []
         result.extend(self.summaryln)
         result.append('')
@@ -160,12 +139,8 @@ class Job(object):
         return result
 
     @property
-    @contract
     def partslist(self):
-        """Return a list of parts needed for the job as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return a list of parts needed for the job as a list of strings."""
         result = []
         result.append('Back Panels:     {:2d}  @  {:10s}  x  {:10s}  x  {}'.format(
             self.cabs.num_backpanels,
@@ -204,12 +179,8 @@ class Job(object):
         return result
 
     @property
-    @contract
     def specification(self):
-        """Return a complete specification of the job as a list of strings.
-
-        :rtype: list[>0](str)
-        """
+        """Return a complete specification of the job as a list of strings."""
         sep = '-' * 65
         result = ([sep] + self.header + [sep] + ['Overview:', ''] + self.overview +
                   [sep] + ['Parts List:', ''] + self.partslist + [sep])
